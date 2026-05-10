@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String?          @unique
+  name            String?
+  streak          Int              @default(0)
+  longestStreak   Int              @default(0)
+  totalUrges      Int              @default(0)
+  totalRelapses   Int              @default(0)
+  disciplineScore Int              @default(0)
+  lastActiveAt    DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  sessions        Session[]
+  logs            Log[]
+  triggerPatterns TriggerPattern[]
+}
+
+model Session {
+  id        String        @id @default(cuid())
+  userId    String
+  status    SessionStatus @default(ACTIVE)
+  mode      SessionMode   @default(RECOVERY)
+  startedAt DateTime      @default(now())
+  endedAt   DateTime?
+  outcome   String?
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  userId    String
+  type      LogType
+  emotion   String?
+  trigger   String?
+  note      String?
+  intensity Int?     @default(5)
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TriggerPattern {
+  id        String      @id @default(cuid())
+  userId    String
+  type      TriggerType
+  frequency Int         @default(1)
+  lastSeen  DateTime    @default(now())
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum SessionMode {
+  URGE
+  VULNERABILITY
+  RECOVERY
+}
+
+enum LogType {
+  URGE
+  RELAPSE
+  SUCCESS
+  CHECK_IN
+}
+
+enum TriggerType {
+  BOREDOM
+  STRESS
+  LONELINESS
+  ANXIETY
+  ANGER
+  SADNESS
+  LATE_NIGHT
+  IDLE_TIME
+  SOCIAL_REJECTION
+}
