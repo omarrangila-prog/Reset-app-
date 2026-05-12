@@ -33,12 +33,20 @@ const taskLibrary = {
 import { TaskCard } from "../../components/TaskCard";
 
 // ─── TIMER MODAL ─────────────────────────────────────────────────────────────
+type Task = {
+  id: string;
+  label: string;
+  duration: number;
+  category: string;
+  icon: string;
+};
+
 function TimerModal({ task, onComplete, onCancel }: {
-  task: any;
+  task: Task;
   onComplete: () => void;
   onCancel: () => void;
 }) {
-  const [timeLeft, setTimeLeft] = useState(task.duration);
+  const [timeLeft, setTimeLeft] = useState<number>(task.duration);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
@@ -169,7 +177,7 @@ export default function TasksPage() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("physical");
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
-  const [activeTask, setActiveTask] = useState<any>(null);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const categories = [
     { id: "physical", label: "Physical", count: taskLibrary.physical.length },
@@ -179,7 +187,7 @@ export default function TasksPage() {
 
   const currentTasks = taskLibrary[activeCategory as keyof typeof taskLibrary];
 
-  const handleStartTask = (task: any) => {
+  const handleStartTask = (task: Task) => {
     setActiveTask(task);
   };
 
