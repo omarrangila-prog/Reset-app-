@@ -814,11 +814,11 @@ export default function ResetApp() {
         {screen === "home" && (
           <div style={{
             minHeight: "calc(100vh - 72px)", display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center",
-            padding: "clamp(24px, 8vw, 32px) clamp(16px, 6vw, 24px) 120px",
+            alignItems: "center", justifyContent: "flex-start",
+            padding: "clamp(24px, 8vw, 32px) clamp(16px, 6vw, 24px) calc(240px + env(safe-area-inset-bottom))",
             animation: "fadeIn 0.5s ease both",
           }}>
-            <div style={{ textAlign: "center", maxWidth: 440, width: "100%" }}>
+            <div style={{ textAlign: "center", maxWidth: 440, width: "100%", marginTop: "clamp(16px, 4vw, 24px)" }}>
               {/* Greeting */}
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.textSub, marginBottom: 8, letterSpacing: "0.03em" }}>
                 {greeting}
