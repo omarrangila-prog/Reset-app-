@@ -2,7 +2,7 @@ services:
   - type: web
     name: reset-frontend
     runtime: node
-    buildCommand: cd frontend && npm install && npm run build
+    buildCommand: cd frontend && npm install --include=dev && npm run build
     startCommand: cd frontend && npm start
     envVars:
       - key: NODE_ENV
