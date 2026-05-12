@@ -51,10 +51,12 @@ router.post("/intervene", async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const recentTriggers = user.triggerPatterns.map((tp) =>
+    const recentTriggers = user.triggerPatterns.map((tp: { type: string }) =>
       tp.type.toLowerCase()
     );
-    const lastRelapse = user.logs.find((l) => l.type === "RELAPSE");
+    const lastRelapse = user.logs.find((l: { type: string; timestamp: Date }) =>
+      l.type === "RELAPSE"
+    );
     const lastRelapseDaysAgo = lastRelapse
       ? Math.floor(
           (Date.now() - lastRelapse.timestamp.getTime()) / (1000 * 60 * 60 * 24)

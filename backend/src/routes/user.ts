@@ -65,13 +65,13 @@ router.get("/:id", async (req: Request, res: Response) => {
     // Compute weekly analytics
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const recentLogs = user.logs.filter(
-      (l) => l.timestamp >= sevenDaysAgo
+      (l: { timestamp: Date }) => l.timestamp >= sevenDaysAgo
     );
 
     const weeklyStats = {
-      urges: recentLogs.filter((l) => l.type === "URGE").length,
-      relapses: recentLogs.filter((l) => l.type === "RELAPSE").length,
-      successes: recentLogs.filter((l) => l.type === "SUCCESS").length,
+      urges: recentLogs.filter((l: { type: string }) => l.type === "URGE").length,
+      relapses: recentLogs.filter((l: { type: string }) => l.type === "RELAPSE").length,
+      successes: recentLogs.filter((l: { type: string }) => l.type === "SUCCESS").length,
     };
 
     return res.json({ ...user, weeklyStats });
@@ -99,7 +99,7 @@ router.get("/:id/analytics", async (req: Request, res: Response) => {
     const recentLogs = user.logs.filter((l) => l.timestamp >= thirtyDaysAgo);
 
     const dailyActivity: Record<string, { urges: number; successes: number; relapses: number }> = {};
-    recentLogs.forEach((log) => {
+    recentLogs.forEach((log: { timestamp: Date; type: string }) => {
       const day = log.timestamp.toISOString().split("T")[0];
       if (!dailyActivity[day]) {
         dailyActivity[day] = { urges: 0, successes: 0, relapses: 0 };
