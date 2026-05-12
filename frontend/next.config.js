@@ -5,6 +5,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
   },
+  outputFileTracingRoot: path.resolve(__dirname),
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
