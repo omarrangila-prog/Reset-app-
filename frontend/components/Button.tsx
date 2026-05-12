@@ -43,10 +43,10 @@ const variantStyles: Record<ButtonVariant, CSSProperties> = {
 };
 
 const sizeStyles: Record<ButtonSize, CSSProperties> = {
-  sm: { padding: "8px 16px", fontSize: "13px", borderRadius: "8px" },
-  md: { padding: "12px 24px", fontSize: "15px", borderRadius: "8px" },
-  lg: { padding: "16px 32px", fontSize: "16px", borderRadius: "12px" },
-  xl: { padding: "20px 40px", fontSize: "18px", borderRadius: "12px", letterSpacing: "0.05em" },
+  sm: { padding: "clamp(6px, 2vw, 8px) clamp(12px, 4vw, 16px)", fontSize: "clamp(12px, 3.5vw, 13px)", borderRadius: "8px" },
+  md: { padding: "clamp(10px, 3vw, 12px) clamp(18px, 6vw, 24px)", fontSize: "clamp(14px, 4vw, 15px)", borderRadius: "8px" },
+  lg: { padding: "clamp(12px, 4vw, 16px) clamp(24px, 8vw, 32px)", fontSize: "clamp(15px, 4.5vw, 16px)", borderRadius: "12px" },
+  xl: { padding: "clamp(16px, 5vw, 20px) clamp(32px, 10vw, 40px)", fontSize: "clamp(16px, 5vw, 18px)", borderRadius: "12px", letterSpacing: "0.05em" },
 };
 
 export function Button({

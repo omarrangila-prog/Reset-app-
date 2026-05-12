@@ -42,7 +42,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
             alignItems: "center",
             gap: "8px",
             fontFamily: "var(--font-body)",
-            fontSize: "11px",
+            fontSize: "clamp(10px, 3vw, 11px)",
             fontWeight: 600,
             letterSpacing: "0.12em",
             color: accentColor,
@@ -61,7 +61,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
           text={message}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: mode === "URGE" ? "22px" : "18px",
+            fontSize: mode === "URGE" ? "clamp(18px, 6vw, 22px)" : "clamp(16px, 5vw, 18px)",
             lineHeight: 1.55,
             color: "#F2F2F0",
             fontWeight: mode === "URGE" ? 500 : 400,
@@ -79,7 +79,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
             <div
               style={{
                 fontFamily: "var(--font-body)",
-                fontSize: "11px",
+                fontSize: "clamp(10px, 3vw, 11px)",
                 fontWeight: 600,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
@@ -118,7 +118,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
                 >
                   <span
                     style={{
-                      fontSize: "10px",
+                      fontSize: "clamp(8px, 2.5vw, 10px)",
                       fontWeight: 700,
                       color: accentColor,
                       fontFamily: "var(--font-mono)",
@@ -129,7 +129,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
                 </div>
                 <span
                   style={{
-                    fontSize: "15px",
+                    fontSize: "clamp(14px, 4vw, 15px)",
                     color: "#8A8A8E",
                     lineHeight: 1.5,
                   }}

@@ -50,7 +50,7 @@ export function StreakCard({
         background: "linear-gradient(135deg, #051A0D 0%, #0D1F0D 50%, #051A0D 100%)",
         border: "1px solid rgba(29,185,84,0.3)",
         borderRadius: "var(--r-xl)",
-        padding: "32px",
+        padding: "clamp(24px, 8vw, 32px)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -92,7 +92,7 @@ export function StreakCard({
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         style={{
           fontFamily: "var(--font-heading)",
-          fontSize: "80px",
+          fontSize: "clamp(60px, 20vw, 80px)",
           lineHeight: 0.9,
           color: "#F2F2F0",
           marginBottom: "4px",
@@ -104,7 +104,7 @@ export function StreakCard({
       <div
         style={{
           fontFamily: "var(--font-body)",
-          fontSize: "18px",
+          fontSize: "clamp(14px, 4.5vw, 18px)",
           color: "#8A8A8E",
           marginBottom: "24px",
         }}
@@ -116,10 +116,10 @@ export function StreakCard({
       <div
         style={{
           display: "flex",
-          gap: "24px",
-          paddingTop: "24px",
+          gap: "clamp(16px, 5vw, 24px)",
+          paddingTop: "clamp(16px, 5vw, 24px)",
           borderTop: "1px solid rgba(29,185,84,0.15)",
-          marginBottom: "24px",
+          marginBottom: "clamp(16px, 5vw, 24px)",
         }}
       >
         <StatItem label="Best Streak" value={`${longestStreak}d`} />
@@ -161,7 +161,7 @@ function StatItem({
       <div
         style={{
           fontFamily: "var(--font-body)",
-          fontSize: "11px",
+          fontSize: "clamp(10px, 3vw, 11px)",
           fontWeight: 600,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
@@ -174,7 +174,7 @@ function StatItem({
       <div
         style={{
           fontFamily: "var(--font-heading)",
-          fontSize: "28px",
+          fontSize: "clamp(20px, 7vw, 28px)",
           color: color || "#F2F2F0",
           lineHeight: 1,
         }}

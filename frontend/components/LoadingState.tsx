@@ -31,7 +31,7 @@ export function LoadingState({
         flexDirection: "column",
         alignItems: "center",
         gap: "16px",
-        padding: size === "lg" ? "48px 24px" : "24px",
+        padding: size === "lg" ? "clamp(32px, 10vw, 48px) clamp(16px, 6vw, 24px)" : "clamp(16px, 5vw, 24px)",
       }}
     >
       {/* Dots animation */}

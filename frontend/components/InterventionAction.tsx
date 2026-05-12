@@ -90,24 +90,24 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
         animate={{ opacity: 1, scale: 1 }}
         style={{
           textAlign: "center",
-          padding: "32px",
+          padding: "clamp(24px, 8vw, 32px)",
           background: "rgba(29,185,84,0.08)",
           borderRadius: "var(--r-lg)",
           border: "1px solid rgba(29,185,84,0.2)",
         }}
       >
-        <div style={{ fontSize: "40px", marginBottom: "12px" }}>✓</div>
+        <div style={{ fontSize: "clamp(32px, 10vw, 40px)", marginBottom: "12px" }}>✓</div>
         <div
           style={{
             fontFamily: "var(--font-heading)",
-            fontSize: "32px",
+            fontSize: "clamp(24px, 8vw, 32px)",
             color: "#1DB954",
             marginBottom: "8px",
           }}
         >
           URGE INTERRUPTED
         </div>
-        <div style={{ color: "#8A8A8E", fontSize: "15px" }}>
+        <div style={{ color: "#8A8A8E", fontSize: "clamp(14px, 4vw, 15px)" }}>
           The loop is broken. You chose differently.
         </div>
       </motion.div>
@@ -123,14 +123,14 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
           background: `${accentColor}0D`,
           border: `1px solid ${accentColor}33`,
           borderRadius: "var(--r-lg)",
-          padding: "24px",
+          padding: "clamp(18px, 6vw, 24px)",
         }}
       >
         {/* Action label */}
         <div
           style={{
             fontFamily: "var(--font-heading)",
-            fontSize: "24px",
+            fontSize: "clamp(20px, 6vw, 24px)",
             color: accentColor,
             marginBottom: "12px",
           }}
@@ -142,10 +142,10 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
         <div
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "16px",
+            fontSize: "clamp(14px, 4.5vw, 16px)",
             color: "#F2F2F0",
             lineHeight: 1.6,
-            marginBottom: "24px",
+            marginBottom: "clamp(18px, 6vw, 24px)",
           }}
         >
           {selectedAction.instruction}
@@ -183,7 +183,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
                 alignItems: "center",
               }}
             >
-              <span style={{ color: "#8A8A8E", fontSize: "13px" }}>
+              <span style={{ color: "#8A8A8E", fontSize: "clamp(12px, 3.5vw, 13px)" }}>
                 {timerActive ? `${timeLeft}s remaining` : "Ready to start"}
               </span>
               {!timerActive && (
@@ -194,8 +194,8 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
                     color: mode === "URGE" ? "#F2F2F0" : "#0A0A0B",
                     border: "none",
                     borderRadius: "var(--r-md)",
-                    padding: "8px 16px",
-                    fontSize: "14px",
+                    padding: "clamp(6px, 2vw, 8px) clamp(12px, 4vw, 16px)",
+                    fontSize: "clamp(12px, 3.5vw, 14px)",
                     fontWeight: 600,
                     cursor: "pointer",
                     fontFamily: "var(--font-body)",

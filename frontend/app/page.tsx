@@ -766,7 +766,7 @@ export default function ResetApp() {
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 40,
         display: "flex", justifyContent: "space-between", alignItems: "center",
-        padding: "20px 28px",
+        padding: "clamp(16px, 4vw, 20px) clamp(16px, 6vw, 28px)",
         borderBottom: screen !== "home" ? `1px solid ${T.border}` : "none",
         backdropFilter: "blur(12px)",
         background: "rgba(8,8,9,0.85)",
@@ -815,7 +815,7 @@ export default function ResetApp() {
           <div style={{
             minHeight: "calc(100vh - 72px)", display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center",
-            padding: "32px 24px 100px",
+            padding: "clamp(24px, 8vw, 32px) clamp(16px, 6vw, 24px) 120px",
             animation: "fadeIn 0.5s ease both",
           }}>
             <div style={{ textAlign: "center", maxWidth: 440, width: "100%" }}>
@@ -838,11 +838,11 @@ export default function ResetApp() {
 
               {/* Main CTA */}
               <button onClick={handleUrge} style={{
-                width: "100%", padding: "22px 24px",
+                width: "100%", padding: "clamp(18px, 5vw, 22px) clamp(20px, 6vw, 24px)",
                 background: T.urge,
                 border: "none", borderRadius: 14,
                 fontFamily: "'Bebas Neue', 'Impact', sans-serif",
-                fontSize: 30, letterSpacing: "0.05em", color: "#F5F5F3",
+                fontSize: "clamp(24px, 8vw, 30px)", letterSpacing: "0.05em", color: "#F5F5F3",
                 cursor: "pointer",
                 boxShadow: `0 0 40px ${T.urge}40`,
                 transition: "transform 0.15s ease, box-shadow 0.2s ease",
@@ -859,30 +859,57 @@ export default function ResetApp() {
               </div>
 
               {/* Secondary CTAs */}
-              <div className="grid grid-cols-2 gap-3 w-full max-w-xs" style={{ marginBottom: 48 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(clamp(120px, 25vw, 140px), 1fr))",
+                  gap: "clamp(8px, 3vw, 12px)",
+                  width: "100%",
+                  maxWidth: 480,
+                  marginBottom: 32,
+                }}
+              >
                 {[
+                  { label: "Morning reset", mode: "morning", href: "/morning" },
+                  { label: "Behavioral tasks", mode: "tasks", href: "/tasks" },
+                  { label: "Night check-in", mode: "night", href: "/night" },
                   { label: "I feel vulnerable", mode: "vuln" },
                   { label: "Check in", mode: "checkin" },
                 ].map(opt => (
-                  <button key={opt.label} onClick={() => {
-                    handleFirstInteraction();
-                    navigate("urge");
-                  }} style={{
-                    background: "transparent", border: `1px solid ${T.border}`,
-                    borderRadius: 9, padding: "11px 18px",
-                    color: T.textSub, fontFamily: "'DM Sans', sans-serif", fontSize: 13,
-                    cursor: "pointer", transition: "all 0.2s",
-                  }}
+                  <a
+                    key={opt.label}
+                    href={opt.href || "#"}
+                    onClick={(e) => {
+                      if (!opt.href) {
+                        e.preventDefault();
+                        handleFirstInteraction();
+                        navigate("urge");
+                      }
+                    }}
+                    style={{
+                      background: "transparent",
+                      border: `1px solid ${T.border}`,
+                      borderRadius: 9,
+                      padding: "clamp(10px, 3vw, 11px) clamp(14px, 4vw, 18px)",
+                      color: T.textSub,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "clamp(12px, 3.5vw, 13px)",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      textAlign: "center",
+                      textDecoration: "none",
+                      display: "block",
+                    }}
                     onMouseOver={e => { e.currentTarget.style.borderColor = T.borderMid; e.currentTarget.style.color = T.text; }}
                     onMouseOut={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textSub; }}
                   >
                     {opt.label}
-                  </button>
+                  </a>
                 ))}
               </div>
 
               {/* Mental weather */}
-              <div style={{ padding: 20, background: T.bgSurface, borderRadius: 14, border: `1px solid ${T.border}` }}>
+              <div style={{ padding: "clamp(16px, 5vw, 20px)", background: T.bgSurface, borderRadius: 14, border: `1px solid ${T.border}` }}>
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: T.textMuted, marginBottom: 12, textTransform: "uppercase" }}>
                   How are you right now?
                 </div>
@@ -909,20 +936,54 @@ export default function ResetApp() {
 
       {/* ── BOTTOM STATS BAR (home only) ── */}
       {screen === "home" && (
-        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-20" style={{
-          position: "fixed", bottom: 0, left: 0, right: 0,
-          padding: "18px 28px", borderTop: `1px solid ${T.border}`,
-          backdropFilter: "blur(16px)", background: "rgba(8,8,9,0.9)",
-          zIndex: 30,
-        }}>
+        <div
+          className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-20"
+          style={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: "clamp(10px, 4vw, 18px) clamp(10px, 6vw, 28px)",
+            borderTop: `1px solid ${T.border}`,
+            backdropFilter: "blur(16px)",
+            background: "rgba(8,8,9,0.95)",
+            zIndex: 30,
+            width: "100vw",
+            boxSizing: "border-box",
+          }}
+        >
           {[
             { label: "Urges resisted", value: stats.totalUrges },
             { label: "Day streak", value: stats.streak },
             { label: "Discipline", value: getDisciplineLevel(stats.score) },
           ].map((s, i) => (
-            <div key={i} className="text-center" style={{}}>
-              <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 20, color: T.text, letterSpacing: "0.02em" }}>{s.value}</div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.textMuted, letterSpacing: "0.06em" }}>{s.label}</div>
+            <div
+              key={i}
+              className="text-center"
+              style={{ minWidth: 80, flex: 1 }}
+            >
+              <div
+                style={{
+                  fontFamily: "'Bebas Neue', 'Impact', sans-serif",
+                  fontSize: "clamp(16px, 4vw, 20px)",
+                  color: T.text,
+                  letterSpacing: "0.02em",
+                  wordBreak: "break-word",
+                }}
+              >
+                {s.value}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "clamp(10px, 2.5vw, 12px)",
+                  color: T.textMuted,
+                  letterSpacing: "0.06em",
+                  wordBreak: "break-word",
+                }}
+              >
+                {s.label}
+              </div>
             </div>
           ))}
         </div>

@@ -41,9 +41,9 @@ const variantStyles: Record<string, CSSProperties> = {
 };
 
 const paddingStyles: Record<string, CSSProperties> = {
-  sm: { padding: "16px" },
-  md: { padding: "24px" },
-  lg: { padding: "32px" },
+  sm: { padding: "clamp(12px, 4vw, 16px)" },
+  md: { padding: "clamp(18px, 6vw, 24px)" },
+  lg: { padding: "clamp(24px, 8vw, 32px)" },
 };
 
 export function Card({
