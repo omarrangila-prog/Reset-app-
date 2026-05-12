@@ -96,7 +96,7 @@ router.get("/:id/analytics", async (req: Request, res: Response) => {
 
     // Build daily activity for last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const recentLogs = user.logs.filter((l) => l.timestamp >= thirtyDaysAgo);
+    const recentLogs = user.logs.filter((l: { timestamp: Date }) => l.timestamp >= thirtyDaysAgo);
 
     const dailyActivity: Record<string, { urges: number; successes: number; relapses: number }> = {};
     recentLogs.forEach((log: { timestamp: Date; type: string }) => {
