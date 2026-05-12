@@ -149,70 +149,63 @@ The app works without a backend — all pages have demo fallbacks with realistic
 
 ## Deployment
 
-### Vercel (Frontend + API Routes)
+### Deploy the Backend on Render
 
-1. **Connect Repository**
-   - Import your GitHub repo to Vercel
-   - Set root directory to `frontend/`
+1. **Create a Render Account**
+   - Go to https://render.com and sign in with GitHub
 
-2. **Environment Variables**
-   ```
-   DATABASE_URL=postgresql://...
-   ANTHROPIC_API_KEY=sk-ant-...
-   NEXT_PUBLIC_API_URL=https://your-vercel-app.vercel.app
-   ```
+2. **Add the Backend Service**
+   - New → Web Service
+   - Connect to the GitHub repo: `RESET-PORN-ADDICTION-HELPER`
+   - Set the branch to `main`
+   - Build command: `cd backend && npm install && npm run build`
+   - Start command: `cd backend && npm start`
+   - Set environment to `Node`
 
-3. **Deploy**
-   - Vercel automatically detects Next.js
-   - API routes are deployed as serverless functions
-   - Database migrations run automatically
+3. **Set Backend Environment Variables**
+   - `DATABASE_URL` → your database connection string
+   - `ANTHROPIC_API_KEY` → your Anthropic API key
+   - `NODE_ENV=production`
+   - `FRONTEND_URL=https://reset-frontend.vercel.app`
+   - `PORT=10000`
 
-### Render (Full Stack)
+4. **Create the Render Database**
+   - New → PostgreSQL
+   - Name it `reset-db`
+   - Copy the generated `DATABASE_URL` into the backend service
 
-1. **Connect Repository**
-   - Create new Render account
-   - Connect your GitHub repo
+5. **Deploy**
+   - Render can use `render.yaml` to configure both services
+   - Backend will be available at `https://reset-backend.onrender.com`
 
-2. **Environment Variables** (set in Render dashboard)
-   ```
-   DATABASE_URL=postgresql://...
-   ANTHROPIC_API_KEY=sk-ant-...
-   NEXT_PUBLIC_API_URL=https://reset-frontend.onrender.com
-   ```
+### Deploy the Frontend on Vercel
 
-3. **Deploy Services**
-   - Use `render.yaml` for automatic service configuration
-   - Creates: Frontend (Next.js), Backend (Node.js), Database (PostgreSQL)
-   - All services deploy simultaneously
+1. **Create a Vercel Account**
+   - Go to https://vercel.com and sign in with GitHub
 
-4. **Database Setup**
-   ```bash
-   # After database is created, run migrations
-   render psql < prisma/migrations.sql
-   ```
+2. **Import the Repository**
+   - Add new project from GitHub
+   - Choose the same repo: `RESET-PORN-ADDICTION-HELPER`
+   - Set the Root Directory to `frontend`
 
-### Manual Deployment
+3. **Set Frontend Environment Variables**
+   - `NEXT_PUBLIC_API_URL=https://reset-backend.onrender.com`
 
-For other platforms, the app is container-ready:
+4. **Deploy**
+   - Vercel detects Next.js and builds automatically
+   - The frontend will use the Render backend URL
 
-```dockerfile
-# Frontend
-FROM node:18-alpine
-WORKDIR /app
-COPY frontend/package*.json ./
-RUN npm ci
-COPY frontend/ .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
+### How the Apps Connect
 
-# Backend
-FROM node:18-alpine
-WORKDIR /app
-COPY backend/package*.json ./
-RUN npm ci
-COPY backend/ .
-RUN npm run build
-EXPOSE 4000
-CMD ["npm", "start"]
-```
+- The frontend reads `NEXT_PUBLIC_API_URL` and sends API requests to the Render backend.
+- The backend uses `FRONTEND_URL` for CORS and only accepts requests from the configured frontend origin.
+
+### Quick Verification
+
+- Backend health: `https://reset-backend.onrender.com/api/health`
+- Frontend app: visit your Vercel deployment URL
+
+### Notes
+
+- If Render assigns a different backend URL, update `NEXT_PUBLIC_API_URL` in Vercel.
+- If your frontend domain differs from `https://reset-frontend.vercel.app`, update `FRONTEND_URL` in Render.

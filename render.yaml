@@ -27,6 +27,8 @@ services:
         fromSecret: database_url
       - key: ANTHROPIC_API_KEY
         fromSecret: anthropic_api_key
+      - key: FRONTEND_URL
+        value: https://reset-frontend.vercel.app
       - key: PORT
         value: 10000
     plan: starter

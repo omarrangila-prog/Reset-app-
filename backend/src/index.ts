@@ -15,11 +15,21 @@ import userRouter from "./routes/user";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(",").map((url) => url.trim())
+  : ["http://localhost:3000", "http://127.0.0.1:3000"];
+
 // Security
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked invalid origin: ${origin}`));
+      }
+    },
     credentials: true,
   })
 );

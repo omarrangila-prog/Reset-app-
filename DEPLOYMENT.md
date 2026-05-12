@@ -10,38 +10,36 @@
 
 2. **Create a New Web Service**:
    - Click "New +" → "Web Service"
-   - Select your GitHub repository: `RESET--PORN-ADDICTION-HELPER`
+   - Select your GitHub repository: `RESET-PORN-ADDICTION-HELPER`
    - Click "Connect"
 
 3. **Configure the Service**:
    - **Name**: `reset-backend`
    - **Environment**: `Node`
-   - **Region**: Choose closest to you
+   - **Region**: Choose the closest region
    - **Branch**: `main`
    - **Build Command**: `cd backend && npm install && npm run build`
    - **Start Command**: `cd backend && npm start`
-   - **Plan**: `Free` (for testing) or `Starter` (for production)
+   - **Plan**: `Starter` or `Free`
 
-4. **Add Environment Secrets**:
-   - Click "Advanced" → "Add Secret File" or Environment variables
-   - Add these secrets:
+4. **Add Environment Variables**:
+   - Add these values:
      ```
-     DATABASE_URL=postgresql://...  (Render will generate this)
-     ANTHROPIC_API_KEY=sk-ant-...   (Your Anthropic API key)
+     DATABASE_URL=postgresql://...       # Render database URL
+     ANTHROPIC_API_KEY=sk-ant-...        # Your Anthropic API key
      NODE_ENV=production
+     FRONTEND_URL=https://reset-frontend.vercel.app
      PORT=10000
      ```
 
-5. **Create Database**:
+5. **Create a Database**:
    - In Render dashboard, click "New +" → "PostgreSQL"
-   - Name: `reset-db`
-   - Once created, Render will provide `DATABASE_URL`
-   - Copy this URL to the backend service's `DATABASE_URL` secret
+   - Name it `reset-db`
+   - Copy the generated `DATABASE_URL` into the backend service
 
 6. **Deploy**:
-   - Click "Create Web Service"
-   - Render will automatically build and deploy from `render.yaml`
-   - Once deployed, you'll get a URL like: `https://reset-backend.onrender.com`
+   - Render will build and deploy the backend
+   - The backend will be available at `https://reset-backend.onrender.com`
 
 ---
 
@@ -53,107 +51,65 @@
 
 2. **Import Project**:
    - Click "Add New" → "Project"
-   - Select `RESET--PORN-ADDICTION-HELPER` repository
-   - Click "Import"
+   - Select `RESET-PORN-ADDICTION-HELPER`
+   - Set the Root Directory to `frontend`
 
-3. **Configure Build**:
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Start Command**: `npm start`
-   - **Output Directory**: `.next`
-
-4. **Add Environment Variables**:
-   - In "Environment Variables" section, add:
+3. **Set Environment Variables**:
+   - Add this variable:
      ```
      NEXT_PUBLIC_API_URL=https://reset-backend.onrender.com
      ```
 
-5. **Deploy**:
-   - Click "Deploy"
-   - Vercel will deploy your frontend
-   - You'll get a URL like: `https://reset-frontend.vercel.app`
+4. **Deploy**:
+   - Vercel will build and deploy the frontend
+   - Your frontend will use the Render backend URL automatically
 
 ---
 
-### Step 3: Connect Frontend & Backend
+### Connect Frontend + Backend
 
-The frontend is already configured to use the backend URL from environment variables:
-- Frontend will call `NEXT_PUBLIC_API_URL` (set in Vercel)
-- Backend will receive requests at `https://reset-backend.onrender.com`
+- The frontend reads `NEXT_PUBLIC_API_URL` and sends requests to the Render API.
+- The backend uses `FRONTEND_URL` for CORS and accepts requests from the configured frontend origin.
 
-**No additional code changes needed!** The environment variables connect them automatically.
+If the actual frontend domain differs from `https://reset-frontend.vercel.app`, update `FRONTEND_URL` in Render.
+If the backend URL differs from `https://reset-backend.onrender.com`, update `NEXT_PUBLIC_API_URL` in Vercel.
 
 ---
 
-### Step 4: Verify Deployment
+### Verify Deployment
 
-1. **Test Backend API**:
+1. **Backend health**:
    ```bash
    curl https://reset-backend.onrender.com/api/health
    ```
 
-2. **Test Frontend**:
-   - Visit your Vercel URL
-   - Check browser console (F12) for any API errors
-   - Try creating a user to confirm backend connection
+2. **Frontend**:
+   - Visit your Vercel deployment URL
+   - Check the browser console for API errors
 
-3. **Check Logs**:
-   - Render dashboard: Logs tab for backend
-   - Vercel dashboard: Deployments for frontend
-
----
-
-### Troubleshooting
-
-#### Backend not starting?
-- Check `npm run build` completes locally: `cd backend && npm run build`
-- Verify all environment secrets are set (especially `ANTHROPIC_API_KEY`)
-- Check database URL is correct and database is created
-
-#### Frontend can't reach backend?
-- Verify `NEXT_PUBLIC_API_URL` is set in Vercel
-- Check API calls in browser DevTools (Network tab)
-- Ensure backend URL doesn't have trailing slash
-
-#### Database errors?
-- Ensure PostgreSQL database is created in Render
-- Run migrations: `npx prisma migrate deploy`
-- Check `DATABASE_URL` is correctly set
+3. **Logs**:
+   - Render: backend logs
+   - Vercel: deployment logs
 
 ---
 
-### Manual Deployment (if render.yaml doesn't work)
+### Notes
 
-If Render doesn't auto-detect `render.yaml`, manually configure:
-
-**Backend Service** (`reset-backend`):
-```yaml
-type: web
-name: reset-backend
-runtime: node
-buildCommand: cd backend && npm install && npm run build
-startCommand: cd backend && npm start
-```
-
-**Frontend Service** (`reset-frontend`):
-```yaml
-type: web
-name: reset-frontend
-runtime: node
-buildCommand: cd frontend && npm install && npm run build
-startCommand: cd frontend && npm start
-```
+- If Render assigns a different backend URL, update `NEXT_PUBLIC_API_URL` in Vercel.
+- If your frontend domain differs from `https://reset-frontend.vercel.app`, update `FRONTEND_URL` in Render.
+- Keep `render.yaml` in the repo so Render can auto-configure deployment.
 
 ---
 
 ### Environment Variables Reference
 
-**Backend (.env or Render secrets)**:
+**Backend (Render secrets)**:
 ```
 NODE_ENV=production
 PORT=10000
 DATABASE_URL=postgresql://user:password@host:5432/reset_db
 ANTHROPIC_API_KEY=sk-ant-xxxxx
+FRONTEND_URL=https://reset-frontend.vercel.app
 ```
 
 **Frontend (Vercel environment)**:
@@ -163,17 +119,6 @@ NEXT_PUBLIC_API_URL=https://reset-backend.onrender.com
 
 ---
 
-### Useful Links
-
-- Render Dashboard: https://dashboard.render.com
-- Vercel Dashboard: https://vercel.com/dashboard
-- Render Docs: https://render.com/docs
-- Vercel Docs: https://vercel.com/docs
-
----
-
 ## All Done! 🚀
 
-Your full-stack app is now deployed:
-- **Backend API**: https://reset-backend.onrender.com
-- **Frontend App**: https://reset-frontend.vercel.app
+Your full-stack app is now set up for Render backend + Vercel frontend.
