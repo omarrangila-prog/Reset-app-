@@ -830,10 +830,20 @@ export default function ResetApp() {
                 fontFamily: "'Bebas Neue', 'Impact', sans-serif",
                 fontSize: "clamp(56px, 12vw, 88px)", lineHeight: 0.9,
                 letterSpacing: "0.03em", color: T.text,
-                marginBottom: 48,
+                marginBottom: 22,
               }}>
-                YOU ARE<br />
-                <span style={{ color: T.recovery }}>{stats.streak}D</span> STRONG
+                RESET
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: T.textSub, letterSpacing: "0.16em", marginTop: 8 }}>
+                  a calm porn addiction helper
+                </div>
+              </div>
+
+              <div style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 15, lineHeight: 1.9, color: T.textSub,
+                maxWidth: 560, margin: "0 auto 42px",
+              }}>
+                RESET helps you pause when porn cravings arrive. It gives easy breathing guidance, quick recovery actions, and a simple way to track how many days you stay in control.
               </div>
 
               {/* Main CTA */}
