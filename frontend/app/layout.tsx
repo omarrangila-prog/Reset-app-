@@ -2,15 +2,48 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "RESET — Behavioral Intervention System",
+  title: "RESET — A calm place to pause, breathe, and reset",
   description:
-    "Break compulsive habits with AI behavioral coaching and psychological interruption.",
-  themeColor: "#0A0A0B",
-  viewport: "width=device-width, initial-scale=1",
+    "RESET helps you interrupt urges, process emotions, and rebuild one day at a time. A private space to break the cycle—no judgment.",
+  metadataBase: new URL("https://reset-recovery-helper.vercel.app"),
+  openGraph: {
+    title: "RESET — your quiet place to reset",
+    description: "A calm app to help you interrupt urges and rebuild one day at a time.",
+    url: "https://reset-recovery-helper.vercel.app",
+    siteName: "RESET",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "RESET - A calm place to break the cycle",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RESET — your quiet place to reset",
+    description: "A calm app to help you interrupt urges and rebuild one day at a time.",
+    images: ["/og-image.png"],
+  },
+  themeColor: "#141413",
+  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "RESET",
+  },
+};
+
+export const viewport = {
+  themeColor: "#141413",
 };
 
 export default function RootLayout({
@@ -20,7 +53,30 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="noise-overlay">{children}</body>
+      <head>
+        <meta name="theme-color" content="#141413" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="RESET" />
+      </head>
+      <body className="noise-overlay">
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch(err => {
+                    console.log('SW registration failed: ', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
+      </body>
     </html>
   );
 }

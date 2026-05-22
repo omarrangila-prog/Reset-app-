@@ -1,0 +1,907 @@
+"use client";
+
+import { useState, useEffect, useRef, useCallback } from "react";
+
+// ─── AUDIO ENGINE (Web Audio API) ─────────────────────────────────────────────
+class AudioEngine {
+  ctx: AudioContext | null;
+  masterGain: GainNode | null;
+  nodes: { [key: string]: any };
+  state: string;
+  initialized: boolean;
+
+  constructor() {
+    this.ctx = null;
+    this.masterGain = null;
+    this.nodes = {};
+    this.state = "CALM";
+    this.initialized = false;
+  }
+
+  init() {
+    if (this.initialized) return;
+    try {
+      this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+      this.masterGain.connect(this.ctx.destination);
+      this.initialized = true;
+    } catch (e) {}
+  }
+
+  createOscillator(freq: number, type: OscillatorType = "sine", gain: number = 0.05) {
+    if (!this.ctx) return null;
+    const osc = this.ctx.createOscillator();
+    const gainNode = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(800, this.ctx.currentTime);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+    gainNode.gain.setValueAtTime(0, this.ctx.currentTime);
+    osc.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(this.masterGain!);
+    osc.start();
+    return { osc, gain: gainNode, filter };
+  }
+
+  createNoise(gainVal: number = 0.015) {
+    if (!this.ctx) return null;
+    const bufferSize = this.ctx.sampleRate * 3;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.3;
+    }
+    const source = this.ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    const gainNode = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(200, this.ctx.currentTime);
+    filter.Q.setValueAtTime(0.5, this.ctx.currentTime);
+    gainNode.gain.setValueAtTime(0, this.ctx.currentTime);
+    source.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(this.masterGain!);
+    source.start();
+    return { source, gain: gainNode, filter };
+  }
+
+  fadeGain(gainNode: GainNode, target: number, duration: number = 1.5) {
+    if (!gainNode || !this.ctx) return;
+    gainNode.gain.linearRampToValueAtTime(target, this.ctx.currentTime + duration);
+  }
+
+  setMode(mode: string) {
+    if (!this.initialized || this.state === mode) return;
+    this.state = mode;
+    const t = this.ctx!.currentTime;
+
+    if (mode === "CALM") {
+      if (this.nodes.pad1) this.fadeGain(this.nodes.pad1.gain, 0.04, 2);
+      if (this.nodes.pad2) this.fadeGain(this.nodes.pad2.gain, 0.025, 2);
+      if (this.nodes.pulse) this.fadeGain(this.nodes.pulse.gain, 0, 1.5);
+      if (this.nodes.bass) this.fadeGain(this.nodes.bass.gain, 0, 1.5);
+      if (this.nodes.noise) this.fadeGain(this.nodes.noise.gain, 0.008, 2);
+      this.masterGain!.gain.linearRampToValueAtTime(0.18, t + 1.5);
+    } else if (mode === "VULNERABILITY") {
+      if (this.nodes.pad1) this.fadeGain(this.nodes.pad1.gain, 0.055, 1.5);
+      if (this.nodes.pad2) this.fadeGain(this.nodes.pad2.gain, 0.03, 1.5);
+      if (this.nodes.pulse) this.fadeGain(this.nodes.pulse.gain, 0.018, 1.5);
+      if (this.nodes.bass) this.fadeGain(this.nodes.bass.gain, 0.01, 2);
+      if (this.nodes.noise) this.fadeGain(this.nodes.noise.gain, 0.015, 1.5);
+      this.masterGain!.gain.linearRampToValueAtTime(0.22, t + 1.5);
+    } else if (mode === "URGE") {
+      if (this.nodes.pad1) {
+        this.nodes.pad1.osc.frequency.linearRampToValueAtTime(82, t + 0.8);
+        this.fadeGain(this.nodes.pad1.gain, 0.07, 0.8);
+      }
+      if (this.nodes.pad2) this.fadeGain(this.nodes.pad2.gain, 0.05, 0.8);
+      if (this.nodes.pulse) this.fadeGain(this.nodes.pulse.gain, 0.055, 0.6);
+      if (this.nodes.bass) this.fadeGain(this.nodes.bass.gain, 0.04, 0.6);
+      if (this.nodes.noise) this.fadeGain(this.nodes.noise.gain, 0.025, 0.8);
+      this.masterGain!.gain.linearRampToValueAtTime(0.3, t + 0.8);
+    }
+  }
+
+  start() {
+    if (!this.initialized) return;
+    this.nodes.pad1 = this.createOscillator(110, "sine", 0.04);
+    this.nodes.pad2 = this.createOscillator(165, "sine", 0.025);
+    this.nodes.pulse = this.createOscillator(55, "triangle", 0);
+    this.nodes.bass = this.createOscillator(41, "sine", 0);
+    this.nodes.noise = this.createNoise(0.008);
+
+    if (this.nodes.pad1) {
+      this.nodes.pad1.osc.frequency.setValueAtTime(110, this.ctx!.currentTime);
+      this.fadeGain(this.nodes.pad1.gain, 0.04, 3);
+    }
+    if (this.nodes.pad2) this.fadeGain(this.nodes.pad2.gain, 0.025, 4);
+    if (this.nodes.noise) this.fadeGain(this.nodes.noise.gain, 0.008, 2);
+
+    // Subtle LFO on pad1 freq
+    if (this.nodes.pad1) {
+      const lfo = this.ctx!.createOscillator();
+      const lfoGain = this.ctx!.createGain();
+      lfo.frequency.setValueAtTime(0.08, this.ctx!.currentTime);
+      lfoGain.gain.setValueAtTime(3, this.ctx!.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(this.nodes.pad1.osc.frequency);
+      lfo.start();
+    }
+
+    // Pulse heartbeat rhythm for urge mode
+    if (this.nodes.pulse) {
+      const pulseLfo = this.ctx!.createOscillator();
+      const pulseLfoGain = this.ctx!.createGain();
+      pulseLfo.frequency.setValueAtTime(1.1, this.ctx!.currentTime);
+      pulseLfoGain.gain.setValueAtTime(0.04, this.ctx!.currentTime);
+      pulseLfo.connect(pulseLfoGain);
+      pulseLfoGain.connect(this.nodes.pulse.gain);
+      pulseLfo.start();
+    }
+  }
+
+  playClick() {
+    if (!this.ctx) return;
+    const osc = this.ctx!.createOscillator();
+    const gain = this.ctx!.createGain();
+    osc.frequency.setValueAtTime(800, this.ctx!.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, this.ctx!.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.08, this.ctx!.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.08);
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start();
+    osc.stop(this.ctx!.currentTime + 0.1);
+  }
+
+  playSuccess() {
+    if (!this.ctx) return;
+    [523, 659, 784].forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.frequency.setValueAtTime(freq, this.ctx!.currentTime);
+      osc.type = "sine";
+      gain.gain.setValueAtTime(0, this.ctx!.currentTime);
+      gain.gain.linearRampToValueAtTime(0.06, this.ctx!.currentTime + 0.01 + i * 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx!.currentTime + 0.5 + i * 0.12);
+      osc.connect(gain);
+      gain.connect(this.masterGain!);
+      osc.start(this.ctx!.currentTime + i * 0.12);
+      osc.stop(this.ctx!.currentTime + 0.6 + i * 0.12);
+    });
+  }
+
+  resume() {
+    if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
+  }
+}
+
+const audioEngine = new AudioEngine();
+
+// ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
+const T = {
+  bg: "#080809",
+  bgElevated: "#0F0F11",
+  bgSurface: "#151518",
+  bgGlass: "rgba(20,20,24,0.7)",
+  text: "#EDEDEB",
+  textSub: "#7A7A80",
+  textMuted: "#3A3A40",
+  urge: "#E8352C",
+  vuln: "#E8A020",
+  recovery: "#18A856",
+  border: "#1E1E24",
+  borderMid: "#2C2C34",
+};
+
+const weatherStates = [
+  { label: "Stable", icon: "○", color: T.recovery, bg: "rgba(24,168,86,0.06)" },
+  { label: "Foggy", icon: "◌", color: T.textSub, bg: "rgba(122,122,128,0.06)" },
+  { label: "Restless", icon: "◎", color: T.vuln, bg: "rgba(232,160,32,0.06)" },
+  { label: "Triggered", icon: "●", color: T.urge, bg: "rgba(232,53,44,0.06)" },
+];
+
+// ─── BREATHING ORB ────────────────────────────────────────────────────────────
+function BreathingOrb({ mode, size = 160, active = true }: { mode: string; size?: number; active?: boolean }) {
+  const [phase, setPhase] = useState("inhale");
+  const [scale, setScale] = useState(0.85);
+  const phaseRef = useRef("inhale");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const timing = mode === "URGE" ? { inhale: 3500, hold: 1500, exhale: 5000 }
+    : mode === "VULNERABILITY" ? { inhale: 4000, hold: 2000, exhale: 6000 }
+    : { inhale: 4500, hold: 2000, exhale: 6500 };
+
+  useEffect(() => {
+    if (!active) return;
+    const cycle = () => {
+      phaseRef.current = "inhale";
+      setPhase("inhale");
+      setScale(1.18);
+      timerRef.current = setTimeout(() => {
+        phaseRef.current = "hold";
+        setPhase("hold");
+        timerRef.current = setTimeout(() => {
+          phaseRef.current = "exhale";
+          setPhase("exhale");
+          setScale(0.75);
+          timerRef.current = setTimeout(cycle, timing.exhale);
+        }, timing.hold);
+      }, timing.inhale);
+    };
+    cycle();
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [mode, active]);
+
+  const color = mode === "URGE" ? T.urge : mode === "VULNERABILITY" ? T.vuln : T.recovery;
+  const phaseLabel = phase === "inhale" ? "Breathe in" : phase === "hold" ? "Hold" : "Breathe out";
+  const phaseDuration = phase === "inhale" ? timing.inhale : phase === "hold" ? timing.hold : timing.exhale;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+      <div style={{ position: "relative", width: size, height: size }}>
+        {/* Outer ring */}
+        <div style={{
+          position: "absolute", inset: 0, borderRadius: "50%",
+          border: `1px solid ${color}22`,
+          transform: `scale(${scale * 1.18})`,
+          transition: `transform ${phaseDuration}ms cubic-bezier(0.45, 0.05, 0.55, 0.95)`,
+        }} />
+        {/* Mid ring */}
+        <div style={{
+          position: "absolute", inset: "10%", borderRadius: "50%",
+          border: `1px solid ${color}33`,
+          transform: `scale(${scale * 1.08})`,
+          transition: `transform ${phaseDuration}ms cubic-bezier(0.45, 0.05, 0.55, 0.95)`,
+        }} />
+        {/* Core orb */}
+        <div style={{
+          position: "absolute", inset: "20%", borderRadius: "50%",
+          background: `radial-gradient(circle at 38% 38%, ${color}55, ${color}18 60%, transparent)`,
+          border: `1px solid ${color}44`,
+          backdropFilter: "blur(8px)",
+          transform: `scale(${scale})`,
+          transition: `transform ${phaseDuration}ms cubic-bezier(0.45, 0.05, 0.55, 0.95)`,
+          boxShadow: `0 0 ${size * 0.3}px ${color}22, inset 0 0 ${size * 0.15}px ${color}18`,
+        }} />
+        {/* Inner glow */}
+        <div style={{
+          position: "absolute", inset: "35%", borderRadius: "50%",
+          background: `radial-gradient(circle, ${color}40, transparent 70%)`,
+          transform: `scale(${scale * 0.9})`,
+          transition: `transform ${phaseDuration}ms cubic-bezier(0.45, 0.05, 0.55, 0.95)`,
+        }} />
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, letterSpacing: "0.12em", color, opacity: 0.9, textTransform: "uppercase" }}>
+          {phaseLabel}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── MENTAL WEATHER WIDGET ────────────────────────────────────────────────────
+function MentalWeather({ current, onChange }: { current: number; onChange: (index: number) => void }) {
+  return (
+    <div style={{ display: "flex", gap: 8 }}>
+      {weatherStates.map((w, i) => (
+        <button key={w.label} onClick={() => onChange(i)} style={{
+          flex: 1, padding: "10px 8px",
+          background: current === i ? w.bg : "transparent",
+          border: `1px solid ${current === i ? w.color + "44" : T.border}`,
+          borderRadius: 10, cursor: "pointer",
+          transition: "all 0.25s ease", textAlign: "center",
+        }}>
+          <div style={{ fontSize: 16, marginBottom: 4, color: current === i ? w.color : T.textMuted }}>{w.icon}</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: current === i ? w.color : T.textMuted, letterSpacing: "0.05em" }}>{w.label}</div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─── STREAK RING ──────────────────────────────────────────────────────────────
+function StreakRing({ streak, max = 30, score }: { streak: number; max?: number; score: number }) {
+  const r = 42, cx = 50, cy = 50;
+  const circ = 2 * Math.PI * r;
+  const pct = Math.min(streak / max, 1);
+  const dashOffset = circ * (1 - pct);
+
+  return (
+    <div style={{ position: "relative", width: 120, height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <svg width="120" height="120" viewBox="0 0 100 100" style={{ position: "absolute", inset: 0, transform: "rotate(-90deg)" }}>
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={T.border} strokeWidth="3" />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={T.recovery} strokeWidth="3"
+          strokeDasharray={circ} strokeDashoffset={dashOffset}
+          strokeLinecap="round" style={{ transition: "stroke-dashoffset 1s ease" }} />
+      </svg>
+      <div style={{ textAlign: "center", zIndex: 1 }}>
+        <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 28, color: T.text, lineHeight: 1 }}>{streak}</div>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: T.textSub, letterSpacing: "0.08em" }}>DAYS</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── URGE MODE SCREEN ─────────────────────────────────────────────────────────
+function UrgeModeScreen({ onResolve, streak, score }: { onResolve: () => void; streak: number; score: number }) {
+  const [phase, setPhase] = useState("enter"); // enter → breathe → action → resolved
+  const [selectedAction, setSelectedAction] = useState<{ label: string; duration: number; instruction: string } | null>(null);
+  const [timerLeft, setTimerLeft] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [loadingMsg, setLoadingMsg] = useState(true);
+
+  const actions = [
+    { label: "Stand up. Move.", duration: 60, instruction: "Leave your device. Stand. Walk to another room." },
+    { label: "Cold water.", duration: 90, instruction: "Go to your kitchen. Drink a full glass of cold water. Feel it." },
+    { label: "20 push-ups.", duration: 120, instruction: "Floor. Now. No negotiation. Start counting." },
+    { label: "Go outside.", duration: 180, instruction: "Step outside. Even just the hallway. Change the air you're breathing." },
+  ];
+
+  useEffect(() => {
+    const msgs = [
+      "You noticed the urge. That's the first victory.",
+      "The urge will peak and pass in 90 seconds. Breathe through it.",
+      "Right now, your body wants to escape. Don't give it the exit.",
+    ];
+    const picked = msgs[Math.floor(Math.random() * msgs.length)];
+    const t = setTimeout(() => { setMessage(picked); setLoadingMsg(false); setPhase("breathe"); }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!timerRunning || timerLeft <= 0) return;
+    const interval = setInterval(() => {
+      setTimerLeft(t => {
+        if (t <= 1) { setTimerRunning(false); setPhase("resolved"); audioEngine.playSuccess(); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timerRunning, timerLeft]);
+
+  if (phase === "resolved") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100%", gap: 32, padding: "48px 24px", textAlign: "center" }}>
+        <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(24,168,86,0.12)", border: "1px solid rgba(24,168,86,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, color: T.recovery, animation: "scaleIn 0.5s ease" }}>
+          ✓
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 40, color: T.recovery, letterSpacing: "0.05em", marginBottom: 12 }}>
+            LOOP INTERRUPTED
+          </div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, color: T.textSub, lineHeight: 1.65, maxWidth: 360 }}>
+            You interrupted the dopamine loop. That's not willpower — that's identity. You're becoming someone who chooses differently.
+          </div>
+        </div>
+        <button onClick={onResolve} style={{
+          background: T.recovery, border: "none", borderRadius: 12,
+          padding: "16px 40px", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, color: "#080809", cursor: "pointer", letterSpacing: "0.02em",
+        }}>
+          Continue →
+        </button>
+      </div>
+    );
+  }
+
+  if (phase === "action" && selectedAction) {
+    const prog = selectedAction.duration > 0 ? ((selectedAction.duration - timerLeft) / selectedAction.duration) * 100 : 0;
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 32, padding: "48px 24px", maxWidth: 480, margin: "0 auto" }}>
+        <div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.15em", color: T.urge, marginBottom: 16, textTransform: "uppercase" }}>Action</div>
+          <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 44, color: T.text, lineHeight: 1, marginBottom: 16 }}>{selectedAction.label.toUpperCase()}</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 17, color: T.textSub, lineHeight: 1.65 }}>{selectedAction.instruction}</div>
+        </div>
+        <div>
+          <div style={{ height: 3, background: T.border, borderRadius: 99, marginBottom: 12, overflow: "hidden" }}>
+            <div style={{ height: "100%", background: T.urge, borderRadius: 99, width: `${prog}%`, transition: "width 0.5s linear" }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.textSub }}>
+              {timerRunning ? `${timerLeft}s remaining` : timerLeft > 0 ? "Ready" : "Done"}
+            </span>
+            {!timerRunning && timerLeft > 0 && (
+              <button onClick={() => setTimerRunning(true)} style={{
+                background: T.urge, border: "none", borderRadius: 8, padding: "8px 20px",
+                color: "#F2F2F0", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, cursor: "pointer",
+              }}>
+                START
+              </button>
+            )}
+          </div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+          <BreathingOrb mode="URGE" size={140} active={!timerRunning} />
+        </div>
+        <button onClick={() => { setSelectedAction(null); setPhase("breathe"); setTimerRunning(false); setTimerLeft(0); }}
+          style={{ background: "transparent", border: "none", color: T.textMuted, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+          ← Different action
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 32, padding: "40px 24px", maxWidth: 480, margin: "0 auto" }}>
+      {/* Header */}
+      <div>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.18em", color: T.urge, marginBottom: 16, textTransform: "uppercase" }}>
+          Crisis Mode Active
+        </div>
+        {loadingMsg ? (
+          <div style={{ height: 60, display: "flex", alignItems: "center" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.textMuted }}>Connecting...</div>
+          </div>
+        ) : (
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 20, lineHeight: 1.55, color: T.text, fontWeight: 400 }}>
+            {message}
+          </div>
+        )}
+      </div>
+
+      {phase === "breathe" && (
+        <>
+          <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+            <BreathingOrb mode="URGE" size={150} />
+          </div>
+          <div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.12em", color: T.textMuted, marginBottom: 12, textTransform: "uppercase" }}>
+              Do one of these. Right now.
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {actions.map((a, i) => (
+                <button key={i} onClick={() => {
+                  audioEngine.playClick();
+                  setSelectedAction(a);
+                  setTimerLeft(a.duration);
+                  setPhase("action");
+                }} style={{
+                  background: "transparent",
+                  border: `1px solid ${T.urge}33`,
+                  borderRadius: 10, padding: "14px 18px",
+                  textAlign: "left", cursor: "pointer",
+                  color: T.text, fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 15, fontWeight: 500,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  transition: "all 0.15s ease",
+                }}>
+                  <span>{a.label}</span>
+                  <span style={{ color: T.textMuted, fontSize: 12 }}>{a.duration}s →</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── DASHBOARD SCREEN ─────────────────────────────────────────────────────────
+function DashboardScreen({ stats, weather, onWeatherChange }: { stats: any; weather: number; onWeatherChange: (w: number) => void }) {
+  const chartData = Array.from({ length: 14 }, (_, i) => ({
+    urges: Math.floor(Math.random() * 3),
+    wins: Math.floor(Math.random() * 2 + 1),
+  }));
+
+  return (
+    <div style={{ padding: "24px 24px 80px", maxWidth: 520, margin: "0 auto" }}>
+      {/* Top stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12, marginBottom: 24 }}>
+        {[
+          { label: "Clean Today", value: stats.streak > 0 ? "Yes" : "No", color: T.text },
+        ].map((s, i) => (
+          <div key={i} style={{ background: T.bgSurface, borderRadius: 12, padding: "16px 12px", border: `1px solid ${T.border}`, textAlign: "center" }}>
+            <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 28, color: s.color, lineHeight: 1, marginBottom: 6 }}>{s.value}</div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.textMuted, letterSpacing: "0.06em" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mental weather */}
+      <div style={{ background: T.bgSurface, borderRadius: 14, padding: "20px", border: `1px solid ${T.border}`, marginBottom: 16 }}>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: T.textMuted, marginBottom: 14, textTransform: "uppercase" }}>Mental Weather</div>
+        <MentalWeather current={weather} onChange={onWeatherChange} />
+      </div>
+
+      {/* 14-day mini chart */}
+      <div style={{ background: T.bgSurface, borderRadius: 14, padding: "20px", border: `1px solid ${T.border}`, marginBottom: 16 }}>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: T.textMuted, marginBottom: 16, textTransform: "uppercase" }}>14-Day Activity</div>
+        <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 60 }}>
+          {chartData.map((d, i) => (
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2, alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
+              <div style={{ width: "100%", background: T.urge + "66", borderRadius: "3px 3px 0 0", height: `${d.urges * 20}px`, transition: "height 0.5s ease" }} />
+              <div style={{ width: "100%", background: T.recovery + "88", borderRadius: "3px 3px 0 0", height: `${d.wins * 20}px`, transition: "height 0.5s ease" }} />
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 16, marginTop: 10 }}>
+          {[{ c: T.urge + "66", l: "Urges" }, { c: T.recovery + "88", l: "Wins" }].map(x => (
+            <div key={x.l} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: 2, background: x.c }} />
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.textMuted }}>{x.l}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Trigger patterns */}
+      <div style={{ background: T.bgSurface, borderRadius: 14, padding: "20px", border: `1px solid ${T.border}` }}>
+        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: T.textMuted, marginBottom: 16, textTransform: "uppercase" }}>Trigger Patterns</div>
+        {[
+          { label: "Boredom", pct: 72, color: T.urge },
+          { label: "Late Night", pct: 58, color: T.vuln },
+          { label: "Stress", pct: 41, color: T.textSub },
+          { label: "Loneliness", pct: 29, color: T.textMuted },
+        ].map((t, i) => (
+          <div key={t.label} style={{ marginBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.text }}>{t.label}</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: T.textSub }}>{t.pct}%</span>
+            </div>
+            <div style={{ height: 3, background: T.border, borderRadius: 99, overflow: "hidden" }}>
+              <div style={{ height: "100%", background: t.color, borderRadius: 99, width: `${t.pct}%`, transition: "width 0.8s ease" }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+export default function ResetApp() {
+  const [screen, setScreen] = useState("intro"); // intro → home → urge → dashboard
+  const [prevScreen, setPrevScreen] = useState<string | null>(null);
+  const [audioReady, setAudioReady] = useState(false);
+  const [weather, setWeather] = useState(0);
+  const [stats, setStats] = useState({ streak: 7, score: 62, totalUrges: 23, longestStreak: 14 });
+  const [showCinematicOverlay, setShowCinematicOverlay] = useState(false);
+  const [introStep, setIntroStep] = useState(0);
+
+  const navigate = useCallback((to: string) => {
+    setPrevScreen(screen);
+    setScreen(to);
+    audioEngine.playClick();
+  }, [screen]);
+
+  // Intro sequence
+  useEffect(() => {
+    if (screen !== "intro") return;
+    const steps = [0, 1, 2, 3];
+    const timings = [0, 1200, 2400, 3800];
+    const timeouts = steps.map((s, i) => setTimeout(() => setIntroStep(s), timings[i]));
+    const navTimeout = setTimeout(() => navigate("home"), 5400);
+    return () => { timeouts.forEach(clearTimeout); clearTimeout(navTimeout); };
+  }, [screen]);
+
+  // Init audio on first interaction
+  const handleFirstInteraction = useCallback(() => {
+    if (!audioReady) {
+      audioEngine.init();
+      audioEngine.start();
+      setAudioReady(true);
+    }
+    audioEngine.resume();
+  }, [audioReady]);
+
+  // Audio mode sync
+  useEffect(() => {
+    if (!audioReady) return;
+    if (screen === "urge") audioEngine.setMode("URGE");
+    else if (screen === "home" && weather >= 2) audioEngine.setMode("VULNERABILITY");
+    else audioEngine.setMode("CALM");
+  }, [screen, weather, audioReady]);
+
+  const handleUrge = () => {
+    handleFirstInteraction();
+    setShowCinematicOverlay(true);
+    setTimeout(() => {
+      setShowCinematicOverlay(false);
+      navigate("urge");
+    }, 1200);
+  };
+
+  const handleUrgeResolved = () => {
+    setStats(s => ({ ...s, streak: s.streak + 1, totalUrges: s.totalUrges + 1, score: Math.min(s.score + 4, 100) }));
+    audioEngine.setMode("CALM");
+    navigate("home");
+  };
+
+  const hour = new Date().getHours();
+  const greeting = hour >= 5 && hour < 12 ? "Morning." : hour >= 12 && hour < 17 ? "Afternoon." : hour >= 17 && hour < 22 ? "Evening." : "Late night.";
+  const isHighRisk = hour >= 22 || hour < 5;
+
+  // ── INTRO SCREEN ──
+  if (screen === "intro") {
+    return (
+      <div onClick={handleFirstInteraction} style={{
+        minHeight: "100vh", background: T.bg,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        fontFamily: "'Bebas Neue', sans-serif",
+        position: "relative", overflow: "hidden",
+      }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes scaleIn { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+          @keyframes pulseRing { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.5); opacity: 0; } }
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          ::-webkit-scrollbar { width: 3px; }
+          ::-webkit-scrollbar-thumb { background: #2A2A30; border-radius: 99px; }
+        `}</style>
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "radial-gradient(ellipse at 50% 60%, rgba(24,168,86,0.04) 0%, transparent 65%)",
+          pointerEvents: "none",
+        }} />
+        {introStep >= 0 && (
+          <div style={{ animation: "fadeIn 1.2s ease both", textAlign: "center" }}>
+            <div style={{
+              fontSize: "clamp(56px, 12vw, 90px)", letterSpacing: "0.2em",
+              color: T.text, lineHeight: 1, marginBottom: 16,
+            }}>RESET</div>
+            {introStep >= 1 && (
+              <div style={{ animation: "fadeIn 0.8s ease both", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: T.textSub, letterSpacing: "0.04em" }}>
+                A behavioral intervention system
+              </div>
+            )}
+          </div>
+        )}
+        {introStep >= 2 && (
+          <div style={{ animation: "fadeIn 0.8s ease both", position: "absolute", bottom: 48, textAlign: "center" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.textMuted, letterSpacing: "0.08em" }}>
+              tap anywhere to begin
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div onClick={handleFirstInteraction} style={{
+      minHeight: "100vh", background: T.bg, color: T.text,
+      fontFamily: "'DM Sans', sans-serif", position: "relative", overflow: "hidden",
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulseRing { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.5); opacity: 0; } }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: #2A2A30; border-radius: 99px; }
+      `}</style>
+
+      {/* Subtle noise texture */}
+      <div style={{
+        position: "fixed", inset: 0, pointerEvents: "none", zIndex: 900, opacity: 0.25,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")`,
+      }} />
+
+      {/* Cinematic overlay for urge activation */}
+      {showCinematicOverlay && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 999,
+          background: "#000",
+          animation: "fadeIn 0.3s ease both",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <div style={{
+            fontFamily: "'Bebas Neue', 'Impact', sans-serif",
+            fontSize: 18, letterSpacing: "0.3em", color: T.urge, opacity: 0.8,
+            animation: "fadeIn 0.5s ease 0.3s both",
+          }}>
+            STAY WITH ME
+          </div>
+        </div>
+      )}
+
+      {/* Background ambient based on mode */}
+      <div style={{
+        position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
+        background: screen === "urge"
+          ? "radial-gradient(ellipse at 50% 30%, rgba(232,53,44,0.06) 0%, transparent 60%)"
+          : weather >= 2
+          ? "radial-gradient(ellipse at 50% 50%, rgba(232,160,32,0.04) 0%, transparent 60%)"
+          : "radial-gradient(ellipse at 50% 60%, rgba(24,168,86,0.03) 0%, transparent 60%)",
+        transition: "background 2s ease",
+      }} />
+
+      {/* Top accent line */}
+      <div style={{
+        position: "fixed", top: 0, left: 0, right: 0, height: 2, zIndex: 50,
+        background: screen === "urge" ? T.urge : weather >= 2 ? T.vuln : T.recovery,
+        transition: "background 1s ease",
+        opacity: 0.7,
+      }} />
+
+      {/* ── NAV ── */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 40,
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "clamp(16px, 4vw, 20px) clamp(16px, 6vw, 28px)",
+        borderBottom: screen !== "home" ? `1px solid ${T.border}` : "none",
+        backdropFilter: "blur(12px)",
+        background: "rgba(8,8,9,0.85)",
+      }}>
+        <button onClick={() => navigate("home")} style={{
+          background: "transparent", border: "none", cursor: "pointer",
+          fontFamily: "'Bebas Neue', 'Impact', sans-serif",
+          fontSize: 20, letterSpacing: "0.14em", color: T.text,
+        }}>RESET</button>
+
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {screen === "urge" && (
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, letterSpacing: "0.12em", color: T.urge, padding: "5px 12px", border: `1px solid ${T.urge}33`, borderRadius: 99 }}>
+              CRISIS MODE
+            </div>
+          )}
+          {screen !== "urge" && (
+            <button onClick={() => navigate(screen === "dashboard" ? "home" : "dashboard")} style={{
+              background: "transparent", border: `1px solid ${T.border}`,
+              borderRadius: 8, padding: "7px 14px",
+              color: T.textSub, fontFamily: "'DM Sans', sans-serif", fontSize: 12,
+              cursor: "pointer", transition: "all 0.2s",
+            }}>
+              {screen === "dashboard" ? "Home" : "Dashboard"}
+            </button>
+          )}
+          {screen === "urge" && (
+            <button onClick={() => navigate("home")} style={{
+              background: "transparent", border: "none",
+              color: T.textMuted, fontFamily: "'DM Sans', sans-serif", fontSize: 13, cursor: "pointer",
+            }}>← Exit</button>
+          )}
+        </div>
+      </nav>
+
+      {/* ── SCREENS ── */}
+      <div style={{ paddingTop: 72, minHeight: "100vh", position: "relative", zIndex: 1 }}>
+
+        {/* HOME SCREEN */}
+        {screen === "home" && (
+          <div style={{
+            minHeight: "calc(100vh - 72px)", display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "flex-start",
+            padding: "clamp(24px, 8vw, 32px) clamp(16px, 6vw, 24px) calc(240px + env(safe-area-inset-bottom))",
+            animation: "fadeIn 0.5s ease both",
+          }}>
+            <div style={{ textAlign: "center", maxWidth: 440, width: "100%", marginTop: "clamp(16px, 4vw, 24px)" }}>
+              {/* Greeting */}
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.textSub, marginBottom: 8, letterSpacing: "0.03em" }}>
+                {greeting}
+                {isHighRisk && <span style={{ color: T.vuln, marginLeft: 10 }}>High-risk window.</span>}
+              </div>
+
+              {/* Hero text */}
+              <div style={{
+                fontFamily: "'Bebas Neue', 'Impact', sans-serif",
+                fontSize: "clamp(56px, 12vw, 88px)", lineHeight: 0.9,
+                letterSpacing: "0.03em", color: T.text,
+                marginBottom: 22,
+              }}>
+                RESET
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: T.textSub, letterSpacing: "0.16em", marginTop: 8 }}>
+                  a calm porn addiction helper
+                </div>
+              </div>
+
+              <div style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 15, lineHeight: 1.9, color: T.textSub,
+                maxWidth: 560, margin: "0 auto 42px",
+              }}>
+                RESET helps you pause when porn cravings arrive. It gives easy breathing guidance, quick recovery actions, and a simple way to track how many days you stay in control.
+              </div>
+
+              {/* Main CTA */}
+              <button onClick={handleUrge} style={{
+                width: "100%", padding: "clamp(18px, 5vw, 22px) clamp(20px, 6vw, 24px)",
+                background: T.urge,
+                border: "none", borderRadius: 14,
+                fontFamily: "'Bebas Neue', 'Impact', sans-serif",
+                fontSize: "clamp(24px, 8vw, 30px)", letterSpacing: "0.05em", color: "#F5F5F3",
+                cursor: "pointer",
+                boxShadow: `0 0 40px ${T.urge}40`,
+                transition: "transform 0.15s ease, box-shadow 0.2s ease",
+                marginBottom: 14,
+              }}
+                onMouseOver={e => { e.currentTarget.style.transform = "scale(1.01)"; e.currentTarget.style.boxShadow = `0 0 60px ${T.urge}55`; }}
+                onMouseOut={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 0 40px ${T.urge}40`; }}
+              >
+                I FEEL AN URGE
+              </button>
+
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: T.textMuted, marginBottom: 40 }}>
+                Immediate intervention. No judgment.
+              </div>
+
+              {/* Secondary CTAs */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(clamp(120px, 25vw, 140px), 1fr))",
+                  gap: "clamp(8px, 3vw, 12px)",
+                  width: "100%",
+                  maxWidth: 480,
+                  marginBottom: 32,
+                }}
+              >
+                {[
+                  { label: "Morning reset", mode: "morning", href: "/morning" },
+                  { label: "Behavioral tasks", mode: "tasks", href: "/tasks" },
+                  { label: "Night check-in", mode: "night", href: "/night" },
+                  { label: "I feel vulnerable", mode: "vuln" },
+                  { label: "Check in", mode: "checkin" },
+                ].map(opt => (
+                  <a
+                    key={opt.label}
+                    href={opt.href || "#"}
+                    onClick={(e) => {
+                      if (!opt.href) {
+                        e.preventDefault();
+                        handleFirstInteraction();
+                        navigate("urge");
+                      }
+                    }}
+                    style={{
+                      background: "transparent",
+                      border: `1px solid ${T.border}`,
+                      borderRadius: 9,
+                      padding: "clamp(10px, 3vw, 11px) clamp(14px, 4vw, 18px)",
+                      color: T.textSub,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "clamp(12px, 3.5vw, 13px)",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      textAlign: "center",
+                      textDecoration: "none",
+                      display: "block",
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.borderColor = T.borderMid; e.currentTarget.style.color = T.text; }}
+                    onMouseOut={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textSub; }}
+                  >
+                    {opt.label}
+                  </a>
+                ))}
+              </div>
+
+              {/* Mental weather */}
+              <div style={{ padding: "clamp(16px, 5vw, 20px)", background: T.bgSurface, borderRadius: 14, border: `1px solid ${T.border}` }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: T.textMuted, marginBottom: 12, textTransform: "uppercase" }}>
+                  How are you right now?
+                </div>
+                <MentalWeather current={weather} onChange={(w) => { setWeather(w); handleFirstInteraction(); }} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* URGE SCREEN */}
+        {screen === "urge" && (
+          <div style={{ animation: "fadeIn 0.4s ease both", minHeight: "calc(100vh - 72px)" }}>
+            <UrgeModeScreen onResolve={handleUrgeResolved} streak={stats.streak} score={stats.score} />
+          </div>
+        )}
+
+        {/* DASHBOARD */}
+        {screen === "dashboard" && (
+          <div style={{ animation: "fadeIn 0.4s ease both" }}>
+            <DashboardScreen stats={stats} weather={weather} onWeatherChange={setWeather} />
+          </div>
+        )}
+      </div>
+
+    </div>
+  );
+}

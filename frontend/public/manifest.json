@@ -1,0 +1,67 @@
+{
+  "name": "RESET — A calm space to break the cycle",
+  "short_name": "RESET",
+  "description": "A private space to interrupt urges, process emotions, and rebuild one day at a time.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#141413",
+  "background_color": "#141413",
+  "categories": ["health", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/screenshot-192.png",
+      "sizes": "192x192",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-512.png",
+      "sizes": "512x512",
+      "form_factor": "wide"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "I'm struggling right now",
+      "short_name": "Help",
+      "description": "Quick access to urge support",
+      "url": "/?mode=urge",
+      "icons": [
+        {
+          "src": "/icon-help-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text"
+    }
+  }
+}
