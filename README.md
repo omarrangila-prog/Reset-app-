@@ -1,4 +1,4 @@
-# RESET — Behavioral Intervention System
+# RESET — A calm place to pause, breathe, and reset — no judgment.
 
 > Real-time AI coaching to break compulsive habits through psychological interruption, streak reinforcement, and identity building.
 

@@ -2,7 +2,7 @@
   "name": "reset",
   "version": "1.0.0",
   "private": true,
-  "description": "RESET — Real-time behavioral intervention system",
+  "description": "RESET — A calm place to pause, breathe, and reset — no judgment.",
   "scripts": {
     "install:all": "npm install --prefix backend && npm install --prefix frontend",
     "dev:backend": "npm run dev --prefix backend",

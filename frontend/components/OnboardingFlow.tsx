@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PrivacyNotice } from "@/components/PrivacyNotice";
 
 interface OnboardingFlowProps {
   onComplete: (data: { reason: string; name: string; timeOfDay: string; remindTime?: string }) => void;
@@ -286,6 +287,9 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
             >
               Start my reset →
             </button>
+            <div style={{ marginTop: 24 }}>
+              <PrivacyNotice showOnboarding />
+            </div>
           </div>
         )}
       </div>

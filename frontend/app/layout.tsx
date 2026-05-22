@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
+import { CrisisBar } from "@/components/CrisisBar";
 
 export const metadata: Metadata = {
-  title: "RESET — A calm place to pause, breathe, and reset",
-  description:
-    "RESET helps you interrupt urges, process emotions, and rebuild one day at a time. A private space to break the cycle—no judgment.",
+  title: "RESET — A calm space to break the cycle",
+  description: "RESET helps you interrupt urges, process emotions, and rebuild one day at a time.",
   metadataBase: new URL("https://reset-recovery-helper.vercel.app"),
   openGraph: {
-    title: "RESET — your quiet place to reset",
-    description: "A calm app to help you interrupt urges and rebuild one day at a time.",
+    title: "RESET — A calm space to break the cycle",
+    description: "Interrupt urges and rebuild one day at a time.",
     url: "https://reset-recovery-helper.vercel.app",
     siteName: "RESET",
     images: [
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RESET — your quiet place to reset",
-    description: "A calm app to help you interrupt urges and rebuild one day at a time.",
+    title: "RESET — A calm space to break the cycle",
+    description: "Interrupt urges and rebuild one day at a time.",
     images: ["/og-image.png"],
   },
   themeColor: "#141413",
@@ -63,6 +63,7 @@ export default function RootLayout({
       </head>
       <body className="noise-overlay">
         {children}
+        <CrisisBar position="bottom" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

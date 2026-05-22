@@ -107,7 +107,7 @@ export async function generateShareCard(data: ShareCardData): Promise<string> {
   ctx.fillStyle = "#4A4A4E";
   ctx.font = "14px 'system-ui'";
   ctx.letterSpacing = "0";
-  ctx.fillText("Real-time behavioral intervention.", 32, H - 32);
+  ctx.fillText("Real-time recovery support.", 32, H - 32);
 
   // Dots accent
   ctx.fillStyle = "#1DB954";

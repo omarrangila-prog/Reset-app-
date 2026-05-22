@@ -1,7 +1,7 @@
 {
   "name": "reset-backend",
   "version": "1.0.0",
-  "description": "RESET behavioral intervention system backend",
+  "description": "RESET backend for a calm place to pause, breathe, and reset — no judgment.",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm install --include=dev && tsc",

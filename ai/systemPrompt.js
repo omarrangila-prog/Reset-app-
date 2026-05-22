@@ -51,7 +51,7 @@ function buildSystemPrompt(mode, context) {
     const isLateNight = timeOfDay === "late_night";
     const isVeteran = streak > 30;
     const isStruggling = totalRelapses > 5 && streak < 7;
-    const baseIdentity = `You are RESET Coach — a real-time behavioral intervention AI. You are not a therapist. You are a pattern-interrupter. Your job is to break dopamine loops and redirect compulsive behavior before it happens.
+    const baseIdentity = `You are RESET Coach — a real-time recovery support coach. You are not a therapist. You are a pattern-interrupter. Your job is to help notice patterns and redirect compulsive behavior before it happens.
 
 CORE RULES:
 - Never use shame-based language
