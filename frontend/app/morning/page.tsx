@@ -49,7 +49,7 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
       <div style={{
         fontFamily: "'Bebas Neue', sans-serif",
         fontSize: "clamp(24px, 8vw, 32px)",
-        color: "#18A856",
+        color: "#2FBE6E",
         marginBottom: 16,
       }}>
         MORNING BREATH
@@ -57,7 +57,7 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: "clamp(14px, 4vw, 16px)",
-        color: "#7A7A80",
+        color: "#5A6478",
         marginBottom: 32,
       }}>
         5 cycles of 4-2-6 breathing
@@ -67,7 +67,7 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
         width: "clamp(100px, 25vw, 120px)",
         height: "clamp(100px, 25vw, 120px)",
         borderRadius: "50%",
-        border: "2px solid #18A85644",
+        border: "2px solid #2FBE6E44",
         margin: "0 auto 24px",
         display: "flex",
         alignItems: "center",
@@ -76,7 +76,7 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
       }}>
         <div style={{
           fontSize: "clamp(36px, 12vw, 48px)",
-          color: "#18A856",
+          color: "#2FBE6E",
           fontFamily: "'JetBrains Mono', monospace",
         }}>
           {5 - count}
@@ -85,7 +85,7 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
           position: "absolute",
           inset: 0,
           borderRadius: "50%",
-          border: "2px solid #18A856",
+          border: "2px solid #2FBE6E",
           clipPath: `inset(0 ${100 - progress}% 0 0)`,
         }} />
       </div>
@@ -93,7 +93,7 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: "clamp(16px, 5vw, 18px)",
-        color: "#EDEDEB",
+        color: "#1C2333",
         marginBottom: 8,
       }}>
         {currentPhase.instruction}
@@ -103,11 +103,11 @@ function MorningBreathing({ onComplete }: { onComplete: () => void }) {
         <button
           onClick={() => setIsActive(true)}
           style={{
-            background: "#18A856",
+            background: "#2FBE6E",
             border: "none",
             borderRadius: 12,
             padding: "16px 32px",
-            color: "#080809",
+            color: "#F5F7FC",
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 16,
             fontWeight: 600,
@@ -146,7 +146,7 @@ function IntentionSetting({ onComplete }: { onComplete: (intention: string) => v
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 16,
-        color: "#7A7A80",
+        color: "#5A6478",
         marginBottom: 32,
         textAlign: "center",
         lineHeight: 1.5,
@@ -161,11 +161,11 @@ function IntentionSetting({ onComplete }: { onComplete: (intention: string) => v
         style={{
           width: "100%",
           minHeight: 120,
-          background: "#151518",
-          border: "1px solid #1E1E24",
+          background: "#FFFFFF",
+          border: "1px solid #E6EAF2",
           borderRadius: 12,
           padding: 16,
-          color: "#EDEDEB",
+          color: "#1C2333",
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
           resize: "none",
@@ -178,11 +178,11 @@ function IntentionSetting({ onComplete }: { onComplete: (intention: string) => v
         disabled={!intention.trim()}
         style={{
           width: "100%",
-          background: intention.trim() ? "#E8A020" : "#1E1E24",
+          background: intention.trim() ? "#E8A020" : "#E6EAF2",
           border: "none",
           borderRadius: 12,
           padding: "16px",
-          color: intention.trim() ? "#080809" : "#7A7A80",
+          color: intention.trim() ? "#F5F7FC" : "#5A6478",
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
           fontWeight: 600,
@@ -218,7 +218,7 @@ function GratitudePractice({ onComplete }: { onComplete: (gratitude: string[]) =
       <div style={{
         fontFamily: "'Bebas Neue', sans-serif",
         fontSize: 32,
-        color: "#18A856",
+        color: "#2FBE6E",
         marginBottom: 16,
         textAlign: "center",
       }}>
@@ -227,7 +227,7 @@ function GratitudePractice({ onComplete }: { onComplete: (gratitude: string[]) =
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 16,
-        color: "#7A7A80",
+        color: "#5A6478",
         marginBottom: 32,
         textAlign: "center",
         lineHeight: 1.5,
@@ -244,11 +244,11 @@ function GratitudePractice({ onComplete }: { onComplete: (gratitude: string[]) =
             placeholder={`I'm grateful for...`}
             style={{
               width: "100%",
-              background: "#151518",
-              border: "1px solid #1E1E24",
+              background: "#FFFFFF",
+              border: "1px solid #E6EAF2",
               borderRadius: 8,
               padding: "12px 16px",
-              color: "#EDEDEB",
+              color: "#1C2333",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 16,
               outline: "none",
@@ -262,11 +262,11 @@ function GratitudePractice({ onComplete }: { onComplete: (gratitude: string[]) =
         disabled={items.filter(item => item.trim()).length < 1}
         style={{
           width: "100%",
-          background: items.filter(item => item.trim()).length >= 1 ? "#18A856" : "#1E1E24",
+          background: items.filter(item => item.trim()).length >= 1 ? "#2FBE6E" : "#E6EAF2",
           border: "none",
           borderRadius: 12,
           padding: "16px",
-          color: items.filter(item => item.trim()).length >= 1 ? "#080809" : "#7A7A80",
+          color: items.filter(item => item.trim()).length >= 1 ? "#F5F7FC" : "#5A6478",
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
           fontWeight: 600,
@@ -311,15 +311,15 @@ export default function MorningPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#080809",
-      color: "#EDEDEB",
+      background: "#F5F7FC",
+      color: "#1C2333",
       fontFamily: "'DM Sans', sans-serif",
     }}>
       {/* Header */}
       <div style={{
         padding: "20px 24px",
-        borderBottom: "1px solid #1E1E24",
-        background: "rgba(8,8,9,0.95)",
+        borderBottom: "1px solid #E6EAF2",
+        background: "rgba(245,247,252,0.85)",
         backdropFilter: "blur(12px)",
       }}>
         <button
@@ -327,7 +327,7 @@ export default function MorningPage() {
           style={{
             background: "transparent",
             border: "none",
-            color: "#7A7A80",
+            color: "#5A6478",
             fontSize: 14,
             cursor: "pointer",
             marginBottom: 8,
@@ -347,7 +347,7 @@ export default function MorningPage() {
         </div>
         <div style={{
           fontSize: 14,
-          color: "#7A7A80",
+          color: "#5A6478",
         }}>
           {currentTime} • Start your day with intention
         </div>
@@ -366,7 +366,7 @@ export default function MorningPage() {
               flex: 1,
               height: 3,
               borderRadius: 99,
-              background: step === "complete" || (step !== "welcome" && ["breathing", "intention", "gratitude"].indexOf(step) > i) ? "#18A856" : "#1E1E24",
+              background: step === "complete" || (step !== "welcome" && ["breathing", "intention", "gratitude"].indexOf(step) > i) ? "#2FBE6E" : "#E6EAF2",
               transition: "background 0.3s ease",
             }}
           />
@@ -380,14 +380,14 @@ export default function MorningPage() {
             <div style={{
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: 48,
-              color: "#18A856",
+              color: "#2FBE6E",
               marginBottom: 16,
             }}>
               GOOD MORNING
             </div>
             <div style={{
               fontSize: 18,
-              color: "#7A7A80",
+              color: "#5A6478",
               marginBottom: 32,
               lineHeight: 1.5,
             }}>
@@ -397,11 +397,11 @@ export default function MorningPage() {
             <button
               onClick={() => setStep("breathing")}
               style={{
-                background: "#18A856",
+                background: "#2FBE6E",
                 border: "none",
                 borderRadius: 12,
                 padding: "16px 32px",
-                color: "#080809",
+                color: "#F5F7FC",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 16,
                 fontWeight: 600,
@@ -437,7 +437,7 @@ export default function MorningPage() {
               alignItems: "center",
               justifyContent: "center",
               fontSize: 32,
-              color: "#18A856",
+              color: "#2FBE6E",
               margin: "0 auto 24px",
             }}>
               ✓
@@ -445,14 +445,14 @@ export default function MorningPage() {
             <div style={{
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: 32,
-              color: "#18A856",
+              color: "#2FBE6E",
               marginBottom: 16,
             }}>
               RESET COMPLETE
             </div>
             <div style={{
               fontSize: 16,
-              color: "#7A7A80",
+              color: "#5A6478",
               marginBottom: 32,
               lineHeight: 1.5,
             }}>
@@ -463,14 +463,14 @@ export default function MorningPage() {
               fontFamily: "'Bebas Neue', sans-serif",
               textTransform: "uppercase",
               letterSpacing: "0.1em",
-              color: "#18A856",
+              color: "#2FBE6E",
               marginBottom: 12,
             }}>
               Today's Intention
             </div>
             <div style={{
               fontSize: 16,
-              color: "#EDEDEB",
+              color: "#1C2333",
               marginBottom: 32,
             }}>
               {intention}
@@ -479,11 +479,11 @@ export default function MorningPage() {
             <button
               onClick={handleFinish}
               style={{
-                background: "#18A856",
+                background: "#2FBE6E",
                 border: "none",
                 borderRadius: 12,
                 padding: "16px 32px",
-                color: "#080809",
+                color: "#F5F7FC",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 16,
                 fontWeight: 600,

@@ -44,13 +44,13 @@ export class ErrorBoundary extends Component<Props, State> {
             gap: 16,
             padding: 24,
             textAlign: "center",
-            background: "#141413",
-            color: "#EDEDEB",
+            background: "#F5F7FC",
+            color: "#1C2333",
             fontFamily: "'DM Sans', sans-serif",
           }}
         >
           <p style={{ fontSize: 18, fontWeight: 600 }}>Something hiccuped.</p>
-          <p style={{ fontSize: 14, color: "#A7A7AD", maxWidth: 360, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 14, color: "#5A6478", maxWidth: 360, lineHeight: 1.6 }}>
             Your data is safe. Take a breath and reload — and if you need support right now, it&apos;s
             one tap away below.
           </p>

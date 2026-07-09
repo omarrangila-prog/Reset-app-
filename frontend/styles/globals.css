@@ -1,34 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* ── Colors ── */
-  --bg:           #080809;
-  --bg-elevated:  #0F0F11;
-  --bg-surface:   #151518;
-  --bg-glass:     rgba(20, 20, 24, 0.72);
-  --text:         #EDEDEB;
-  --text-sub:     #7A7A80;
-  --text-muted:   #3A3A40;
+  /* ─────────────────────────────────────────────────────────────
+     LIGHT DESIGN SYSTEM — "RESET" premium wellness theme.
+     Soft, calming, luxurious. Blue→lavender accents, airy neutrals.
+     ───────────────────────────────────────────────────────────── */
 
-  --urge:         #E8352C;
-  --vuln:         #E8A020;
-  --recovery:     #18A856;
+  /* Surfaces */
+  --bg:           #F5F7FC;   /* app canvas — cool warm-white */
+  --bg-tint:      #EEF1FA;   /* subtle section tint */
+  --bg-elevated:  #FFFFFF;   /* cards */
+  --bg-surface:   #FFFFFF;
+  --bg-glass:     rgba(255, 255, 255, 0.72);
+  --bg-glass-strong: rgba(255, 255, 255, 0.9);
 
-  --border:       #1E1E24;
-  --border-mid:   #2C2C34;
-  --border-strong:#3A3A42;
+  /* Text (all AA+ on light surfaces) */
+  --text:         #1C2333;   /* near-slate ink */
+  --text-sub:     #5A6478;   /* secondary */
+  --text-muted:   #8A93A6;   /* tertiary / captions */
+
+  /* Brand accents */
+  --accent:       #5B7CFA;   /* soft blue — primary */
+  --accent-2:     #7C6BF0;   /* lavender — secondary */
+  --accent-soft:  #EAF0FF;   /* accent-tinted surface */
+  --sky:          #4FB6F5;
+  --mint:         #34C9A3;
+  --emerald:      #2FBE6E;   /* success / recovery */
+
+  /* Semantic (kept calm — no harsh red) */
+  --urge:         #EC6A5E;   /* soft coral for support/alerts */
+  --vuln:         #F0B24B;   /* warm amber */
+  --recovery:     #2FBE6E;
+  --danger:       #E5687C;   /* muted rose for destructive */
+
+  /* Gradients */
+  --grad-hero:    linear-gradient(135deg, #6E8CFB 0%, #9B7BF2 100%);
+  --grad-ring:    linear-gradient(135deg, #5B7CFA 0%, #7C6BF0 60%, #4FB6F5 100%);
+  --grad-calm:    linear-gradient(160deg, #EAF0FF 0%, #F3EEFF 100%);
+
+  /* Borders / hairlines */
+  --border:       #E6EAF2;
+  --border-mid:   #D8DEEA;
+  --border-strong:#C6CEDE;
 
   /* ── Spacing (8pt grid) ── */
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px;
   --s12: 48px;--s16: 64px;--s20: 80px;--s24: 96px;
 
-  /* ── Radii ── */
-  --r-sm: 4px; --r-md: 8px; --r-lg: 16px; --r-xl: 24px; --r-full: 9999px;
+  /* ── Radii (soft, floating) ── */
+  --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-2xl: 36px; --r-full: 9999px;
+
+  /* ── Elevation (soft, colored-tinted shadows) ── */
+  --shadow-xs: 0 1px 2px rgba(28, 35, 51, 0.05);
+  --shadow-sm: 0 2px 8px rgba(28, 35, 51, 0.06);
+  --shadow-md: 0 8px 24px rgba(46, 62, 120, 0.08);
+  --shadow-lg: 0 16px 40px rgba(46, 62, 120, 0.12);
+  --shadow-accent: 0 12px 30px rgba(91, 124, 250, 0.28);
 
   /* ── Fonts ── */
-  --font-heading: 'Bebas Neue', 'Impact', sans-serif;
-  --font-body:    'DM Sans', 'system-ui', sans-serif;
+  --font-heading: 'Sora', 'DM Sans', system-ui, sans-serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 }
 
@@ -50,27 +82,56 @@ body {
   overflow-x: hidden;
 }
 
-/* Film grain noise overlay */
+/* Soft ambient light backdrop (very subtle color blooms — luxurious depth). */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background:
+    radial-gradient(60% 40% at 15% 0%, rgba(124, 107, 240, 0.10), transparent 70%),
+    radial-gradient(50% 40% at 100% 10%, rgba(79, 182, 245, 0.10), transparent 70%),
+    radial-gradient(60% 50% at 50% 100%, rgba(52, 201, 163, 0.06), transparent 70%);
   pointer-events: none;
-  z-index: 1000;
-  opacity: 0.28;
+  z-index: 0;
 }
 
-::selection { background: var(--recovery); color: var(--bg); }
+::selection { background: var(--accent-soft); color: var(--text); }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--r-full); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: var(--r-full); }
 
-:focus-visible { outline: 2px solid var(--recovery); outline-offset: 2px; border-radius: var(--r-sm); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }
 
 a { color: inherit; text-decoration: none; }
-h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: 0.02em; line-height: 1.05; }
+h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line-height: 1.1; font-weight: 600; }
+
+/* ── Premium component utilities (light theme) ── */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-md);
+}
+.card-soft {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+.card-float {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+}
+.gradient-text {
+  background: var(--grad-hero);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 /* ── Cinematic keyframes ── */
 @keyframes fadeInUp   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -284,6 +345,40 @@ img, svg, video, canvas {
 body {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Mobile tap targets: interactive controls are at least 44px tall (WCAG 2.5.5).
+   Applied globally so inline-styled buttons across the app comply without
+   per-file edits. `min-height` + centering keeps existing layouts intact.
+   Links are handled per-component (nav/inline links shouldn't all grow). */
+button,
+[role="button"],
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  min-height: 44px;
+}
+button,
+[role="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* iOS-style press feedback: subtle scale-down on tap for tactile response. */
+@media (prefers-reduced-motion: no-preference) {
+  button,
+  [role="button"],
+  a[href] {
+    transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms ease, background 200ms ease;
+  }
+  button:active,
+  [role="button"]:active,
+  a[href]:active {
+    transform: scale(0.97);
+  }
+}
+/* Remove the mobile tap highlight flash for a native feel. */
+* { -webkit-tap-highlight-color: transparent; }
 
 /* Accessibility: keyboard skip link (visible only on focus). */
 .skip-link {

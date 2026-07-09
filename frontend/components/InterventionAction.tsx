@@ -47,7 +47,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
       : recoveryActions;
 
   const accentColor =
-    mode === "URGE" ? "#F5A623" : mode === "VULNERABILITY" ? "#F5A623" : "#1DB954";
+    mode === "URGE" ? "#5B7CFA" : mode === "VULNERABILITY" ? "#5B7CFA" : "#2FBE6E";
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
@@ -91,9 +91,9 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
         style={{
           textAlign: "center",
           padding: "clamp(24px, 8vw, 32px)",
-          background: "rgba(29,185,84,0.08)",
+          background: "rgba(47,190,110,0.08)",
           borderRadius: "var(--r-lg)",
-          border: "1px solid rgba(29,185,84,0.2)",
+          border: "1px solid rgba(47,190,110,0.2)",
         }}
       >
         <div style={{ fontSize: "clamp(32px, 10vw, 40px)", marginBottom: "12px" }}>✓</div>
@@ -101,13 +101,13 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
           style={{
             fontFamily: "var(--font-heading)",
             fontSize: "clamp(24px, 8vw, 32px)",
-            color: "#1DB954",
+            color: "#2FBE6E",
             marginBottom: "8px",
           }}
         >
           URGE INTERRUPTED
         </div>
-        <div style={{ color: "#8A8A8E", fontSize: "clamp(14px, 4vw, 15px)" }}>
+        <div style={{ color: "#8A93A6", fontSize: "clamp(14px, 4vw, 15px)" }}>
           The loop is broken. You chose differently.
         </div>
       </motion.div>
@@ -143,7 +143,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
           style={{
             fontFamily: "var(--font-body)",
             fontSize: "clamp(14px, 4.5vw, 16px)",
-            color: "#F2F2F0",
+            color: "#1C2333",
             lineHeight: 1.6,
             marginBottom: "clamp(18px, 6vw, 24px)",
           }}
@@ -183,7 +183,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
                 alignItems: "center",
               }}
             >
-              <span style={{ color: "#8A8A8E", fontSize: "clamp(12px, 3.5vw, 13px)" }}>
+              <span style={{ color: "#8A93A6", fontSize: "clamp(12px, 3.5vw, 13px)" }}>
                 {timerActive ? `${timeLeft}s remaining` : "Ready to start"}
               </span>
               {!timerActive && (
@@ -191,7 +191,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
                   onClick={startTimer}
                   style={{
                     background: accentColor,
-                    color: mode === "URGE" ? "#F2F2F0" : "#0A0A0B",
+                    color: mode === "URGE" ? "#1C2333" : "#FFFFFF",
                     border: "none",
                     borderRadius: "var(--r-md)",
                     padding: "clamp(6px, 2vw, 8px) clamp(12px, 4vw, 16px)",
@@ -214,7 +214,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
           style={{
             background: "transparent",
             border: "none",
-            color: "#4A4A4E",
+            color: "#8A93A6",
             fontSize: "13px",
             cursor: "pointer",
             fontFamily: "var(--font-body)",
@@ -235,7 +235,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
           fontWeight: 600,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#4A4A4E",
+          color: "#8A93A6",
           marginBottom: "12px",
         }}
       >
@@ -258,7 +258,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
               padding: "14px 16px",
               textAlign: "left",
               cursor: "pointer",
-              color: "#F2F2F0",
+              color: "#1C2333",
               fontFamily: "var(--font-body)",
               fontSize: "15px",
               fontWeight: 500,
@@ -269,7 +269,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
             }}
           >
             <span>{action.label}</span>
-            <span style={{ color: "#4A4A4E" }}>→</span>
+            <span style={{ color: "#8A93A6" }}>→</span>
           </motion.button>
         ))}
       </div>

@@ -52,7 +52,7 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
-          color: "#EDEDEB",
+          color: "#1C2333",
           marginBottom: 16,
         }}>
           What went well today? (2-3 wins)
@@ -66,11 +66,11 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
             placeholder="I successfully..."
             style={{
               width: "100%",
-              background: "#151518",
-              border: "1px solid #1E1E24",
+              background: "#FFFFFF",
+              border: "1px solid #E6EAF2",
               borderRadius: 8,
               padding: "clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px)",
-              color: "#EDEDEB",
+              color: "#1C2333",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: "clamp(12px, 3.5vw, 14px)",
               marginBottom: 8,
@@ -85,7 +85,7 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
-          color: "#EDEDEB",
+          color: "#1C2333",
           marginBottom: 16,
         }}>
           What challenged you? (optional)
@@ -99,11 +99,11 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
             placeholder="I struggled with..."
             style={{
               width: "100%",
-              background: "#151518",
-              border: "1px solid #1E1E24",
+              background: "#FFFFFF",
+              border: "1px solid #E6EAF2",
               borderRadius: 8,
               padding: "clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px)",
-              color: "#EDEDEB",
+              color: "#1C2333",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: "clamp(12px, 3.5vw, 14px)",
               marginBottom: 8,
@@ -118,7 +118,7 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
-          color: "#EDEDEB",
+          color: "#1C2333",
           marginBottom: 16,
         }}>
           One thing you'll do differently tomorrow
@@ -130,11 +130,11 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
           style={{
             width: "100%",
             minHeight: 80,
-            background: "#151518",
-            border: "1px solid #1E1E24",
+            background: "#FFFFFF",
+            border: "1px solid #E6EAF2",
             borderRadius: 8,
             padding: "clamp(10px, 3vw, 12px) clamp(12px, 4vw, 16px)",
-            color: "#EDEDEB",
+            color: "#1C2333",
             fontFamily: "'DM Sans', sans-serif",
             fontSize: "clamp(12px, 3.5vw, 14px)",
             resize: "none",
@@ -148,11 +148,11 @@ function DayReflection({ onComplete }: { onComplete: (reflection: { wins: string
         disabled={wins.filter(w => w.trim()).length < 1 || !tomorrow.trim()}
         style={{
           width: "100%",
-          background: (wins.filter(w => w.trim()).length >= 1 && tomorrow.trim()) ? "#E8A020" : "#1E1E24",
+          background: (wins.filter(w => w.trim()).length >= 1 && tomorrow.trim()) ? "#E8A020" : "#E6EAF2",
           border: "none",
           borderRadius: 12,
           padding: "16px",
-          color: (wins.filter(w => w.trim()).length >= 1 && tomorrow.trim()) ? "#080809" : "#7A7A80",
+          color: (wins.filter(w => w.trim()).length >= 1 && tomorrow.trim()) ? "#F5F7FC" : "#5A6478",
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 16,
           fontWeight: 600,
@@ -191,7 +191,7 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
       <div style={{
         fontFamily: "'Bebas Neue', sans-serif",
         fontSize: 28,
-        color: "#18A856",
+        color: "#2FBE6E",
         marginBottom: 16,
       }}>
         STREAK PROTECTION
@@ -199,7 +199,7 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 16,
-        color: "#7A7A80",
+        color: "#5A6478",
         marginBottom: 32,
       }}>
         Current streak: {currentStreak} days
@@ -209,7 +209,7 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
         <>
           <div style={{
             fontSize: 18,
-            color: "#EDEDEB",
+            color: "#1C2333",
             marginBottom: 8,
             minHeight: 60,
             display: "flex",
@@ -220,7 +220,7 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
           </div>
           <div style={{
             fontSize: 14,
-            color: "#7A7A80",
+            color: "#5A6478",
             marginBottom: 32,
           }}>
             Read aloud • {currentIndex + 1} of {affirmations.length}
@@ -228,11 +228,11 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
           <button
             onClick={handleNext}
             style={{
-              background: "#18A856",
+              background: "#2FBE6E",
               border: "none",
               borderRadius: 12,
               padding: "16px 32px",
-              color: "#080809",
+              color: "#F5F7FC",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 16,
               fontWeight: 600,
@@ -254,7 +254,7 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
             alignItems: "center",
             justifyContent: "center",
             fontSize: 32,
-            color: "#18A856",
+            color: "#2FBE6E",
             margin: "0 auto 24px",
           }}>
             ✓
@@ -262,14 +262,14 @@ function StreakProtection({ currentStreak, onComplete }: { currentStreak: number
           <div style={{
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: 24,
-            color: "#18A856",
+            color: "#2FBE6E",
             marginBottom: 16,
           }}>
             STREAK SECURED
           </div>
           <div style={{
             fontSize: 16,
-            color: "#7A7A80",
+            color: "#5A6478",
           }}>
             Your discipline is protected for tomorrow.
           </div>
@@ -307,15 +307,15 @@ export default function NightPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#080809",
-      color: "#EDEDEB",
+      background: "#F5F7FC",
+      color: "#1C2333",
       fontFamily: "'DM Sans', sans-serif",
     }}>
       {/* Header */}
       <div style={{
         padding: "20px 24px",
-        borderBottom: "1px solid #1E1E24",
-        background: "rgba(8,8,9,0.95)",
+        borderBottom: "1px solid #E6EAF2",
+        background: "rgba(245,247,252,0.85)",
         backdropFilter: "blur(12px)",
       }}>
         <button
@@ -323,7 +323,7 @@ export default function NightPage() {
           style={{
             background: "transparent",
             border: "none",
-            color: "#7A7A80",
+            color: "#5A6478",
             fontSize: 14,
             cursor: "pointer",
             marginBottom: 8,
@@ -343,7 +343,7 @@ export default function NightPage() {
         </div>
         <div style={{
           fontSize: 14,
-          color: "#7A7A80",
+          color: "#5A6478",
         }}>
           {currentTime} • End your day with reflection
         </div>
@@ -362,7 +362,7 @@ export default function NightPage() {
               flex: 1,
               height: 3,
               borderRadius: 99,
-              background: step === "complete" || (step !== "welcome" && ["reflection", "protection"].indexOf(step) > i) ? "#18A856" : "#1E1E24",
+              background: step === "complete" || (step !== "welcome" && ["reflection", "protection"].indexOf(step) > i) ? "#2FBE6E" : "#E6EAF2",
               transition: "background 0.3s ease",
             }}
           />
@@ -383,7 +383,7 @@ export default function NightPage() {
             </div>
             <div style={{
               fontSize: 18,
-              color: "#7A7A80",
+              color: "#5A6478",
               marginBottom: 32,
               lineHeight: 1.5,
             }}>
@@ -397,7 +397,7 @@ export default function NightPage() {
                 border: "none",
                 borderRadius: 12,
                 padding: "16px 32px",
-                color: "#080809",
+                color: "#F5F7FC",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 16,
                 fontWeight: 600,
@@ -429,7 +429,7 @@ export default function NightPage() {
               alignItems: "center",
               justifyContent: "center",
               fontSize: 32,
-              color: "#18A856",
+              color: "#2FBE6E",
               margin: "0 auto 24px",
             }}>
               🌙
@@ -437,14 +437,14 @@ export default function NightPage() {
             <div style={{
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: 32,
-              color: "#18A856",
+              color: "#2FBE6E",
               marginBottom: 16,
             }}>
               NIGHT COMPLETE
             </div>
             <div style={{
               fontSize: 16,
-              color: "#7A7A80",
+              color: "#5A6478",
               marginBottom: 32,
               lineHeight: 1.5,
             }}>
@@ -454,8 +454,8 @@ export default function NightPage() {
 
             {reflection && (
               <div style={{
-                background: "#151518",
-                border: "1px solid #1E1E24",
+                background: "#FFFFFF",
+                border: "1px solid #E6EAF2",
                 borderRadius: 12,
                 padding: 20,
                 marginBottom: 24,
@@ -472,7 +472,7 @@ export default function NightPage() {
                 </div>
                 <div style={{
                   fontSize: 16,
-                  color: "#EDEDEB",
+                  color: "#1C2333",
                 }}>
                   {reflection.tomorrow}
                 </div>
@@ -482,11 +482,11 @@ export default function NightPage() {
             <button
               onClick={handleFinish}
               style={{
-                background: "#18A856",
+                background: "#2FBE6E",
                 border: "none",
                 borderRadius: 12,
                 padding: "16px 32px",
-                color: "#080809",
+                color: "#F5F7FC",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 16,
                 fontWeight: 600,

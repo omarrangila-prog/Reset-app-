@@ -4,16 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
+import { BottomNav } from "@/components/ui/BottomNav";
 
 const T = {
-  bg: "#141413",
-  surface: "#1A1A18",
-  text: "#EDEDEB",
-  sub: "#A7A7AD",
-  border: "#2C2C34",
+  bg: "#F5F7FC",
+  surface: "#FFFFFF",
+  text: "#1C2333",
+  sub: "#5A6478",
+  border: "#E6EAF2",
   recovery: "#2FBE6E",
-  amber: "#E0B486",
-  danger: "#E8352C",
+  amber: "#5B7CFA",
+  danger: "#E5687C",
 };
 
 export default function SettingsPage() {
@@ -41,7 +42,8 @@ export default function SettingsPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", padding: 24, background: T.bg, color: T.text, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ minHeight: "100vh", padding: "24px 24px 120px", background: T.bg, color: T.text, fontFamily: "'DM Sans', sans-serif" }}>
+      <BottomNav />
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>

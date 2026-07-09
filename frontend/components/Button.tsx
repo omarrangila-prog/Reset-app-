@@ -15,38 +15,38 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
 
 const variantStyles: Record<ButtonVariant, CSSProperties> = {
   primary: {
-    background: "#F2F2F0",
-    color: "#0A0A0B",
+    background: "#1C2333",
+    color: "#FFFFFF",
     border: "none",
   },
   secondary: {
     background: "transparent",
-    color: "#F2F2F0",
-    border: "1px solid #3A3A3E",
+    color: "#1C2333",
+    border: "1px solid #C6CEDE",
   },
   danger: {
-    background: "#FF3333",
-    color: "#F2F2F0",
+    background: "#EC6A5E",
+    color: "#FFFFFF",
     border: "none",
   },
   ghost: {
     background: "transparent",
-    color: "#8A8A8E",
+    color: "#8A93A6",
     border: "none",
   },
   urge: {
-    background: "#F5A623",
-    color: "#080809",
+    background: "#5B7CFA",
+    color: "#FFFFFF",
     border: "none",
-    boxShadow: "0 0 40px rgba(245, 166, 35, 0.25)",
+    boxShadow: "0 0 40px rgba(91, 124, 250, 0.25)",
   },
 };
 
 const sizeStyles: Record<ButtonSize, CSSProperties> = {
-  sm: { padding: "clamp(6px, 2vw, 8px) clamp(12px, 4vw, 16px)", fontSize: "clamp(12px, 3.5vw, 13px)", borderRadius: "8px" },
-  md: { padding: "clamp(10px, 3vw, 12px) clamp(18px, 6vw, 24px)", fontSize: "clamp(14px, 4vw, 15px)", borderRadius: "8px" },
-  lg: { padding: "clamp(12px, 4vw, 16px) clamp(24px, 8vw, 32px)", fontSize: "clamp(15px, 4.5vw, 16px)", borderRadius: "12px" },
-  xl: { padding: "clamp(16px, 5vw, 20px) clamp(32px, 10vw, 40px)", fontSize: "clamp(16px, 5vw, 18px)", borderRadius: "12px", letterSpacing: "0.05em" },
+  sm: { padding: "clamp(8px, 2vw, 10px) clamp(14px, 4vw, 18px)", fontSize: "clamp(12px, 3.5vw, 13px)", borderRadius: "12px" },
+  md: { padding: "clamp(11px, 3vw, 13px) clamp(18px, 6vw, 24px)", fontSize: "clamp(14px, 4vw, 15px)", borderRadius: "14px" },
+  lg: { padding: "clamp(13px, 4vw, 16px) clamp(24px, 8vw, 32px)", fontSize: "clamp(15px, 4.5vw, 16px)", borderRadius: "16px" },
+  xl: { padding: "clamp(16px, 5vw, 20px) clamp(32px, 10vw, 40px)", fontSize: "clamp(16px, 5vw, 18px)", borderRadius: "18px", letterSpacing: "0.02em" },
 };
 
 export function Button({
@@ -84,7 +84,7 @@ export function Button({
     >
       {loading ? (
         <>
-          <LoadingSpinner size={size} color={variant === "primary" ? "#0A0A0B" : "#F2F2F0"} />
+          <LoadingSpinner size={size} color={variant === "primary" ? "#FFFFFF" : "#1C2333"} />
           <span style={{ opacity: 0.7 }}>
             {typeof children === "string" ? children : "Loading..."}
           </span>

@@ -41,7 +41,7 @@ export function BreathingOrb({ mode, size = 160, active = true }: BreathingOrbPr
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [mode, active, timing.inhale, timing.hold, timing.exhale]);
 
-  const color = mode === "URGE" ? "#E8352C" : mode === "VULNERABILITY" ? "#E8A020" : "#18A856";
+  const color = mode === "URGE" ? "#E8352C" : mode === "VULNERABILITY" ? "#E8A020" : "#2FBE6E";
   const phaseLabel = phase === "inhale" ? "Breathe in" : phase === "hold" ? "Hold" : "Breathe out";
   const phaseDuration = phase === "inhale" ? timing.inhale : phase === "hold" ? timing.hold : timing.exhale;
 

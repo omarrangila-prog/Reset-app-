@@ -33,14 +33,14 @@ export function PostRelapseFlow({ onComplete, previousStreak = 0 }: PostRelapseF
   };
 
   const T = {
-    bg: "#080809",
-    bgSurface: "#151518",
-    text: "#EDEDEB",
-    textSub: "#7A7A80",
-    textMuted: "#3A3A40",
-    border: "#1E1E24",
-    recovery: "#18A856",
-    amber: "#D4A574",
+    bg: "#F5F7FC",
+    bgSurface: "#FFFFFF",
+    text: "#1C2333",
+    textSub: "#5A6478",
+    textMuted: "#8A93A6",
+    border: "#E6EAF2",
+    recovery: "#2FBE6E",
+    amber: "#5B7CFA",
   };
 
   const handleComplete = async () => {
@@ -78,7 +78,7 @@ export function PostRelapseFlow({ onComplete, previousStreak = 0 }: PostRelapseF
                 width: 80,
                 height: 80,
                 borderRadius: "50%",
-                background: `rgba(212, 165, 116, 0.1)`,
+                background: `rgba(91, 124, 250, 0.1)`,
                 border: `1px solid ${T.amber}33`,
                 display: "flex",
                 alignItems: "center",

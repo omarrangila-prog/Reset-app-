@@ -7,6 +7,7 @@ import { StreakCard } from "../../components/StreakCard";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { LoadingState } from "../../components/LoadingState";
+import { BottomNav } from "@/components/ui/BottomNav";
 import Link from "next/link";
 import {
   BarChart,
@@ -146,7 +147,7 @@ export default function DashboardPage() {
           gap: 16,
           padding: 24,
           textAlign: "center",
-          color: "#EDEDEB",
+          color: "#1C2333",
         }}
       >
         <p style={{ fontSize: 16 }}>We couldn&apos;t load your data just now.</p>
@@ -163,7 +164,7 @@ export default function DashboardPage() {
           }}
           style={{
             padding: "12px 20px",
-            background: "#18A856",
+            background: "#2FBE6E",
             color: "#000",
             border: "none",
             borderRadius: 10,
@@ -181,7 +182,7 @@ export default function DashboardPage() {
   const data = analytics;
 
   return (
-    <div style={{ minHeight: "100vh", maxWidth: "800px", margin: "0 auto", padding: "0 24px 80px" }}>
+    <div style={{ minHeight: "100vh", maxWidth: "800px", margin: "0 auto", padding: "0 24px 120px" }}>
       {/* Header */}
       <header
         style={{
@@ -200,7 +201,7 @@ export default function DashboardPage() {
               fontFamily: "var(--font-heading)",
               fontSize: "20px",
               letterSpacing: "0.1em",
-              color: "#F2F2F0",
+              color: "#1C2333",
             }}
           >
             RESET
@@ -209,7 +210,7 @@ export default function DashboardPage() {
             style={{
               fontFamily: "var(--font-body)",
               fontSize: "12px",
-              color: "#4A4A4E",
+              color: "#8A93A6",
               marginTop: "2px",
             }}
           >
@@ -258,7 +259,7 @@ export default function DashboardPage() {
             size="sm"
             loading={streakLoading}
             onClick={handleResetStreak}
-            style={{ color: "#FF3333" }}
+            style={{ color: "#EC6A5E" }}
           >
             Reset
           </Button>
@@ -281,13 +282,13 @@ export default function DashboardPage() {
           label="Total Urges Faced"
           value={data.totalUrges}
           sublabel="You faced each one"
-          color="#F5A623"
+          color="#5B7CFA"
         />
         <StatCard
           label="Relapses"
           value={data.totalRelapses}
           sublabel={data.totalRelapses === 0 ? "Clean record" : "Each one taught you"}
-          color={data.totalRelapses === 0 ? "#1DB954" : "#FF3333"}
+          color={data.totalRelapses === 0 ? "#2FBE6E" : "#EC6A5E"}
         />
       </motion.div>
 
@@ -307,7 +308,7 @@ export default function DashboardPage() {
                 fontWeight: 600,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#4A4A4E",
+                color: "#8A93A6",
                 marginBottom: "20px",
               }}
             >
@@ -317,28 +318,28 @@ export default function DashboardPage() {
               <BarChart data={chartData} barGap={2}>
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 11, fill: "#4A4A4E", fontFamily: "var(--font-body)" }}
+                  tick={{ fontSize: 11, fill: "#8A93A6", fontFamily: "var(--font-body)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis hide />
                 <Tooltip
                   contentStyle={{
-                    background: "#18181B",
-                    border: "1px solid #2A2A2E",
+                    background: "#FFFFFF",
+                    border: "1px solid #E6EAF2",
                     borderRadius: "8px",
                     fontSize: "12px",
                     fontFamily: "var(--font-body)",
-                    color: "#F2F2F0",
+                    color: "#1C2333",
                   }}
                 />
-                <Bar dataKey="urges" name="Urges" fill="#FF333355" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="wins" name="Wins" fill="#1DB95488" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="urges" name="Urges" fill="#EC6A5E55" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="wins" name="Wins" fill="#2FBE6E88" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
             <div style={{ display: "flex", gap: "16px", marginTop: "12px" }}>
-              <Legend color="#FF333355" label="Urges" />
-              <Legend color="#1DB95488" label="Wins" />
+              <Legend color="#EC6A5E55" label="Urges" />
+              <Legend color="#2FBE6E88" label="Wins" />
             </div>
           </Card>
         </motion.div>
@@ -360,7 +361,7 @@ export default function DashboardPage() {
                 fontWeight: 600,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#4A4A4E",
+                color: "#8A93A6",
                 marginBottom: "20px",
               }}
             >
@@ -384,7 +385,7 @@ export default function DashboardPage() {
                         style={{
                           fontFamily: "var(--font-body)",
                           fontSize: "14px",
-                          color: "#F2F2F0",
+                          color: "#1C2333",
                         }}
                       >
                         {triggerLabels[tp.type] || tp.type}
@@ -393,7 +394,7 @@ export default function DashboardPage() {
                         style={{
                           fontFamily: "var(--font-mono)",
                           fontSize: "12px",
-                          color: "#8A8A8E",
+                          color: "#8A93A6",
                         }}
                       >
                         {tp.frequency}×
@@ -413,7 +414,7 @@ export default function DashboardPage() {
                         transition={{ delay: 0.5 + i * 0.1, duration: 0.6, ease: "easeOut" }}
                         style={{
                           height: "100%",
-                          background: i === 0 ? "#FF3333" : i === 1 ? "#F5A623" : "#8A8A8E",
+                          background: i === 0 ? "#EC6A5E" : i === 1 ? "#5B7CFA" : "#8A93A6",
                           borderRadius: "var(--r-full)",
                         }}
                       />
@@ -441,7 +442,7 @@ export default function DashboardPage() {
                 fontWeight: 600,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#4A4A4E",
+                color: "#8A93A6",
                 marginBottom: "16px",
               }}
             >
@@ -449,26 +450,26 @@ export default function DashboardPage() {
             </div>
             <div style={{ display: "flex", gap: "32px" }}>
               <div>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#F5A623" }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#5B7CFA" }}>
                   {user.weeklyStats.urges}
                 </div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#4A4A4E" }}>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#8A93A6" }}>
                   urges faced
                 </div>
               </div>
               <div>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#1DB954" }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#2FBE6E" }}>
                   {user.weeklyStats.successes}
                 </div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#4A4A4E" }}>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#8A93A6" }}>
                   wins
                 </div>
               </div>
               <div>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#FF3333" }}>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#EC6A5E" }}>
                   {user.weeklyStats.relapses}
                 </div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#4A4A4E" }}>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#8A93A6" }}>
                   relapses
                 </div>
               </div>
@@ -476,6 +477,7 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
       )}
+      <BottomNav />
     </div>
   );
 }
@@ -500,7 +502,7 @@ function StatCard({
           fontWeight: 600,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#4A4A4E",
+          color: "#8A93A6",
           marginBottom: "8px",
         }}
       >
@@ -521,7 +523,7 @@ function StatCard({
         style={{
           fontFamily: "var(--font-body)",
           fontSize: "12px",
-          color: "#4A4A4E",
+          color: "#8A93A6",
         }}
       >
         {sublabel}
@@ -541,7 +543,7 @@ function Legend({ color, label }: { color: string; label: string }) {
           background: color,
         }}
       />
-      <span style={{ fontSize: "12px", color: "#8A8A8E", fontFamily: "var(--font-body)" }}>
+      <span style={{ fontSize: "12px", color: "#8A93A6", fontFamily: "var(--font-body)" }}>
         {label}
       </span>
     </div>

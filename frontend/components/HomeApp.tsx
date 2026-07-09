@@ -2,259 +2,163 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
-import { PrivacyNotice } from "@/components/PrivacyNotice";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { PostRelapseFlow } from "@/components/PostRelapseFlow";
 import { Modal } from "@/components/Modal";
+import { Card } from "@/components/ui/Card";
+import { RecoveryRing } from "@/components/ui/RecoveryRing";
+import { StatTile } from "@/components/ui/StatTile";
+import { BottomNav } from "@/components/ui/BottomNav";
+import { t } from "@/components/ui/theme";
 import { useAppStore } from "@/lib/store";
 import { api } from "@/lib/api";
 
-const T = {
-  bg: "#141413",
-  bgSurface: "#1A1A18",
-  text: "#EDEDEB",
-  // Raised from the old #7A7A80 / #3A3A40 to meet WCAG AA contrast on #141413.
-  textSub: "#A7A7AD",
-  textMuted: "#8A8A90",
-  border: "#2C2C34",
-  recovery: "#2FBE6E",
-  amber: "#E0B486",
-  urge: "#E8352C",
-};
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  if (h < 22) return "Good evening";
+  return "Rest well tonight";
+}
+
+// A gentle ring target: fills over a 30-day horizon, then holds full.
+function ringProgress(streak: number): number {
+  return Math.min(1, streak / 30 || 0.02);
+}
 
 function HomeScreen({
   streak,
   longestStreak,
+  momentum,
+  score,
   onJournalTap,
   onRelapseTap,
 }: {
   streak: number;
   longestStreak: number;
+  momentum: string;
+  score: number;
   onJournalTap: () => void;
   onRelapseTap: () => void;
 }) {
-  const [intention, setIntention] = useState("");
-  const [showIntentionPicker, setShowIntentionPicker] = useState(false);
-
-  const defaultIntentions = ["Present", "Patient", "Strong", "Calm", "Clear", "Brave", "Kind", "Focused"];
-
-  // Stable daily prompt (does not change on re-render): seeded by the date.
-  const reflectionPrompts = [
+  const prompts = [
     "What are you proud of today?",
-    "What triggered you most?",
-    "How did you handle difficulty?",
-    "What brought you joy?",
-    "What did you learn?",
+    "What did you handle well?",
+    "What brought you a moment of calm?",
+    "What did you learn about yourself?",
+    "What are you grateful for right now?",
   ];
   const daySeed = new Date().toISOString().split("T")[0].split("-").reduce((a, b) => a + Number(b), 0);
-  const dailyPrompt = reflectionPrompts[daySeed % reflectionPrompts.length];
+  const prompt = prompts[daySeed % prompts.length];
 
   return (
-    <div
-      style={{
-        padding: "24px",
-        paddingTop: "80px",
-        paddingBottom: "120px",
-        maxWidth: 520,
-        margin: "0 auto",
-        background: T.bg,
-        minHeight: "100vh",
-      }}
-    >
-      <div
-        style={{
-          textAlign: "center",
-          marginBottom: 40,
-          padding: "32px 24px",
-          background: `linear-gradient(135deg, rgba(47, 190, 110, 0.08) 0%, rgba(224, 180, 134, 0.04) 100%)`,
-          borderRadius: 16,
-          border: `1px solid ${T.recovery}22`,
-        }}
-      >
+    <div style={{ maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
+      {/* Hero greeting */}
+      <header style={{ marginBottom: 24, marginTop: 8 }}>
+        <div style={{ fontSize: 13, color: t.muted, marginBottom: 2 }}>{greeting()} 🌿</div>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: t.text, letterSpacing: "-0.02em" }}>
+          You&apos;re doing beautifully.
+        </h1>
+      </header>
+
+      {/* Recovery ring card */}
+      <Card variant="float" padding={28} style={{ marginBottom: 16, textAlign: "center", background: t.gradCalm, border: "none" }}>
+        <RecoveryRing days={streak} progress={ringProgress(streak)} label={longestStreak > streak ? `best: ${longestStreak} days` : "of recovery"} />
         <div
           style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 12,
-            letterSpacing: "0.1em",
-            color: T.textMuted,
-            textTransform: "uppercase",
-            marginBottom: 8,
+            display: "inline-flex",
+            marginTop: 16,
+            padding: "8px 16px",
+            borderRadius: 999,
+            background: "#fff",
+            color: t.accent,
+            fontSize: 13,
+            fontWeight: 600,
+            boxShadow: t.shadowSm,
           }}
         >
-          Current Streak
+          {streak === 0 ? "A fresh start begins now 💙" : "Keep going strong 💙"}
         </div>
-        <div
-          aria-live="polite"
-          style={{
-            fontFamily: "'Bebas Neue', 'Impact', sans-serif",
-            fontSize: 64,
-            color: T.recovery,
-            lineHeight: 1,
-            letterSpacing: "-0.01em",
-            marginBottom: 8,
-          }}
-        >
-          {streak}
-        </div>
-        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.amber, fontWeight: 500 }}>
-          {streak === 0 ? "A fresh start begins now." : `Day ${streak}. You're doing this.`}
-        </div>
-        {longestStreak > streak && (
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.textMuted, marginTop: 8 }}>
-            Your longest streak: {longestStreak} days
+      </Card>
+
+      {/* Recovery score */}
+      <Card variant="soft" style={{ marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 12, color: t.muted, marginBottom: 4 }}>Recovery momentum</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+              <span style={{ fontFamily: t.fontHeading, fontSize: 34, fontWeight: 700, color: t.accent }}>{score}</span>
+              <span style={{ fontSize: 16, color: t.accent, fontWeight: 600 }}>/100</span>
+            </div>
+            <div style={{ fontSize: 12, color: t.emerald, fontWeight: 600, marginTop: 2 }}>{momentum}</div>
           </div>
-        )}
+          <Sparkline score={score} />
+        </div>
+      </Card>
+
+      {/* Today's focus */}
+      <Card variant="tint" style={{ marginBottom: 16 }}>
+        <div style={{ fontSize: 11, color: t.accent2, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
+          Today&apos;s focus
+        </div>
+        <div style={{ fontSize: 16, color: t.text, fontWeight: 600, marginBottom: 4 }}>Stay calm, stay steady</div>
+        <div style={{ fontSize: 13, color: t.sub, lineHeight: 1.6 }}>Urges are temporary. Your strength is lasting.</div>
+      </Card>
+
+      {/* Mood / Energy / Sleep tiles */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+        <StatTile icon="🙂" label="Mood" value="Calm" accent={t.accent} />
+        <StatTile icon="⚡" label="Energy" value="Good" accent={t.vuln} />
+        <StatTile icon="☾" label="Sleep" value="7h 20m" accent={t.accent2} />
       </div>
 
+      {/* Primary support action */}
       <Link
         href="/urge"
         style={{
-          display: "inline-flex",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           width: "100%",
-          padding: "18px 24px",
-          background: T.amber,
-          border: "none",
-          borderRadius: 12,
-          color: "#080809",
-          fontFamily: "'DM Sans', sans-serif",
+          padding: "16px 24px",
+          background: t.gradHero,
+          borderRadius: 16,
+          color: "#fff",
           fontSize: 15,
           fontWeight: 600,
-          cursor: "pointer",
-          marginBottom: 16,
-          minHeight: 44,
-          letterSpacing: "0.02em",
-          justifyContent: "center",
-          textDecoration: "none",
+          marginBottom: 12,
+          minHeight: 52,
+          boxShadow: t.shadowAccent,
+          letterSpacing: "0.01em",
         }}
       >
-        Need support now
+        Feeling an urge? Open calm mode
       </Link>
 
-      {!intention && !showIntentionPicker && (
-        <button
-          onClick={() => setShowIntentionPicker(true)}
-          style={{
-            width: "100%",
-            padding: "16px 24px",
-            background: "transparent",
-            border: `1px dashed ${T.border}`,
-            borderRadius: 12,
-            color: T.textSub,
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 14,
-            cursor: "pointer",
-            marginBottom: 24,
-            minHeight: 44,
-          }}
-        >
-          Set today's intention
-        </button>
-      )}
-
-      {showIntentionPicker && (
-        <div style={{ marginBottom: 24 }}>
-          <div
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 12,
-              color: T.textMuted,
-              marginBottom: 12,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-            }}
-          >
-            What's your word for today?
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-            {defaultIntentions.map((word) => (
-              <button
-                key={word}
-                onClick={() => {
-                  setIntention(word);
-                  setShowIntentionPicker(false);
-                }}
-                style={{
-                  padding: "10px 16px",
-                  background: T.bgSurface,
-                  border: `1px solid ${T.border}`,
-                  borderRadius: 8,
-                  color: T.text,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 13,
-                  cursor: "pointer",
-                  minHeight: 44,
-                }}
-              >
-                {word}
-              </button>
-            ))}
-          </div>
+      {/* Daily reflection */}
+      <Card variant="soft" style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
+          Daily reflection
         </div>
-      )}
-
-      {intention && (
-        <div
-          style={{
-            padding: "16px 20px",
-            background: `rgba(47, 190, 110, 0.08)`,
-            borderRadius: 12,
-            border: `1px solid ${T.recovery}33`,
-            marginBottom: 24,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.textMuted, marginBottom: 6, letterSpacing: "0.05em" }}>
-            Today's intention
-          </div>
-          <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 24, color: T.recovery, letterSpacing: "0.02em", marginBottom: 6 }}>
-            {intention}
-          </div>
-        </div>
-      )}
-
-      <div
-        style={{
-          padding: "20px",
-          background: T.bgSurface,
-          borderRadius: 12,
-          border: `1px solid ${T.border}`,
-          marginBottom: 16,
-        }}
-      >
-        <div
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 12,
-            color: T.textMuted,
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
-            marginBottom: 12,
-          }}
-        >
-          Reflection
-        </div>
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: T.text, marginBottom: 16, lineHeight: 1.6 }}>
-          {dailyPrompt}
-        </p>
+        <p style={{ fontSize: 15, color: t.text, marginBottom: 14, lineHeight: 1.6 }}>{prompt}</p>
         <button
           onClick={onJournalTap}
           style={{
             width: "100%",
             padding: "12px 16px",
-            background: "transparent",
-            border: `1px solid ${T.recovery}`,
-            borderRadius: 8,
-            color: T.recovery,
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 13,
-            fontWeight: 500,
+            background: t.accentSoft,
+            border: "none",
+            borderRadius: 12,
+            color: t.accent,
+            fontSize: 14,
+            fontWeight: 600,
             cursor: "pointer",
             minHeight: 44,
           }}
         >
-          Write today's note →
+          Write today&apos;s note →
         </button>
-      </div>
+      </Card>
 
       <button
         onClick={onRelapseTap}
@@ -262,21 +166,37 @@ function HomeScreen({
           width: "100%",
           padding: "12px 16px",
           background: "transparent",
-          border: `1px solid ${T.border}`,
-          borderRadius: 8,
-          color: T.textSub,
-          fontFamily: "'DM Sans', sans-serif",
+          border: `1px solid ${t.border}`,
+          borderRadius: 12,
+          color: t.sub,
           fontSize: 13,
           cursor: "pointer",
-          marginBottom: 24,
           minHeight: 44,
         }}
       >
-        I slipped — start again
+        I slipped — start again, gently
       </button>
-
-      <PrivacyNotice />
     </div>
+  );
+}
+
+/** Tiny inline sparkline (decorative momentum trend). */
+function Sparkline({ score }: { score: number }) {
+  const pts = [30, 38, 34, 46, 52, 60, Math.max(30, score)];
+  const w = 96, h = 44, max = 100;
+  const path = pts
+    .map((p, i) => `${(i / (pts.length - 1)) * w},${h - (p / max) * h}`)
+    .join(" ");
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden>
+      <defs>
+        <linearGradient id="spark" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#5B7CFA" />
+          <stop offset="100%" stopColor="#7C6BF0" />
+        </linearGradient>
+      </defs>
+      <polyline points={path} fill="none" stroke="url(#spark)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -292,10 +212,12 @@ export default function HomeApp() {
 
   const streak = user?.streak ?? 0;
   const longestStreak = user?.longestStreak ?? 0;
+  const score = user?.disciplineScore ?? 0;
+  const momentum = user?.momentum ?? "Getting started";
 
   useEffect(() => {
-    const onboardingSeen = localStorage.getItem("onboarding_seen");
-    if (!onboardingSeen) {
+    const seen = localStorage.getItem("onboarding_seen");
+    if (!seen) {
       setShowOnboarding(true);
       setHasSeenOnboarding(false);
     }
@@ -330,7 +252,6 @@ export default function HomeApp() {
       setShowJournalModal(false);
       setTimeout(() => setJournalSaved(false), 3000);
     } catch {
-      // Keep the modal open and the text intact so nothing is lost.
       alert("Couldn't save just now — your note is still here. Try again in a moment.");
     } finally {
       setJournalSaving(false);
@@ -343,28 +264,11 @@ export default function HomeApp() {
   };
 
   return (
-    <div
-      style={{
-        background: T.bg,
-        color: T.text,
-        minHeight: "100vh",
-        fontFamily: "'DM Sans', 'Inter', sans-serif",
-      }}
-    >
-      {showOnboarding && (
-        <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingComplete} />
-      )}
+    <div style={{ minHeight: "100vh", color: t.text }}>
+      {showOnboarding && <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingComplete} />}
+      {showPostRelapse && <PostRelapseFlow onComplete={handleRelapseComplete} previousStreak={streak} />}
 
-      {showPostRelapse && (
-        <PostRelapseFlow onComplete={handleRelapseComplete} previousStreak={streak} />
-      )}
-
-      <Modal
-        open={showJournalModal}
-        onClose={() => setShowJournalModal(false)}
-        title="What's on your mind?"
-        align="bottom"
-      >
+      <Modal open={showJournalModal} onClose={() => setShowJournalModal(false)} title="What's on your mind?" align="bottom">
         <textarea
           value={journal}
           onChange={(e) => setJournal(e.currentTarget.value.slice(0, 5000))}
@@ -373,12 +277,12 @@ export default function HomeApp() {
           autoFocus
           style={{
             width: "100%",
-            padding: "14px",
-            background: T.bg,
-            border: `1px solid ${T.border}`,
-            borderRadius: 10,
-            color: T.text,
-            fontFamily: "'DM Sans', sans-serif",
+            padding: 14,
+            background: t.bg,
+            border: `1px solid ${t.border}`,
+            borderRadius: 12,
+            color: t.text,
+            fontFamily: t.fontBody,
             fontSize: 14,
             outline: "none",
             resize: "none",
@@ -387,25 +291,22 @@ export default function HomeApp() {
             boxSizing: "border-box",
           }}
         />
-        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.textMuted, marginBottom: 12 }}>
-          {journal.length} / 5000
-        </div>
+        <div style={{ fontSize: 11, color: t.muted, marginBottom: 12 }}>{journal.length} / 5000</div>
         <button
           onClick={handleSaveJournal}
           disabled={journalSaving}
           style={{
             width: "100%",
             padding: "14px 18px",
-            background: T.recovery,
+            background: t.gradHero,
             border: "none",
-            borderRadius: 10,
-            color: "#000",
-            fontFamily: "'DM Sans', sans-serif",
+            borderRadius: 12,
+            color: "#fff",
             fontSize: 14,
             fontWeight: 600,
             cursor: journalSaving ? "default" : "pointer",
             marginBottom: 8,
-            minHeight: 44,
+            minHeight: 48,
             opacity: journalSaving ? 0.7 : 1,
           }}
         >
@@ -417,10 +318,9 @@ export default function HomeApp() {
             width: "100%",
             padding: "12px 18px",
             background: "transparent",
-            border: `1px solid ${T.border}`,
-            borderRadius: 10,
-            color: T.textSub,
-            fontFamily: "'DM Sans', sans-serif",
+            border: `1px solid ${t.border}`,
+            borderRadius: 12,
+            color: t.sub,
             fontSize: 13,
             cursor: "pointer",
             minHeight: 44,
@@ -430,41 +330,60 @@ export default function HomeApp() {
         </button>
       </Modal>
 
+      {/* Top bar */}
       <nav
         style={{
-          position: "fixed",
+          position: "sticky",
           top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          padding: "16px 24px",
-          background: `linear-gradient(to bottom, ${T.bg} 70%, transparent)`,
-          backdropFilter: "blur(12px)",
+          zIndex: 50,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          minHeight: 56,
+          padding: "16px 20px",
+          maxWidth: 520,
+          margin: "0 auto",
         }}
       >
-        <div style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 18, letterSpacing: "0.14em", color: T.text }}>
+        <div style={{ fontFamily: t.fontHeading, fontSize: 20, fontWeight: 700, color: t.text, letterSpacing: "-0.01em" }}>
           RESET
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", gap: 8 }}>
           <Link
-            href="/settings"
+            href="/urge"
+            aria-label="Get crisis help"
             style={{
-              color: T.textSub,
-              fontSize: 13,
-              textDecoration: "none",
-              padding: "10px 12px",
-              border: `1px solid ${T.border}`,
-              borderRadius: 10,
-              minHeight: 44,
+              height: 40,
+              padding: "0 14px",
+              borderRadius: 12,
+              background: `${t.urge}14`,
+              border: `1px solid ${t.urge}33`,
               display: "inline-flex",
               alignItems: "center",
+              gap: 6,
+              color: t.urge,
+              fontSize: 13,
+              fontWeight: 600,
             }}
           >
-            Settings
+            🆘 Help
+          </Link>
+          <Link
+            href="/settings"
+            aria-label="Settings"
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              background: t.surface,
+              border: `1px solid ${t.border}`,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: t.sub,
+              boxShadow: t.shadowSm,
+            }}
+          >
+            ⚙
           </Link>
         </div>
       </nav>
@@ -474,16 +393,17 @@ export default function HomeApp() {
           role="status"
           style={{
             position: "fixed",
-            top: 72,
+            top: 64,
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 200,
-            background: T.recovery,
-            color: "#000",
+            background: t.emerald,
+            color: "#fff",
             padding: "10px 18px",
             borderRadius: 999,
             fontSize: 13,
             fontWeight: 600,
+            boxShadow: t.shadowMd,
           }}
         >
           Note saved securely ✓
@@ -494,19 +414,20 @@ export default function HomeApp() {
         <HomeScreen
           streak={streak}
           longestStreak={longestStreak}
+          momentum={momentum}
+          score={score}
           onJournalTap={() => setShowJournalModal(true)}
           onRelapseTap={() => setShowPostRelapse(true)}
         />
       )}
 
       {!authReady && (
-        <div
-          aria-hidden
-          style={{ position: "fixed", bottom: 60, left: 0, right: 0, textAlign: "center", fontSize: 11, color: T.textMuted }}
-        >
+        <div aria-hidden style={{ position: "fixed", bottom: 90, left: 0, right: 0, textAlign: "center", fontSize: 11, color: t.muted }}>
           Securing your private space…
         </div>
       )}
+
+      <BottomNav />
     </div>
   );
 }

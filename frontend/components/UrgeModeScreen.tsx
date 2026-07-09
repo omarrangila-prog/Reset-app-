@@ -26,14 +26,15 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
   );
 
   const T = {
-    bg: "#080809",
-    bgSurface: "#151518",
-    text: "#EDEDEB",
-    textSub: "#7A7A80",
-    textMuted: "#3A3A40",
-    border: "#1E1E24",
-    accent: "#F5A623",
-    recovery: "#18A856",
+    // Light "calm mode" palette with a soft gradient canvas.
+    bg: "linear-gradient(165deg, #EAF0FF 0%, #F3EEFF 55%, #EAFBF4 100%)",
+    bgSurface: "#FFFFFF",
+    text: "#1C2333",
+    textSub: "#5A6478",
+    textMuted: "#8A93A6",
+    border: "#E6EAF2",
+    accent: "#5B7CFA",
+    recovery: "#2FBE6E",
   };
 
   // Breathing exercise
@@ -168,6 +169,35 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
             >
               Let's breathe →
             </button>
+
+            {/* Always-available crisis resources. */}
+            <div style={{ marginTop: 28, display: "grid", gap: 8 }}>
+              <div style={{ fontSize: 12, color: T.textMuted, letterSpacing: "0.04em" }}>
+                In crisis? Reach a person now:
+              </div>
+              {[
+                { label: "Call or text 988", href: "tel:988" },
+                { label: "Text HOME to 741741", href: "sms:741741" },
+                { label: "Emergency — call 911", href: "tel:911" },
+              ].map((r) => (
+                <a
+                  key={r.label}
+                  href={r.href}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: 12,
+                    background: "#FFFFFF",
+                    border: `1px solid ${T.border}`,
+                    color: T.text,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    textAlign: "center",
+                  }}
+                >
+                  {r.label}
+                </a>
+              ))}
+            </div>
           </div>
         )}
 

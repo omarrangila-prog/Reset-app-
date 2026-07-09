@@ -72,7 +72,7 @@ function TimerModal({ task, onComplete, onCancel }: {
     <div style={{
       position: "fixed",
       inset: 0,
-      background: "rgba(8,8,9,0.95)",
+      background: "rgba(245,247,252,0.85)",
       backdropFilter: "blur(20px)",
       zIndex: 1000,
       display: "flex",
@@ -81,8 +81,8 @@ function TimerModal({ task, onComplete, onCancel }: {
       padding: "clamp(20px, 6vw, 24px)",
     }}>
       <div style={{
-        background: "#151518",
-        border: "1px solid #1E1E24",
+        background: "#FFFFFF",
+        border: "1px solid #E6EAF2",
         borderRadius: 20,
         padding: "clamp(24px, 8vw, 32px)",
         maxWidth: 400,
@@ -93,7 +93,7 @@ function TimerModal({ task, onComplete, onCancel }: {
         <div style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: "clamp(24px, 8vw, 32px)",
-          color: "#EDEDEB",
+          color: "#1C2333",
           marginBottom: 8,
         }}>
           {task.label.toUpperCase()}
@@ -101,7 +101,7 @@ function TimerModal({ task, onComplete, onCancel }: {
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: "clamp(12px, 3.5vw, 14px)",
-          color: "#7A7A80",
+          color: "#5A6478",
           marginBottom: 32,
         }}>
           {task.category} task
@@ -111,20 +111,20 @@ function TimerModal({ task, onComplete, onCancel }: {
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 48,
-            color: "#18A856",
+            color: "#2FBE6E",
             marginBottom: 16,
           }}>
             {minutes}:{seconds.toString().padStart(2, '0')}
           </div>
           <div style={{
             height: 4,
-            background: "#1E1E24",
+            background: "#E6EAF2",
             borderRadius: 99,
             overflow: "hidden",
           }}>
             <div style={{
               height: "100%",
-              background: "#18A856",
+              background: "#2FBE6E",
               borderRadius: 99,
               width: `${progress}%`,
               transition: "width 0.5s ease",
@@ -138,10 +138,10 @@ function TimerModal({ task, onComplete, onCancel }: {
             style={{
               flex: 1,
               background: "transparent",
-              border: "1px solid #1E1E24",
+              border: "1px solid #E6EAF2",
               borderRadius: 12,
               padding: "14px",
-              color: "#7A7A80",
+              color: "#5A6478",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               cursor: "pointer",
@@ -153,7 +153,7 @@ function TimerModal({ task, onComplete, onCancel }: {
             onClick={() => setIsRunning(!isRunning)}
             style={{
               flex: 1,
-              background: isRunning ? "#E8352C" : "#18A856",
+              background: isRunning ? "#EC6A5E" : "#2FBE6E",
               border: "none",
               borderRadius: 12,
               padding: "14px",
@@ -206,8 +206,8 @@ export default function TasksPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#080809",
-      color: "#EDEDEB",
+      background: "#F5F7FC",
+      color: "#1C2333",
       fontFamily: "'DM Sans', sans-serif",
       padding: "80px 24px 24px",
     }}>
@@ -218,7 +218,7 @@ export default function TasksPage() {
           style={{
             background: "transparent",
             border: "none",
-            color: "#7A7A80",
+            color: "#5A6478",
             fontSize: 14,
             cursor: "pointer",
             marginBottom: 16,
@@ -239,7 +239,7 @@ export default function TasksPage() {
         </div>
         <div style={{
           fontSize: 16,
-          color: "#7A7A80",
+          color: "#5A6478",
           lineHeight: 1.5,
         }}>
           Small, grounding actions to pause the moment and regain calm.
@@ -259,11 +259,11 @@ export default function TasksPage() {
             onClick={() => setActiveCategory(cat.id)}
             style={{
               flex: 1,
-              background: activeCategory === cat.id ? "#18A85622" : "transparent",
-              border: `1px solid ${activeCategory === cat.id ? "#18A85644" : "#1E1E24"}`,
+              background: activeCategory === cat.id ? "#2FBE6E22" : "transparent",
+              border: `1px solid ${activeCategory === cat.id ? "#2FBE6E44" : "#E6EAF2"}`,
               borderRadius: 12,
               padding: "12px 16px",
-              color: activeCategory === cat.id ? "#18A856" : "#EDEDEB",
+              color: activeCategory === cat.id ? "#2FBE6E" : "#1C2333",
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               fontWeight: 500,

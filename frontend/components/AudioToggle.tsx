@@ -25,7 +25,7 @@ export function AudioToggle({ audioEngine }: AudioToggleProps) {
       onClick={handleToggle}
       style={{
         background: "transparent",
-        border: `1px solid ${isEnabled ? "#18A856" : "#1E1E24"}`,
+        border: `1px solid ${isEnabled ? "#2FBE6E" : "#1E1E24"}`,
         borderRadius: 8,
         padding: "8px 12px",
         cursor: "pointer",
@@ -37,14 +37,14 @@ export function AudioToggle({ audioEngine }: AudioToggleProps) {
     >
       <div style={{
         fontSize: 16,
-        color: isEnabled ? "#18A856" : "#7A7A80",
+        color: isEnabled ? "#2FBE6E" : "#7A7A80",
       }}>
         {isEnabled ? "🔊" : "🔇"}
       </div>
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 12,
-        color: isEnabled ? "#EDEDEB" : "#7A7A80",
+        color: isEnabled ? "#1C2333" : "#7A7A80",
       }}>
         Audio {isEnabled ? "On" : "Off"}
       </div>

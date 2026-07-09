@@ -14,13 +14,13 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
   const [remindTime, setRemindTime] = useState("");
 
   const T = {
-    bg: "#080809",
-    bgSurface: "#151518",
-    text: "#EDEDEB",
-    textSub: "#7A7A80",
-    textMuted: "#3A3A40",
-    border: "#1E1E24",
-    recovery: "#18A856",
+    bg: "#F5F7FC",
+    bgSurface: "#FFFFFF",
+    text: "#1C2333",
+    textSub: "#5A6478",
+    textMuted: "#8A93A6",
+    border: "#E6EAF2",
+    recovery: "#2FBE6E",
   };
 
   const handleNext = () => {

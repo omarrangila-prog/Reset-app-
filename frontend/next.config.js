@@ -7,10 +7,12 @@ const path = require("path");
 const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline'",
+  // Allow Google Fonts stylesheet (imported in globals.css) + inline styles.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob:",
-  "font-src 'self' data:",
-  "connect-src 'self'",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  // Groq API (free AI coach) + same-origin.
+  "connect-src 'self' https://api.groq.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

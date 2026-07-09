@@ -9,9 +9,9 @@ interface CoachMessageProps {
 }
 
 const modeColors: Record<BehavioralMode, string> = {
-  URGE: "#F5A623",
-  VULNERABILITY: "#F5A623",
-  RECOVERY: "#1DB954",
+  URGE: "#5B7CFA",
+  VULNERABILITY: "#5B7CFA",
+  RECOVERY: "#2FBE6E",
 };
 
 const modeLabels: Record<BehavioralMode, string> = {
@@ -63,7 +63,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
             fontFamily: "var(--font-body)",
             fontSize: mode === "URGE" ? "clamp(18px, 6vw, 22px)" : "clamp(16px, 5vw, 18px)",
             lineHeight: 1.55,
-            color: "#F2F2F0",
+            color: "#1C2333",
             fontWeight: mode === "URGE" ? 500 : 400,
             marginBottom: "24px",
           }}
@@ -83,7 +83,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
                 fontWeight: 600,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#4A4A4E",
+                color: "#8A93A6",
                 marginBottom: "12px",
               }}
             >
@@ -130,7 +130,7 @@ export function CoachMessage({ message, mode, actionSteps }: CoachMessageProps) 
                 <span
                   style={{
                     fontSize: "clamp(14px, 4vw, 15px)",
-                    color: "#8A8A8E",
+                    color: "#8A93A6",
                     lineHeight: 1.5,
                   }}
                 >

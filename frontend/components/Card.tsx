@@ -24,19 +24,19 @@ const variantStyles: Record<string, CSSProperties> = {
     border: "1px solid var(--border-strong)",
   },
   urge: {
-    background: "#1A0505",
-    border: "1px solid rgba(255,51,51,0.3)",
-    boxShadow: "0 0 40px rgba(255, 51, 51, 0.1)",
+    background: "#FDECEC",
+    border: "1px solid rgba(236,106,94,0.3)",
+    boxShadow: "0 0 40px rgba(236, 106, 94, 0.1)",
   },
   vulnerability: {
-    background: "#1A1205",
-    border: "1px solid rgba(245,166,35,0.3)",
-    boxShadow: "0 0 40px rgba(245, 166, 35, 0.08)",
+    background: "#FEF6E8",
+    border: "1px solid rgba(91,124,250,0.3)",
+    boxShadow: "0 0 40px rgba(91, 124, 250, 0.08)",
   },
   recovery: {
-    background: "#051A0D",
-    border: "1px solid rgba(29,185,84,0.25)",
-    boxShadow: "0 0 40px rgba(29, 185, 84, 0.08)",
+    background: "#EAFBF4",
+    border: "1px solid rgba(47,190,110,0.25)",
+    boxShadow: "0 0 40px rgba(47, 190, 110, 0.08)",
   },
 };
 

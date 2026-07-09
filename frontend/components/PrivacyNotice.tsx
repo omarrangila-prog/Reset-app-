@@ -8,13 +8,13 @@ export function PrivacyNotice({ showOnboarding = false }: PrivacyNoticeProps) {
   const [isExpanded, setIsExpanded] = useState(showOnboarding);
 
   const T = {
-    bg: "#080809",
-    bgSurface: "#151518",
-    text: "#EDEDEB",
-    textSub: "#7A7A80",
+    bg: "#FFFFFF",
+    bgSurface: "#FFFFFF",
+    text: "#1C2333",
+    textSub: "#5A6478",
     textMuted: "#3A3A40",
     border: "#1E1E24",
-    recovery: "#18A856",
+    recovery: "#2FBE6E",
   };
 
   return (

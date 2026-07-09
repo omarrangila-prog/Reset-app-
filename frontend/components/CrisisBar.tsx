@@ -10,68 +10,60 @@ export function CrisisBar({ position = "bottom" }: CrisisBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const T = {
-    bg: "#080809",
-    bgSurface: "#151518",
-    text: "#EDEDEB",
-    textSub: "#7A7A80",
-    textMuted: "#3A3A40",
-    border: "#1E1E24",
-    amber: "#D4A574",
+    bg: "#FFFFFF",
+    bgSurface: "rgba(255,255,255,0.82)",
+    text: "#1C2333",
+    textSub: "#5A6478",
+    textMuted: "#8A93A6",
+    border: "#E6EAF2",
+    amber: "#EC6A5E",
   };
+
+  // Floating, compact SOS affordance. Anchored top-right so it never collides
+  // with the bottom navigation or the coach composer, and expands downward.
+  const anchor = { top: "calc(env(safe-area-inset-top) + 14px)" };
 
   return (
     <div
       style={{
         position: "fixed",
-        [position]: 0,
-        left: 0,
-        right: 0,
-        zIndex: 9999,
-        borderTop: position === "bottom" ? `1px solid ${T.border}` : `1px solid ${T.border}`,
+        ...anchor,
+        right: 12,
+        left: isExpanded ? 12 : "auto",
+        maxWidth: 460,
+        margin: isExpanded ? "0 auto" : undefined,
+        zIndex: 95,
+        border: `1px solid ${T.border}`,
+        borderRadius: 18,
         background: T.bgSurface,
-        backdropFilter: "blur(12px)",
+        backdropFilter: "blur(16px) saturate(140%)",
+        WebkitBackdropFilter: "blur(16px) saturate(140%)",
+        boxShadow: "0 8px 24px rgba(46,62,120,0.10)",
+        overflow: "hidden",
       }}
     >
       <div style={{ display: "flex", alignItems: "stretch" }}>
-        <a
-          href="/urge"
-          style={{
-            display: "inline-flex",
-            flex: 1,
-            padding: "12px 16px",
-            background: "transparent",
-            border: "none",
-            color: T.textSub,
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 13,
-            cursor: "pointer",
-            alignItems: "center",
-            letterSpacing: "0.05em",
-            textDecoration: "none",
-            minHeight: 44,
-          }}
-        >
-          Need support now? Open the calm support page →
-        </a>
         <button
           type="button"
           onClick={() => setIsExpanded((v) => !v)}
           aria-expanded={isExpanded}
           aria-controls="crisis-resources"
           style={{
-            padding: "12px 16px",
+            padding: "10px 16px",
             background: "transparent",
             border: "none",
-            borderLeft: `1px solid ${T.border}`,
             color: T.amber,
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 13,
             fontWeight: 600,
             cursor: "pointer",
             minHeight: 44,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          {isExpanded ? "Hide help ▾" : "Crisis help ▴"}
+          {isExpanded ? "✕ Hide crisis help" : "🆘 Crisis help"}
         </button>
       </div>
 

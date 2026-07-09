@@ -8,9 +8,9 @@ interface LoadingStateProps {
 }
 
 const modeColors = {
-  URGE: "#F5A623",
-  VULNERABILITY: "#F5A623",
-  RECOVERY: "#1DB954",
+  URGE: "#5B7CFA",
+  VULNERABILITY: "#5B7CFA",
+  RECOVERY: "#2FBE6E",
 };
 
 export function LoadingState({
@@ -68,7 +68,7 @@ export function LoadingState({
           style={{
             fontFamily: "var(--font-body)",
             fontSize: size === "sm" ? "13px" : "15px",
-            color: "#8A8A8E",
+            color: "#8A93A6",
             textAlign: "center",
           }}
         >
@@ -85,7 +85,7 @@ export function FullPageLoading({ message }: { message?: string }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "#0A0A0B",
+        background: "#FFFFFF",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

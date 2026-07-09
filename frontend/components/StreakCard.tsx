@@ -36,8 +36,8 @@ export function StreakCard({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       style={{
-        background: "linear-gradient(135deg, #051A0D 0%, #0D1F0D 50%, #051A0D 100%)",
-        border: "1px solid rgba(29,185,84,0.3)",
+        background: "linear-gradient(135deg, #EAFBF4 0%, #F5F7FC 50%, #EAFBF4 100%)",
+        border: "1px solid rgba(47,190,110,0.3)",
         borderRadius: "var(--r-xl)",
         padding: "clamp(24px, 8vw, 32px)",
         position: "relative",
@@ -53,7 +53,7 @@ export function StreakCard({
           width: "200px",
           height: "200px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(29,185,84,0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(47,190,110,0.15) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -66,7 +66,7 @@ export function StreakCard({
           fontWeight: 600,
           letterSpacing: "0.12em",
           textTransform: "uppercase",
-          color: "#1DB954",
+          color: "#2FBE6E",
           marginBottom: "8px",
         }}
       >
@@ -83,7 +83,7 @@ export function StreakCard({
           fontFamily: "var(--font-heading)",
           fontSize: "clamp(60px, 20vw, 80px)",
           lineHeight: 0.9,
-          color: "#F2F2F0",
+          color: "#1C2333",
           marginBottom: "4px",
         }}
       >
@@ -94,7 +94,7 @@ export function StreakCard({
         style={{
           fontFamily: "var(--font-body)",
           fontSize: "clamp(14px, 4.5vw, 18px)",
-          color: "#8A8A8E",
+          color: "#8A93A6",
           marginBottom: "24px",
         }}
       >
@@ -107,7 +107,7 @@ export function StreakCard({
           display: "flex",
           gap: "clamp(16px, 5vw, 24px)",
           paddingTop: "clamp(16px, 5vw, 24px)",
-          borderTop: "1px solid rgba(29,185,84,0.15)",
+          borderTop: "1px solid rgba(47,190,110,0.15)",
           marginBottom: "clamp(16px, 5vw, 24px)",
         }}
       >
@@ -120,7 +120,7 @@ export function StreakCard({
         size="sm"
         loading={sharing}
         onClick={handleShare}
-        style={{ borderColor: "rgba(29,185,84,0.3)", color: "#1DB954" }}
+        style={{ borderColor: "rgba(47,190,110,0.3)", color: "#2FBE6E" }}
       >
         Share this
       </Button>
@@ -148,7 +148,7 @@ function StatItem({
           fontWeight: 600,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#4A4A4E",
+          color: "#8A93A6",
           marginBottom: "4px",
         }}
       >
@@ -158,14 +158,14 @@ function StatItem({
         style={{
           fontFamily: "var(--font-heading)",
           fontSize: "clamp(20px, 7vw, 28px)",
-          color: color || "#F2F2F0",
+          color: color || "#1C2333",
           lineHeight: 1,
         }}
       >
         {value}
         {suffix && (
           <span
-            style={{ fontSize: "14px", color: "#8A8A8E", fontFamily: "var(--font-body)" }}
+            style={{ fontSize: "14px", color: "#8A93A6", fontFamily: "var(--font-body)" }}
           >
             {suffix}
           </span>

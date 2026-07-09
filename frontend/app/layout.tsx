@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
-import { CrisisBar } from "@/components/CrisisBar";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#141413",
+  themeColor: "#F5F7FC",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover" as const,
@@ -58,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#141413" />
+        <meta name="theme-color" content="#F5F7FC" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -74,7 +73,6 @@ export default function RootLayout({
           <main id="main">{children}</main>
         </ErrorBoundary>
         <InstallPrompt />
-        <CrisisBar position="bottom" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

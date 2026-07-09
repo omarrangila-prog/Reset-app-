@@ -8,7 +8,7 @@ interface MentalWeatherProps {
 }
 
 const weatherStates = [
-  { label: "Stable", icon: "○", color: "#18A856", bg: "rgba(24,168,86,0.06)" },
+  { label: "Stable", icon: "○", color: "#2FBE6E", bg: "rgba(24,168,86,0.06)" },
   { label: "Foggy", icon: "◌", color: "#7A7A80", bg: "rgba(122,122,128,0.06)" },
   { label: "Restless", icon: "◎", color: "#E8A020", bg: "rgba(232,160,32,0.06)" },
   { label: "Triggered", icon: "●", color: "#E8352C", bg: "rgba(232,53,44,0.06)" },
