@@ -136,8 +136,24 @@ export const api = {
     apiFetch("/api/journal", { method: "POST", body: JSON.stringify({ content, mood }) }),
   getJournal: (limit = 30): Promise<JournalEntry[]> => apiFetch(`/api/journal?limit=${limit}`),
 
+  // Habits
+  getHabits: (): Promise<HabitItem[]> => apiFetch("/api/habits"),
+  createHabit: (name: string, icon?: string, accent?: string): Promise<HabitItem> =>
+    apiFetch("/api/habits", { method: "POST", body: JSON.stringify({ name, icon, accent }) }),
+  toggleHabit: (id: string): Promise<HabitItem> =>
+    apiFetch("/api/habits", { method: "PATCH", body: JSON.stringify({ id }) }),
+
   // Account
   deleteAccount: (): Promise<{ ok: boolean; deleted: boolean }> =>
     apiFetch("/api/account", { method: "DELETE" }),
   exportUrl: "/api/account/export",
 };
+
+export interface HabitItem {
+  id: string;
+  name: string;
+  icon: string;
+  accent: string;
+  streak: number;
+  doneToday: boolean;
+}

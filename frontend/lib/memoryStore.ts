@@ -69,6 +69,17 @@ export interface SessionRow {
   startedAt: Date;
 }
 
+export interface Habit {
+  id: string;
+  userId: string;
+  name: string;
+  icon: string;
+  accent: string;
+  streak: number;
+  lastDoneDate: string | null; // YYYY-MM-DD (local day the habit was last completed)
+  createdAt: Date;
+}
+
 // ── Database bootstrap (singleton across hot reloads) ──
 const g = globalThis as unknown as { __resetDb?: Database.Database };
 
@@ -126,6 +137,17 @@ function initDb(): Database.Database {
       mode TEXT,
       startedAt INTEGER
     );
+    CREATE TABLE IF NOT EXISTS habits (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      name TEXT,
+      icon TEXT,
+      accent TEXT,
+      streak INTEGER DEFAULT 0,
+      lastDoneDate TEXT,
+      createdAt INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_habits_user ON habits(userId, createdAt);
   `);
   return db;
 }
@@ -297,5 +319,53 @@ export const store = {
     db.prepare("INSERT INTO sessions (id, userId, mode, startedAt) VALUES (?, ?, ?, ?)")
       .run(s.id, userId, mode, s.startedAt.getTime());
     return s;
+  },
+
+  // ── habits ──
+  listHabits(userId: string): Habit[] {
+    const rows = db.prepare("SELECT * FROM habits WHERE userId = ? ORDER BY createdAt ASC").all(userId) as any[];
+    return rows.map((r) => ({
+      id: r.id, userId: r.userId, name: r.name, icon: r.icon, accent: r.accent,
+      streak: r.streak, lastDoneDate: r.lastDoneDate, createdAt: toDate(r.createdAt) ?? new Date(),
+    }));
+  },
+  createHabit(userId: string, name: string, icon: string, accent: string): Habit {
+    const h: Habit = { id: id("hab"), userId, name, icon, accent, streak: 0, lastDoneDate: null, createdAt: new Date() };
+    db.prepare("INSERT INTO habits (id, userId, name, icon, accent, streak, lastDoneDate, createdAt) VALUES (?, ?, ?, ?, ?, 0, NULL, ?)")
+      .run(h.id, userId, name, icon, accent, h.createdAt.getTime());
+    return h;
+  },
+  /** Toggle a habit's completion for `today` (YYYY-MM-DD). Streak-aware. */
+  toggleHabit(userId: string, habitId: string, today: string): Habit | undefined {
+    const r = db.prepare("SELECT * FROM habits WHERE id = ? AND userId = ?").get(habitId, userId) as any;
+    if (!r) return undefined;
+    let streak = r.streak as number;
+    let lastDone: string | null = r.lastDoneDate;
+    if (lastDone === today) {
+      // Un-complete today: undo the increment.
+      streak = Math.max(0, streak - 1);
+      lastDone = null;
+    } else {
+      // Complete today: +1 (streak logic kept simple/honest).
+      streak = streak + 1;
+      lastDone = today;
+    }
+    db.prepare("UPDATE habits SET streak = ?, lastDoneDate = ? WHERE id = ?").run(streak, lastDone, habitId);
+    return this.listHabits(userId).find((h) => h.id === habitId);
+  },
+  deleteHabit(userId: string, habitId: string): void {
+    db.prepare("DELETE FROM habits WHERE id = ? AND userId = ?").run(habitId, userId);
+  },
+  /** Create a starter set on first visit so the screen is never empty. */
+  seedHabitsIfEmpty(userId: string): Habit[] {
+    const existing = this.listHabits(userId);
+    if (existing.length > 0) return existing;
+    const defaults = [
+      { name: "15-minute walk", icon: "walk", accent: "#34C9A3" },
+      { name: "Morning reflection", icon: "reflect", accent: "#5B7CFA" },
+      { name: "Sleep before 11 PM", icon: "sleep", accent: "#7C6BF0" },
+    ];
+    defaults.forEach((d) => this.createHabit(userId, d.name, d.icon, d.accent));
+    return this.listHabits(userId);
   },
 };

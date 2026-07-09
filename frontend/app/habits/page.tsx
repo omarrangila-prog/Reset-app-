@@ -1,28 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Footprints, Sunrise, Moon, BookOpen, Sparkles, Plus } from "lucide-react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Reveal, spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { api, HabitItem } from "@/lib/api";
+import { useAppStore } from "@/lib/store";
 
-interface Habit {
-  id: string;
-  name: string;
-  icon: string;
-  accent: string;
-  streak: number;
-  doneToday: boolean;
-}
-
-const INITIAL: Habit[] = [
-  { id: "walk", name: "15-minute walk", icon: "◈", accent: t.mint, streak: 5, doneToday: false },
-  { id: "reflect", name: "Morning reflection", icon: "◐", accent: t.accent, streak: 12, doneToday: true },
-  { id: "sleep", name: "Sleep before 11 PM", icon: "☾", accent: t.accent2, streak: 3, doneToday: false },
-  { id: "read", name: "Read 10 pages", icon: "❏", accent: t.sky, streak: 8, doneToday: false },
-];
+// Map stored icon keys → lucide components (premium icon language, no emoji).
+const ICONS: Record<string, typeof Footprints> = {
+  walk: Footprints,
+  reflect: Sunrise,
+  sleep: Moon,
+  read: BookOpen,
+  spark: Sparkles,
+};
 
 function CompletionRing({ done, accent }: { done: boolean; accent: string }) {
   const size = 44, stroke = 3, r = (size - stroke) / 2, c = 2 * Math.PI * r;
@@ -36,7 +31,7 @@ function CompletionRing({ done, accent }: { done: boolean; accent: string }) {
           animate={{ strokeDashoffset: done ? 0 : c }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         />
       </svg>
-      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: done ? accent : t.muted, fontSize: 16 }}>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: done ? accent : t.muted, fontSize: 15 }}>
         {done ? "✓" : ""}
       </div>
     </div>
@@ -44,11 +39,42 @@ function CompletionRing({ done, accent }: { done: boolean; accent: string }) {
 }
 
 export default function HabitsPage() {
-  const [habits, setHabits] = useState(INITIAL);
-  const doneCount = habits.filter((h) => h.doneToday).length;
+  const { userId } = useAppStore();
+  const [habits, setHabits] = useState<HabitItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [newName, setNewName] = useState("");
 
-  const toggle = (id: string) =>
+  useEffect(() => {
+    if (!userId) return;
+    api.getHabits().then(setHabits).catch(() => {}).finally(() => setLoading(false));
+  }, [userId]);
+
+  const doneCount = habits.filter((h) => h.doneToday).length;
+  const pct = habits.length ? Math.round((doneCount / habits.length) * 100) : 0;
+
+  const toggle = async (id: string) => {
+    // optimistic
     setHabits((hs) => hs.map((h) => (h.id === id ? { ...h, doneToday: !h.doneToday, streak: h.doneToday ? h.streak - 1 : h.streak + 1 } : h)));
+    try {
+      const updated = await api.toggleHabit(id);
+      setHabits((hs) => hs.map((h) => (h.id === id ? updated : h)));
+    } catch {
+      // revert on failure
+      api.getHabits().then(setHabits).catch(() => {});
+    }
+  };
+
+  const create = async () => {
+    const name = newName.trim();
+    if (!name) { setCreating(false); return; }
+    try {
+      const h = await api.createHabit(name, "spark", t.accent);
+      setHabits((hs) => [...hs, h]);
+    } catch {}
+    setNewName("");
+    setCreating(false);
+  };
 
   return (
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
@@ -59,35 +85,63 @@ export default function HabitsPage() {
             <p style={{ fontSize: 13, color: t.sub, marginTop: 2 }}>{doneCount} of {habits.length} done today</p>
           </div>
           <div className="mesh" style={{ padding: "10px 16px", borderRadius: 16, color: "#fff", fontSize: 13, fontWeight: 700, boxShadow: t.shadowAccent }}>
-            <span style={{ position: "relative", zIndex: 1 }}>{Math.round((doneCount / habits.length) * 100)}%</span>
+            <span style={{ position: "relative", zIndex: 1 }}>{pct}%</span>
           </div>
         </header>
       </Reveal>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {habits.map((h, i) => (
-          <Reveal key={h.id} index={i + 1}>
-            <Card variant="soft" onClick={() => toggle(h.id)} ariaLabel={`Toggle ${h.name}`}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <span style={{ width: 46, height: 46, borderRadius: 14, background: `${h.accent}18`, color: h.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }} aria-hidden>{h.icon}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: t.text }}>{h.name}</div>
-                  <div style={{ fontSize: 12, color: t.muted, marginTop: 2 }}>🔥 {h.streak} day streak</div>
-                </div>
-                <motion.div whileTap={{ scale: 0.9 }} transition={spring}>
-                  <CompletionRing done={h.doneToday} accent={h.accent} />
-                </motion.div>
+      {loading ? (
+        <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 32 }}>Loading…</div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {habits.map((h, i) => {
+            const Icon = ICONS[h.icon] ?? Sparkles;
+            return (
+              <Reveal key={h.id} index={i + 1}>
+                <Card variant="soft" onClick={() => toggle(h.id)} ariaLabel={`Toggle ${h.name}`}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                    <span style={{ width: 46, height: 46, borderRadius: 14, background: `${h.accent}18`, color: h.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} aria-hidden>
+                      <Icon size={20} strokeWidth={2.2} />
+                    </span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: t.text }}>{h.name}</div>
+                      <div style={{ fontSize: 12, color: t.muted, marginTop: 2 }}>{h.streak} day streak</div>
+                    </div>
+                    <motion.div whileTap={{ scale: 0.9 }} transition={spring}>
+                      <CompletionRing done={h.doneToday} accent={h.accent} />
+                    </motion.div>
+                  </div>
+                </Card>
+              </Reveal>
+            );
+          })}
+
+          {creating ? (
+            <Card variant="soft">
+              <input
+                autoFocus
+                value={newName}
+                onChange={(e) => setNewName(e.target.value.slice(0, 80))}
+                onKeyDown={(e) => e.key === "Enter" && create()}
+                placeholder="New habit name…"
+                aria-label="New habit name"
+                style={{ width: "100%", border: "none", outline: "none", background: "transparent", fontSize: 15, color: t.text, fontFamily: t.fontBody, marginBottom: 12 }}
+              />
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={create} style={{ flex: 1, padding: "10px", background: t.gradHero, border: "none", borderRadius: 10, color: "#fff", fontWeight: 600, cursor: "pointer", minHeight: 44 }}>Add</button>
+                <button onClick={() => { setCreating(false); setNewName(""); }} style={{ flex: 1, padding: "10px", background: "transparent", border: `1px solid ${t.border}`, borderRadius: 10, color: t.sub, cursor: "pointer", minHeight: 44 }}>Cancel</button>
               </div>
             </Card>
-          </Reveal>
-        ))}
-      </div>
-
-      <Reveal index={habits.length + 1}>
-        <button style={{ width: "100%", marginTop: 16, padding: "16px", background: "transparent", border: `1.5px dashed ${t.borderMid}`, borderRadius: 16, color: t.accent, fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 52 }}>
-          + Create a new habit
-        </button>
-      </Reveal>
+          ) : (
+            <button
+              onClick={() => setCreating(true)}
+              style={{ width: "100%", marginTop: 4, padding: "16px", background: "transparent", border: `1.5px dashed ${t.borderMid}`, borderRadius: 16, color: t.accent, fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 52, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+            >
+              <Plus size={18} /> Create a new habit
+            </button>
+          )}
+        </div>
+      )}
 
       <BottomNav />
     </div>
