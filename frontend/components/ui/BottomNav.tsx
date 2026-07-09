@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { t } from "./theme";
 
 /**
@@ -83,10 +84,12 @@ export function BottomNav() {
               aria-label={tab.label}
               aria-current={active ? "page" : undefined}
               style={{
+                position: "relative",
                 flex: 1,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                justifyContent: "center",
                 gap: 3,
                 padding: "6px 2px",
                 minHeight: 44,
@@ -94,10 +97,26 @@ export function BottomNav() {
                 fontWeight: active ? 600 : 500,
               }}
             >
-              <span style={{ fontSize: 18 }} aria-hidden>
+              {/* Sliding glass capsule under the active tab (VisionOS-style) */}
+              {active && (
+                <motion.span
+                  layoutId="nav-capsule"
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    inset: "2px 4px",
+                    borderRadius: 16,
+                    background: `${t.accent}14`,
+                    border: `1px solid ${t.accent}22`,
+                    zIndex: 0,
+                  }}
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <span style={{ fontSize: 18, position: "relative", zIndex: 1 }} aria-hidden>
                 {tab.icon}
               </span>
-              <span style={{ fontSize: 10, letterSpacing: "0.02em" }}>{tab.label}</span>
+              <span style={{ fontSize: 10, letterSpacing: "0.02em", position: "relative", zIndex: 1 }}>{tab.label}</span>
             </Link>
           );
         })}

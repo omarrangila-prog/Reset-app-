@@ -62,7 +62,9 @@ export function Button({
   return (
     <motion.button
       whileTap={{ scale: loading || disabled ? 1 : 0.97 }}
-      whileHover={{ opacity: loading || disabled ? 1 : 0.9 }}
+      whileHover={loading || disabled ? undefined : { y: -1, filter: "brightness(1.04)" }}
+      whileFocus={loading || disabled ? undefined : { boxShadow: "0 0 0 3px rgba(91,124,250,0.35)" }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
       disabled={loading || disabled}
       style={{
         display: "inline-flex",

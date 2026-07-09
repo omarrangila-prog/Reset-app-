@@ -1,6 +1,8 @@
 "use client";
 
 import { CSSProperties, ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { spring } from "./motion";
 import { t } from "./theme";
 
 /**
@@ -9,6 +11,9 @@ import { t } from "./theme";
  *  - float: larger radius + shadow (hero/feature cards)
  *  - glass: translucent glassmorphism (overlays over gradients)
  *  - tint:  accent-tinted surface (highlights)
+ *
+ * When `onClick` is set the card becomes interactive with hover-lift,
+ * press-scale (spring), and a keyboard focus ring — VisionOS-style physicality.
  */
 export function Card({
   children,
@@ -25,6 +30,8 @@ export function Card({
   onClick?: () => void;
   ariaLabel?: string;
 }) {
+  const reduced = useReducedMotion();
+
   const base: CSSProperties = {
     borderRadius: variant === "float" ? t.rXl : t.rLg,
     padding,
@@ -42,18 +49,24 @@ export function Card({
     },
     tint: { background: t.accentSoft, border: `1px solid ${t.accent}22`, boxShadow: "none" },
   };
-  const Comp = onClick ? "button" : "div";
+
+  const merged = { ...base, ...variants[variant] };
+
+  if (!onClick) {
+    return <div style={merged}>{children}</div>;
+  }
+
   return (
-    <Comp
+    <motion.button
       onClick={onClick}
       aria-label={ariaLabel}
-      style={{
-        ...base,
-        ...variants[variant],
-        ...(onClick ? { cursor: "pointer", textAlign: "left", width: "100%", display: "block" } : {}),
-      }}
+      whileHover={reduced ? undefined : { y: -3, boxShadow: t.shadowLg }}
+      whileTap={reduced ? undefined : { scale: 0.985 }}
+      whileFocus={reduced ? undefined : { boxShadow: `0 0 0 2px ${t.accent}` }}
+      transition={spring}
+      style={{ ...merged, cursor: "pointer", textAlign: "left", width: "100%", display: "block" }}
     >
       {children}
-    </Comp>
+    </motion.button>
   );
 }
