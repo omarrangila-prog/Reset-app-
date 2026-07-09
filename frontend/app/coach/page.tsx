@@ -3,9 +3,11 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { api, InterventionResponse } from "@/lib/api";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
 
 type Mode = "URGE" | "VULNERABILITY" | "RECOVERY";
@@ -120,6 +122,25 @@ function CoachInner() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+      {/* Ambient coach-orb art. Drop /public/hero/coach.webp to activate; absent = nothing. */}
+      <div
+        aria-hidden
+        style={{
+          position: "fixed",
+          top: "18%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 380,
+          height: 380,
+          backgroundImage: "url('/hero/coach.webp')",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          opacity: 0.35,
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
       {/* Header */}
       <header
         style={{
@@ -181,7 +202,13 @@ function CoachInner() {
       {/* Messages */}
       <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "16px 20px 200px", display: "flex", flexDirection: "column", gap: 12, maxWidth: 560, margin: "0 auto", width: "100%" }}>
         {messages.map((m) => (
-          <div key={m.id} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
+          <motion.div
+            key={m.id}
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={spring}
+            style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}
+          >
             <div
               style={{
                 maxWidth: "82%",
@@ -216,7 +243,7 @@ function CoachInner() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         ))}
         {typing && (
           <div style={{ display: "flex", justifyContent: "flex-start" }}>

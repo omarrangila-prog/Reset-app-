@@ -51,12 +51,49 @@
   /* ── Radii (soft, floating) ── */
   --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-2xl: 36px; --r-full: 9999px;
 
-  /* ── Elevation (soft, colored-tinted shadows) ── */
-  --shadow-xs: 0 1px 2px rgba(28, 35, 51, 0.05);
-  --shadow-sm: 0 2px 8px rgba(28, 35, 51, 0.06);
-  --shadow-md: 0 8px 24px rgba(46, 62, 120, 0.08);
-  --shadow-lg: 0 16px 40px rgba(46, 62, 120, 0.12);
-  --shadow-accent: 0 12px 30px rgba(91, 124, 250, 0.28);
+  /* ── Elevation — LAYERED depth (ambient + key + contact), the premium technique.
+     Multiple stacked shadows read as real light, not a single flat drop. ── */
+  --shadow-xs:
+    0 1px 1px rgba(28, 35, 51, 0.04),
+    0 1px 2px rgba(46, 62, 120, 0.05);
+  --shadow-sm:
+    0 1px 1px rgba(28, 35, 51, 0.03),
+    0 3px 6px rgba(46, 62, 120, 0.05),
+    0 1px 3px rgba(46, 62, 120, 0.04);
+  --shadow-md:
+    0 1px 2px rgba(28, 35, 51, 0.04),
+    0 6px 14px rgba(46, 62, 120, 0.07),
+    0 12px 28px rgba(46, 62, 120, 0.06);
+  --shadow-lg:
+    0 2px 4px rgba(28, 35, 51, 0.04),
+    0 10px 24px rgba(46, 62, 120, 0.09),
+    0 24px 56px rgba(46, 62, 120, 0.10);
+  --shadow-accent:
+    0 2px 6px rgba(91, 124, 250, 0.18),
+    0 10px 24px rgba(91, 124, 250, 0.24),
+    0 20px 48px rgba(124, 107, 240, 0.16);
+
+  /* ── Blur / glass depth ── */
+  --blur-glass: 20px;
+  --blur-heavy: 40px;
+  --glass-hi: rgba(255, 255, 255, 0.72);
+  --glass-lo: rgba(255, 255, 255, 0.5);
+  --glass-stroke: rgba(255, 255, 255, 0.7);
+
+  /* ── Mesh gradient hero fields (cinematic, pure CSS) ── */
+  --mesh-hero:
+    radial-gradient(38% 44% at 18% 22%, rgba(124, 107, 240, 0.55) 0%, transparent 60%),
+    radial-gradient(42% 46% at 82% 18%, rgba(79, 182, 245, 0.50) 0%, transparent 62%),
+    radial-gradient(46% 50% at 72% 88%, rgba(52, 201, 163, 0.40) 0%, transparent 60%),
+    radial-gradient(50% 54% at 25% 84%, rgba(91, 124, 250, 0.45) 0%, transparent 60%),
+    linear-gradient(135deg, #6E8CFB 0%, #9B7BF2 100%);
+
+  /* ── Motion (Apple-like spring & easing) ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 480ms;
 
   /* ── Fonts ── */
   --font-heading: 'Sora', 'DM Sans', system-ui, sans-serif;
@@ -95,6 +132,20 @@ body::before {
   z-index: 0;
 }
 
+/* Fine film grain over everything — the single strongest "handcrafted, not
+   generated" cue. Extremely subtle so it reads as texture, not noise. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
 ::selection { background: var(--accent-soft); color: var(--text); }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -108,11 +159,29 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line
 
 /* ── Premium component utilities (light theme) ── */
 .glass {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: var(--shadow-md);
+  position: relative;
+  background: var(--glass-hi);
+  backdrop-filter: blur(var(--blur-glass)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(150%);
+  border: 1px solid var(--glass-stroke);
+  box-shadow:
+    var(--shadow-md),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),      /* top rim light */
+    inset 0 -1px 0 rgba(46, 62, 120, 0.04);       /* bottom contact */
+}
+/* Cinematic mesh hero surface (pure CSS, no image). */
+.mesh {
+  background: var(--mesh-hero);
+  background-size: 160% 160%;
+  position: relative;
+  overflow: hidden;
+}
+.mesh::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 50% -10%, rgba(255,255,255,0.35), transparent 55%);
+  pointer-events: none;
 }
 .card-soft {
   background: var(--bg-elevated);

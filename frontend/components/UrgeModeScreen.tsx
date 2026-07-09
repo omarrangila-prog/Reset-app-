@@ -217,47 +217,53 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
               4-7-8 breathing exercise
             </p>
 
+            <div style={{ position: "relative", width: 240, height: 240, margin: "0 auto 32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {/* Layered concentric glow rings breathe together — depth, not a flat circle */}
+              {[1, 0.72, 0.48].map((s, i) => (
+                <div
+                  key={i}
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    width: 240 * s,
+                    height: 240 * s,
+                    borderRadius: "50%",
+                    background: `radial-gradient(circle, rgba(91,124,250,${0.14 - i * 0.03}) 0%, transparent 70%)`,
+                    border: `1px solid rgba(124,107,240,${0.28 - i * 0.07})`,
+                    transform: `scale(${breathingScale})`,
+                    transition: "transform 3.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }}
+                />
+              ))}
             <div
               style={{
-                width: 200,
-                height: 200,
+                width: 132,
+                height: 132,
                 borderRadius: "50%",
-                background: `radial-gradient(circle, ${T.recovery}20 0%, transparent 70%)`,
-                border: `2px solid ${T.recovery}40`,
-                margin: "0 auto 32px",
+                background: "radial-gradient(circle at 35% 30%, #8AA6FF 0%, #6E8CFB 45%, #7C6BF0 100%)",
+                boxShadow: "0 12px 40px rgba(91,124,250,0.45), inset 0 2px 8px rgba(255,255,255,0.5)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 transform: `scale(${breathingScale})`,
-                transition: "transform 0.5s ease-in-out",
+                transition: "transform 3.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                position: "relative",
+                zIndex: 1,
               }}
             >
-              <div
-                style={{
-                  textAlign: "center",
-                  color: T.recovery,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 28,
-                    fontWeight: 600,
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  ●
-                </div>
-              </div>
+              {/* Soft inner sheen — clean luminous orb, no glyph */}
+              <div aria-hidden style={{ width: 40, height: 40, borderRadius: "50%", background: "radial-gradient(circle at 40% 35%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%)" }} />
+            </div>
             </div>
 
             <p
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: 20,
-                color: T.recovery,
+                fontSize: 22,
+                color: T.text,
+                fontWeight: 600,
                 marginBottom: 16,
-                letterSpacing: "0.02em",
+                letterSpacing: "0.01em",
                 height: 32,
               }}
             >

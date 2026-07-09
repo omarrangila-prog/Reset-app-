@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { RecoveryRing } from "@/components/ui/RecoveryRing";
 import { StatTile } from "@/components/ui/StatTile";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
 import { useAppStore } from "@/lib/store";
 import { api } from "@/lib/api";
@@ -54,63 +55,109 @@ function HomeScreen({
   return (
     <div style={{ maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
       {/* Hero greeting */}
-      <header style={{ marginBottom: 24, marginTop: 8 }}>
-        <div style={{ fontSize: 13, color: t.muted, marginBottom: 2 }}>{greeting()} 🌿</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, color: t.text, letterSpacing: "-0.02em" }}>
-          You&apos;re doing beautifully.
-        </h1>
-      </header>
+      <Reveal index={0}>
+        <header style={{ marginBottom: 22, marginTop: 8 }}>
+          <div style={{ fontSize: 13, color: t.muted, marginBottom: 4, fontWeight: 500, letterSpacing: "0.01em" }}>{greeting()}</div>
+          <h1 style={{ fontSize: 30, fontWeight: 700, color: t.text, letterSpacing: "-0.03em", lineHeight: 1.08 }}>
+            You&apos;re doing<br />beautifully.
+          </h1>
+        </header>
+      </Reveal>
 
-      {/* Recovery ring card */}
-      <Card variant="float" padding={28} style={{ marginBottom: 16, textAlign: "center", background: t.gradCalm, border: "none" }}>
-        <RecoveryRing days={streak} progress={ringProgress(streak)} label={longestStreak > streak ? `best: ${longestStreak} days` : "of recovery"} />
+      {/* Cinematic mesh hero with the recovery ring floating on glass depth */}
+      <Reveal index={1}>
         <div
+          className="mesh"
           style={{
-            display: "inline-flex",
-            marginTop: 16,
-            padding: "8px 16px",
-            borderRadius: 999,
-            background: "#fff",
-            color: t.accent,
-            fontSize: 13,
-            fontWeight: 600,
-            boxShadow: t.shadowSm,
+            borderRadius: 28,
+            padding: "34px 24px 28px",
+            marginBottom: 16,
+            textAlign: "center",
+            boxShadow: t.shadowAccent,
+            position: "relative",
           }}
         >
-          {streak === 0 ? "A fresh start begins now 💙" : "Keep going strong 💙"}
+          {/* Hero-art slot. Drop /public/hero/home.webp to activate; if the file
+              is absent the CSS background simply renders nothing over the mesh
+              (no broken-image icon), so it degrades gracefully either way. */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: "url('/hero/home.webp')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              mixBlendMode: "screen",
+              opacity: 0.55,
+              borderRadius: 28,
+              pointerEvents: "none",
+            }}
+          />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <RecoveryRing
+              days={streak}
+              progress={ringProgress(streak)}
+              onMesh
+              label={longestStreak > streak ? `best · ${longestStreak} days` : "of recovery"}
+            />
+            <div
+              style={{
+                display: "inline-flex",
+                marginTop: 18,
+                padding: "9px 18px",
+                borderRadius: 999,
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.28)",
+                color: "#fff",
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              {streak === 0 ? "A fresh start begins now" : "Keep going — you're building something"}
+            </div>
+          </div>
         </div>
-      </Card>
+      </Reveal>
 
       {/* Recovery score */}
-      <Card variant="soft" style={{ marginBottom: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ fontSize: 12, color: t.muted, marginBottom: 4 }}>Recovery momentum</div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-              <span style={{ fontFamily: t.fontHeading, fontSize: 34, fontWeight: 700, color: t.accent }}>{score}</span>
-              <span style={{ fontSize: 16, color: t.accent, fontWeight: 600 }}>/100</span>
+      <Reveal index={2}>
+        <Card variant="soft" style={{ marginBottom: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ fontSize: 12, color: t.muted, marginBottom: 4 }}>Recovery momentum</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                <span style={{ fontFamily: t.fontHeading, fontSize: 36, fontWeight: 700, color: t.accent, letterSpacing: "-0.02em" }}>{score}</span>
+                <span style={{ fontSize: 16, color: t.accent, fontWeight: 600 }}>/100</span>
+              </div>
+              <div style={{ fontSize: 12, color: t.emerald, fontWeight: 600, marginTop: 2 }}>{momentum}</div>
             </div>
-            <div style={{ fontSize: 12, color: t.emerald, fontWeight: 600, marginTop: 2 }}>{momentum}</div>
+            <Sparkline score={score} />
           </div>
-          <Sparkline score={score} />
-        </div>
-      </Card>
+        </Card>
+      </Reveal>
 
       {/* Today's focus */}
-      <Card variant="tint" style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 11, color: t.accent2, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
-          Today&apos;s focus
-        </div>
-        <div style={{ fontSize: 16, color: t.text, fontWeight: 600, marginBottom: 4 }}>Stay calm, stay steady</div>
-        <div style={{ fontSize: 13, color: t.sub, lineHeight: 1.6 }}>Urges are temporary. Your strength is lasting.</div>
-      </Card>
+      <Reveal index={3}>
+        <Card variant="tint" style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, color: t.accent2, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
+            Today&apos;s focus
+          </div>
+          <div style={{ fontSize: 16, color: t.text, fontWeight: 600, marginBottom: 4 }}>Stay calm, stay steady</div>
+          <div style={{ fontSize: 13, color: t.sub, lineHeight: 1.6 }}>Urges are temporary. Your strength is lasting.</div>
+        </Card>
+      </Reveal>
 
       {/* Mood / Energy / Sleep tiles */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-        <StatTile icon="🙂" label="Mood" value="Calm" accent={t.accent} />
-        <StatTile icon="⚡" label="Energy" value="Good" accent={t.vuln} />
-        <StatTile icon="☾" label="Sleep" value="7h 20m" accent={t.accent2} />
-      </div>
+      <Reveal index={4}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+          <StatTile icon="🙂" label="Mood" value="Calm" accent={t.accent} />
+          <StatTile icon="⚡" label="Energy" value="Good" accent={t.vuln} />
+          <StatTile icon="☾" label="Sleep" value="7h 20m" accent={t.accent2} />
+        </div>
+      </Reveal>
 
       {/* Primary support action */}
       <Link

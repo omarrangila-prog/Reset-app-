@@ -35,29 +35,15 @@ export function StreakCard({
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
+      className="mesh"
       style={{
-        background: "linear-gradient(135deg, #EAFBF4 0%, #F5F7FC 50%, #EAFBF4 100%)",
-        border: "1px solid rgba(47,190,110,0.3)",
         borderRadius: "var(--r-xl)",
         padding: "clamp(24px, 8vw, 32px)",
         position: "relative",
         overflow: "hidden",
+        boxShadow: "var(--shadow-accent)",
       }}
     >
-      {/* Background glow */}
-      <div
-        style={{
-          position: "absolute",
-          top: "-40px",
-          right: "-40px",
-          width: "200px",
-          height: "200px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(47,190,110,0.15) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
       {/* Label */}
       <div
         style={{
@@ -66,8 +52,10 @@ export function StreakCard({
           fontWeight: 600,
           letterSpacing: "0.12em",
           textTransform: "uppercase",
-          color: "#2FBE6E",
+          color: "rgba(255,255,255,0.85)",
           marginBottom: "8px",
+          position: "relative",
+          zIndex: 1,
         }}
       >
         Current Streak
@@ -83,8 +71,12 @@ export function StreakCard({
           fontFamily: "var(--font-heading)",
           fontSize: "clamp(60px, 20vw, 80px)",
           lineHeight: 0.9,
-          color: "#1C2333",
+          color: "#FFFFFF",
           marginBottom: "4px",
+          letterSpacing: "-0.03em",
+          position: "relative",
+          zIndex: 1,
+          textShadow: "0 4px 20px rgba(0,0,0,0.15)",
         }}
       >
         {streak}
@@ -94,8 +86,10 @@ export function StreakCard({
         style={{
           fontFamily: "var(--font-body)",
           fontSize: "clamp(14px, 4.5vw, 18px)",
-          color: "#8A93A6",
+          color: "rgba(255,255,255,0.85)",
           marginBottom: "24px",
+          position: "relative",
+          zIndex: 1,
         }}
       >
         {streak === 1 ? "day clean" : "days clean"}
@@ -107,23 +101,27 @@ export function StreakCard({
           display: "flex",
           gap: "clamp(16px, 5vw, 24px)",
           paddingTop: "clamp(16px, 5vw, 24px)",
-          borderTop: "1px solid rgba(47,190,110,0.15)",
+          borderTop: "1px solid rgba(255,255,255,0.18)",
           marginBottom: "clamp(16px, 5vw, 24px)",
+          position: "relative",
+          zIndex: 1,
         }}
       >
         <StatItem label="Best Streak" value={`${longestStreak}d`} />
       </div>
 
       {/* Share button */}
-      <Button
-        variant="secondary"
-        size="sm"
-        loading={sharing}
-        onClick={handleShare}
-        style={{ borderColor: "rgba(47,190,110,0.3)", color: "#2FBE6E" }}
-      >
-        Share this
-      </Button>
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <Button
+          variant="secondary"
+          size="sm"
+          loading={sharing}
+          onClick={handleShare}
+          style={{ borderColor: "rgba(255,255,255,0.4)", color: "#FFFFFF", background: "rgba(255,255,255,0.12)" }}
+        >
+          Share this
+        </Button>
+      </div>
     </motion.div>
   );
 }
@@ -148,7 +146,7 @@ function StatItem({
           fontWeight: 600,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#8A93A6",
+          color: "rgba(255,255,255,0.75)",
           marginBottom: "4px",
         }}
       >
@@ -158,7 +156,7 @@ function StatItem({
         style={{
           fontFamily: "var(--font-heading)",
           fontSize: "clamp(20px, 7vw, 28px)",
-          color: color || "#1C2333",
+          color: color || "#FFFFFF",
           lineHeight: 1,
         }}
       >
