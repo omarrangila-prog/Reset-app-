@@ -1,28 +1,51 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Home, Compass, Sparkles, BarChart3, User } from "lucide-react";
 import { t } from "./theme";
 
 /**
- * Floating bottom navigation with a centered, elevated primary action (Coach).
- * Original interpretation of the common "5-tab + raised center" pattern.
+ * Floating premium navigation.
+ * - Active tab EXPANDS into a glass pill: icon + label slides in.
+ * - Inactive tabs are icon-only.
+ * - Centered elevated Coach action.
+ * - Scroll-adaptive: shrinks on scroll-down, expands on scroll-up (Arc/Airbnb).
  */
 const tabs = [
-  { href: "/", label: "Home", icon: "◇" },
-  { href: "/journey", label: "Journey", icon: "◒" },
-  { href: "/coach", label: "Coach", icon: "✦", center: true },
-  { href: "/dashboard", label: "Insights", icon: "◔" },
-  { href: "/profile", label: "Profile", icon: "○" },
+  { href: "/", label: "Home", Icon: Home },
+  { href: "/journey", label: "Journey", Icon: Compass },
+  { href: "/coach", label: "Coach", Icon: Sparkles, center: true },
+  { href: "/dashboard", label: "Insights", Icon: BarChart3 },
+  { href: "/profile", label: "Profile", Icon: User },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const reduced = useReducedMotion();
+  const [hidden, setHidden] = useState(false);
+
+  // Shrink/hide on scroll-down, reveal on scroll-up.
+  useEffect(() => {
+    if (reduced) return;
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y > last + 8 && y > 80) setHidden(true);
+      else if (y < last - 8) setHidden(false);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [reduced]);
 
   return (
-    <nav
+    <motion.nav
       aria-label="Primary"
+      animate={{ y: hidden ? 90 : 0, opacity: hidden ? 0.85 : 1 }}
+      transition={{ type: "spring", stiffness: 320, damping: 32 }}
       style={{
         position: "fixed",
         left: 0,
@@ -31,7 +54,7 @@ export function BottomNav() {
         zIndex: 90,
         display: "flex",
         justifyContent: "center",
-        padding: "10px 16px calc(10px + env(safe-area-inset-bottom))",
+        padding: "0 16px calc(14px + env(safe-area-inset-bottom))",
         pointerEvents: "none",
       }}
     >
@@ -44,13 +67,15 @@ export function BottomNav() {
           justifyContent: "space-between",
           gap: 4,
           width: "100%",
-          maxWidth: 460,
-          padding: "8px 14px",
-          borderRadius: 26,
+          maxWidth: 440,
+          padding: "8px 12px",
+          borderRadius: 28,
         }}
       >
         {tabs.map((tab) => {
           const active = pathname === tab.href;
+          const { Icon } = tab;
+
           if (tab.center) {
             return (
               <Link
@@ -58,69 +83,80 @@ export function BottomNav() {
                 href={tab.href}
                 aria-label={tab.label}
                 aria-current={active ? "page" : undefined}
-                style={{
-                  width: 56,
-                  height: 56,
-                  marginTop: -28,
-                  borderRadius: "50%",
-                  background: t.gradHero,
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 22,
-                  boxShadow: t.shadowAccent,
-                  flexShrink: 0,
-                }}
+                style={{ flexShrink: 0 }}
               >
-                {tab.icon}
+                <motion.span
+                  whileTap={reduced ? undefined : { scale: 0.92 }}
+                  whileHover={reduced ? undefined : { y: -2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 24 }}
+                  style={{
+                    width: 54,
+                    height: 54,
+                    marginTop: -22,
+                    borderRadius: "50%",
+                    background: t.gradHero,
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: t.shadowAccent,
+                  }}
+                >
+                  <Icon size={22} strokeWidth={2.2} />
+                </motion.span>
               </Link>
             );
           }
+
           return (
             <Link
               key={tab.href}
               href={tab.href}
               aria-label={tab.label}
               aria-current={active ? "page" : undefined}
-              style={{
-                position: "relative",
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 3,
-                padding: "6px 2px",
-                minHeight: 44,
-                color: active ? t.accent : t.muted,
-                fontWeight: active ? 600 : 500,
-              }}
+              style={{ flex: active ? "0 0 auto" : "1", display: "flex", justifyContent: "center", minWidth: 0 }}
             >
-              {/* Sliding glass capsule under the active tab (VisionOS-style) */}
-              {active && (
+              <motion.span
+                layout
+                whileTap={reduced ? undefined : { scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 420, damping: 30 }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: active ? 7 : 0,
+                  padding: active ? "9px 16px" : "9px",
+                  minHeight: 44,
+                  borderRadius: 999,
+                  background: active ? `${t.accent}16` : "transparent",
+                  border: active ? `1px solid ${t.accent}26` : "1px solid transparent",
+                  color: active ? t.accent : t.muted,
+                }}
+              >
                 <motion.span
-                  layoutId="nav-capsule"
-                  aria-hidden
-                  style={{
-                    position: "absolute",
-                    inset: "2px 4px",
-                    borderRadius: 16,
-                    background: `${t.accent}14`,
-                    border: `1px solid ${t.accent}22`,
-                    zIndex: 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-              <span style={{ fontSize: 18, position: "relative", zIndex: 1 }} aria-hidden>
-                {tab.icon}
-              </span>
-              <span style={{ fontSize: 10, letterSpacing: "0.02em", position: "relative", zIndex: 1 }}>{tab.label}</span>
+                  animate={active && !reduced ? { y: [-1, -3, -1] } : { y: 0 }}
+                  transition={{ duration: 2.4, repeat: active ? Infinity : 0, ease: "easeInOut" }}
+                  style={{ display: "inline-flex" }}
+                >
+                  <Icon size={20} strokeWidth={active ? 2.4 : 2} />
+                </motion.span>
+                <AnimatePresence>
+                  {active && (
+                    <motion.span
+                      initial={reduced ? false : { width: 0, opacity: 0 }}
+                      animate={{ width: "auto", opacity: 1 }}
+                      exit={{ width: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden" }}
+                    >
+                      {tab.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.span>
             </Link>
           );
         })}
       </div>
-    </nav>
+    </motion.nav>
   );
 }

@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { QuickRescue } from "@/components/ui/QuickRescue";
 
 export const metadata: Metadata = {
   title: "RESET — A calm space to break the cycle",
@@ -72,6 +73,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <main id="main">{children}</main>
         </ErrorBoundary>
+        <QuickRescue />
         <InstallPrompt />
         <script
           dangerouslySetInnerHTML={{
