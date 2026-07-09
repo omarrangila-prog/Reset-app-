@@ -32,6 +32,8 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   outputFileTracingRoot: path.resolve(__dirname),
+  // Native module — must not be bundled; loaded at runtime on the server.
+  serverExternalPackages: ["better-sqlite3"],
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

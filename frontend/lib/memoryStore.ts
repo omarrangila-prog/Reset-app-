@@ -1,14 +1,17 @@
 /**
- * TEMPORARY in-memory data store (no database).
+ * Persistent data store — SQLite-backed via better-sqlite3.
  *
- * ⚠️ IMPORTANT: data lives in process memory only. It resets whenever the
- * server restarts and is NOT shared across serverless instances. This is for
- * demos / getting-started only — swap back to Prisma+Postgres (see git history)
- * before real users depend on persistence.
+ * Data survives server restarts (written to a real file on disk). The public
+ * surface is unchanged and synchronous, so all API routes keep working without
+ * edits. File location is configurable via SQLITE_PATH (default ./data/reset.db).
  *
- * The surface mirrors the small subset of Prisma calls the app actually uses,
- * so routes read almost identically.
+ * NOTE: SQLite needs a persistent disk. Works on a single always-on server
+ * (Railway/Render/Fly with a volume) — NOT on Vercel serverless (no disk).
  */
+
+import Database from "better-sqlite3";
+import fs from "fs";
+import path from "path";
 
 export type LogType = "URGE" | "RELAPSE" | "SUCCESS" | "CHECK_IN";
 export type SessionMode = "URGE" | "VULNERABILITY" | "RECOVERY";
@@ -66,28 +69,81 @@ export interface SessionRow {
   startedAt: Date;
 }
 
-// Persist across hot reloads / route module reloads within one process.
-interface MemDb {
-  users: Map<string, User>;
-  usersByKey: Map<string, string>;
-  logs: LogEntry[];
-  journal: JournalEntry[];
-  triggers: TriggerPattern[];
-  sessions: SessionRow[];
+// ── Database bootstrap (singleton across hot reloads) ──
+const g = globalThis as unknown as { __resetDb?: Database.Database };
+
+function initDb(): Database.Database {
+  const dbPath = process.env.SQLITE_PATH || path.join(process.cwd(), "data", "reset.db");
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  const db = new Database(dbPath);
+  db.pragma("journal_mode = WAL");
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      deviceKeyHash TEXT UNIQUE,
+      streak INTEGER DEFAULT 0,
+      longestStreak INTEGER DEFAULT 0,
+      totalUrges INTEGER DEFAULT 0,
+      totalRelapses INTEGER DEFAULT 0,
+      disciplineScore INTEGER DEFAULT 0,
+      streakStartDate INTEGER,
+      lastStreakDate INTEGER,
+      timezone TEXT DEFAULT 'UTC',
+      lastActiveAt INTEGER,
+      createdAt INTEGER
+    );
+    CREATE TABLE IF NOT EXISTS logs (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      type TEXT,
+      emotion TEXT,
+      trigger TEXT,
+      note TEXT,
+      intensity INTEGER,
+      timestamp INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_logs_user_ts ON logs(userId, timestamp);
+    CREATE TABLE IF NOT EXISTS journal (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      content TEXT,
+      mood TEXT,
+      createdAt INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_journal_user ON journal(userId, createdAt);
+    CREATE TABLE IF NOT EXISTS triggers (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      type TEXT,
+      frequency INTEGER DEFAULT 1,
+      lastSeen INTEGER,
+      createdAt INTEGER,
+      UNIQUE(userId, type)
+    );
+    CREATE TABLE IF NOT EXISTS sessions (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      mode TEXT,
+      startedAt INTEGER
+    );
+  `);
+  return db;
 }
 
-const g = globalThis as unknown as { __resetMem?: MemDb };
+// Lazy: only open the DB on first actual use, so importing this module during
+// Next's build-time page-data collection never touches the filesystem.
+const db: Database.Database = new Proxy({} as Database.Database, {
+  get(_t, prop) {
+    const real = g.__resetDb ?? (g.__resetDb = initDb());
+    // @ts-expect-error dynamic proxy forward
+    const val = real[prop];
+    return typeof val === "function" ? val.bind(real) : val;
+  },
+});
 
-const mem: MemDb =
-  g.__resetMem ??
-  (g.__resetMem = {
-    users: new Map<string, User>(),
-    usersByKey: new Map<string, string>(),
-    logs: [],
-    journal: [],
-    triggers: [],
-    sessions: [],
-  });
+// ── Helpers: dates stored as unix-ms integers ──
+const toMs = (d: Date | null | undefined) => (d ? d.getTime() : null);
+const toDate = (n: number | null | undefined) => (n != null ? new Date(n) : null);
 
 let counter = 0;
 export function id(prefix = "id"): string {
@@ -95,124 +151,151 @@ export function id(prefix = "id"): string {
   return `${prefix}_${Date.now().toString(36)}_${counter.toString(36)}`;
 }
 
+function rowToUser(r: any): User {
+  return {
+    id: r.id,
+    deviceKeyHash: r.deviceKeyHash,
+    streak: r.streak,
+    longestStreak: r.longestStreak,
+    totalUrges: r.totalUrges,
+    totalRelapses: r.totalRelapses,
+    disciplineScore: r.disciplineScore,
+    streakStartDate: toDate(r.streakStartDate),
+    lastStreakDate: toDate(r.lastStreakDate),
+    timezone: r.timezone,
+    lastActiveAt: toDate(r.lastActiveAt),
+    createdAt: toDate(r.createdAt) ?? new Date(),
+  };
+}
+const rowToLog = (r: any): LogEntry => ({
+  id: r.id, userId: r.userId, type: r.type, emotion: r.emotion, trigger: r.trigger,
+  note: r.note, intensity: r.intensity, timestamp: toDate(r.timestamp) ?? new Date(),
+});
+const rowToJournal = (r: any): JournalEntry => ({
+  id: r.id, userId: r.userId, content: r.content, mood: r.mood, createdAt: toDate(r.createdAt) ?? new Date(),
+});
+const rowToTrigger = (r: any): TriggerPattern => ({
+  id: r.id, userId: r.userId, type: r.type, frequency: r.frequency,
+  lastSeen: toDate(r.lastSeen) ?? new Date(), createdAt: toDate(r.createdAt) ?? new Date(),
+});
+
 export const store = {
-  // --- users ---
+  // ── users ──
   getUser(userId: string): User | undefined {
-    return mem.users.get(userId);
+    const r = db.prepare("SELECT * FROM users WHERE id = ?").get(userId);
+    return r ? rowToUser(r) : undefined;
   },
   getUserByKey(keyHash: string): User | undefined {
-    const uid = mem.usersByKey.get(keyHash);
-    return uid ? mem.users.get(uid) : undefined;
+    const r = db.prepare("SELECT * FROM users WHERE deviceKeyHash = ?").get(keyHash);
+    return r ? rowToUser(r) : undefined;
   },
   upsertUserByKey(keyHash: string, timezone: string): User {
     const existing = this.getUserByKey(keyHash);
     if (existing) {
-      existing.lastActiveAt = new Date();
-      existing.timezone = timezone;
-      return existing;
+      db.prepare("UPDATE users SET lastActiveAt = ?, timezone = ? WHERE id = ?")
+        .run(Date.now(), timezone, existing.id);
+      return this.getUser(existing.id)!;
     }
-    const user: User = {
-      id: id("usr"),
-      deviceKeyHash: keyHash,
-      streak: 0,
-      longestStreak: 0,
-      totalUrges: 0,
-      totalRelapses: 0,
-      disciplineScore: 0,
-      streakStartDate: null,
-      lastStreakDate: null,
-      timezone,
-      lastActiveAt: new Date(),
-      createdAt: new Date(),
-    };
-    mem.users.set(user.id, user);
-    mem.usersByKey.set(keyHash, user.id);
-    return user;
+    const now = Date.now();
+    const uid = id("usr");
+    db.prepare(
+      `INSERT INTO users (id, deviceKeyHash, timezone, lastActiveAt, createdAt)
+       VALUES (?, ?, ?, ?, ?)`
+    ).run(uid, keyHash, timezone, now, now);
+    return this.getUser(uid)!;
   },
   updateUser(userId: string, patch: Partial<User>): User | undefined {
-    const u = mem.users.get(userId);
-    if (!u) return undefined;
-    Object.assign(u, patch);
-    return u;
+    const cur = this.getUser(userId);
+    if (!cur) return undefined;
+    const merged = { ...cur, ...patch };
+    db.prepare(
+      `UPDATE users SET streak=?, longestStreak=?, totalUrges=?, totalRelapses=?,
+        disciplineScore=?, streakStartDate=?, lastStreakDate=?, timezone=?, lastActiveAt=?
+       WHERE id=?`
+    ).run(
+      merged.streak, merged.longestStreak, merged.totalUrges, merged.totalRelapses,
+      merged.disciplineScore, toMs(merged.streakStartDate), toMs(merged.lastStreakDate),
+      merged.timezone, toMs(merged.lastActiveAt), userId
+    );
+    return this.getUser(userId);
   },
   deleteUser(userId: string): void {
-    const u = mem.users.get(userId);
-    if (u?.deviceKeyHash) mem.usersByKey.delete(u.deviceKeyHash);
-    mem.users.delete(userId);
-    mem.logs = mem.logs.filter((l) => l.userId !== userId);
-    mem.journal = mem.journal.filter((j) => j.userId !== userId);
-    mem.triggers = mem.triggers.filter((t) => t.userId !== userId);
-    mem.sessions = mem.sessions.filter((s) => s.userId !== userId);
+    const tx = db.transaction((uid: string) => {
+      db.prepare("DELETE FROM logs WHERE userId = ?").run(uid);
+      db.prepare("DELETE FROM journal WHERE userId = ?").run(uid);
+      db.prepare("DELETE FROM triggers WHERE userId = ?").run(uid);
+      db.prepare("DELETE FROM sessions WHERE userId = ?").run(uid);
+      db.prepare("DELETE FROM users WHERE id = ?").run(uid);
+    });
+    tx(userId);
   },
 
-  // --- logs ---
+  // ── logs ──
   createLog(data: Omit<LogEntry, "id" | "timestamp"> & { timestamp?: Date }): LogEntry {
     const entry: LogEntry = {
-      id: id("log"),
-      timestamp: data.timestamp ?? new Date(),
-      userId: data.userId,
-      type: data.type,
-      emotion: data.emotion ?? null,
-      trigger: data.trigger ?? null,
-      note: data.note ?? null,
+      id: id("log"), timestamp: data.timestamp ?? new Date(), userId: data.userId, type: data.type,
+      emotion: data.emotion ?? null, trigger: data.trigger ?? null, note: data.note ?? null,
       intensity: data.intensity ?? null,
     };
-    mem.logs.push(entry);
+    db.prepare(
+      `INSERT INTO logs (id, userId, type, emotion, trigger, note, intensity, timestamp)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(entry.id, entry.userId, entry.type, entry.emotion, entry.trigger, entry.note, entry.intensity, entry.timestamp.getTime());
     return entry;
   },
   listLogs(userId: string, opts?: { type?: LogType; limit?: number }): LogEntry[] {
-    let rows = mem.logs
-      .filter((l) => l.userId === userId && (!opts?.type || l.type === opts.type))
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-    if (opts?.limit) rows = rows.slice(0, opts.limit);
-    return rows;
+    const clause = opts?.type ? "AND type = ?" : "";
+    const args: any[] = opts?.type ? [userId, opts.type] : [userId];
+    const limit = opts?.limit ? ` LIMIT ${Math.max(1, Math.min(1000, opts.limit))}` : "";
+    const rows = db.prepare(
+      `SELECT * FROM logs WHERE userId = ? ${clause} ORDER BY timestamp DESC${limit}`
+    ).all(...args);
+    return rows.map(rowToLog);
   },
   countLogsSince(userId: string, since: Date): number {
-    return mem.logs.filter((l) => l.userId === userId && l.timestamp >= since).length;
+    const r = db.prepare("SELECT COUNT(*) c FROM logs WHERE userId = ? AND timestamp >= ?")
+      .get(userId, since.getTime()) as { c: number };
+    return r.c;
   },
 
-  // --- journal ---
+  // ── journal ──
   createJournal(userId: string, content: string, mood: string | null): JournalEntry {
     const entry: JournalEntry = { id: id("jrn"), userId, content, mood, createdAt: new Date() };
-    mem.journal.push(entry);
+    db.prepare("INSERT INTO journal (id, userId, content, mood, createdAt) VALUES (?, ?, ?, ?, ?)")
+      .run(entry.id, userId, content, mood, entry.createdAt.getTime());
     return entry;
   },
   listJournal(userId: string, limit = 30): JournalEntry[] {
-    return mem.journal
-      .filter((j) => j.userId === userId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, limit);
+    const rows = db.prepare(
+      `SELECT * FROM journal WHERE userId = ? ORDER BY createdAt DESC LIMIT ?`
+    ).all(userId, Math.max(1, Math.min(1000, limit)));
+    return rows.map(rowToJournal);
   },
 
-  // --- triggers ---
+  // ── triggers ──
   upsertTrigger(userId: string, type: TriggerType): TriggerPattern {
-    const found = mem.triggers.find((t) => t.userId === userId && t.type === type);
+    const found = db.prepare("SELECT * FROM triggers WHERE userId = ? AND type = ?").get(userId, type);
     if (found) {
-      found.frequency += 1;
-      found.lastSeen = new Date();
-      return found;
+      db.prepare("UPDATE triggers SET frequency = frequency + 1, lastSeen = ? WHERE userId = ? AND type = ?")
+        .run(Date.now(), userId, type);
+      return rowToTrigger(db.prepare("SELECT * FROM triggers WHERE userId = ? AND type = ?").get(userId, type));
     }
-    const t: TriggerPattern = {
-      id: id("trg"),
-      userId,
-      type,
-      frequency: 1,
-      lastSeen: new Date(),
-      createdAt: new Date(),
-    };
-    mem.triggers.push(t);
-    return t;
+    const now = Date.now();
+    const tid = id("trg");
+    db.prepare("INSERT INTO triggers (id, userId, type, frequency, lastSeen, createdAt) VALUES (?, ?, ?, 1, ?, ?)")
+      .run(tid, userId, type, now, now);
+    return rowToTrigger(db.prepare("SELECT * FROM triggers WHERE id = ?").get(tid));
   },
   listTriggers(userId: string): TriggerPattern[] {
-    return mem.triggers
-      .filter((t) => t.userId === userId)
-      .sort((a, b) => b.frequency - a.frequency);
+    const rows = db.prepare("SELECT * FROM triggers WHERE userId = ? ORDER BY frequency DESC").all(userId);
+    return rows.map(rowToTrigger);
   },
 
-  // --- sessions ---
+  // ── sessions ──
   createSession(userId: string, mode: SessionMode): SessionRow {
     const s: SessionRow = { id: id("ses"), userId, mode, startedAt: new Date() };
-    mem.sessions.push(s);
+    db.prepare("INSERT INTO sessions (id, userId, mode, startedAt) VALUES (?, ?, ?, ?)")
+      .run(s.id, userId, mode, s.startedAt.getTime());
     return s;
   },
 };

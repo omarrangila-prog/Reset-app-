@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/memoryStore";
 import { getUserIdFromRequest, SESSION_COOKIE_NAME } from "@/lib/auth";
 
+// Session depends on request cookies — never prerender.
+export const dynamic = "force-dynamic";
+
 /** Return the current session's userId, or 401. Used by the client to bootstrap. */
 export async function GET(req: NextRequest) {
   const userId = getUserIdFromRequest(req);

@@ -13,6 +13,7 @@
     "@next/swc-linux-x64-musl": "^15.5.18",
     "@tailwindcss/postcss": "^4.3.0",
     "autoprefixer": "^10.4.19",
+    "better-sqlite3": "^12.11.1",
     "canvas-confetti": "^1.9.3",
     "framer-motion": "^11.11.17",
     "html2canvas": "^1.4.1",
@@ -27,6 +28,7 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.9.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
