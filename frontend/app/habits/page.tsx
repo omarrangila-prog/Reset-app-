@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Footprints, Sunrise, Moon, BookOpen, Sparkles, Plus } from "lucide-react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 import { Reveal, spring } from "@/components/ui/motion";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { t } from "@/components/ui/theme";
@@ -98,7 +99,7 @@ export default function HabitsPage() {
       />
 
       {loading ? (
-        <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 32 }}>Loading…</div>
+        <div><SkeletonCard lines={2} /><SkeletonCard lines={3} /></div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {habits.map((h, i) => {

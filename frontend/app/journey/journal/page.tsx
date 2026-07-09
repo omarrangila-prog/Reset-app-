@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 import { t } from "@/components/ui/theme";
 import { api, JournalEntry } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
@@ -76,7 +77,7 @@ export default function JournalPage() {
       </Card>
 
       {loading ? (
-        <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 24 }}>Loading…</div>
+        <div><SkeletonCard lines={2} /><SkeletonCard lines={3} /></div>
       ) : entries.length === 0 ? (
         <Card variant="tint" style={{ textAlign: "center" }}>
           <div style={{ fontSize: 15, color: t.text, fontWeight: 600, marginBottom: 4 }}>Your story starts here</div>

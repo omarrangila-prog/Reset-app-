@@ -7,7 +7,7 @@ import { PostRelapseFlow } from "@/components/PostRelapseFlow";
 import { Modal } from "@/components/Modal";
 import { Card } from "@/components/ui/Card";
 import { RecoveryOrb } from "@/components/ui/RecoveryOrb";
-import { StatTile } from "@/components/ui/StatTile";
+import { deriveInsight } from "@/lib/insights";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
@@ -28,6 +28,7 @@ function HomeScreen({
   longestStreak,
   momentum,
   score,
+  insight,
   onJournalTap,
   onRelapseTap,
 }: {
@@ -35,6 +36,7 @@ function HomeScreen({
   longestStreak: number;
   momentum: string;
   score: number;
+  insight: string;
   onJournalTap: () => void;
   onRelapseTap: () => void;
 }) {
@@ -64,53 +66,40 @@ function HomeScreen({
         </header>
       </Reveal>
 
-      {/* Cinematic mesh hero with the recovery ring floating on glass depth */}
+      {/* ── HERO: dominant recovery orb on cinematic mesh (≈38% of screen) ── */}
       <Reveal index={1}>
         <div
           className="mesh"
           style={{
-            borderRadius: 28,
-            padding: "34px 24px 28px",
+            borderRadius: 32,
+            padding: "44px 24px 32px",
             marginBottom: 16,
             textAlign: "center",
             boxShadow: t.shadowAccent,
             position: "relative",
+            minHeight: "42vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
-          {/* Hero-art slot. Drop /public/hero/home.webp to activate; if the file
-              is absent the CSS background simply renders nothing over the mesh
-              (no broken-image icon), so it degrades gracefully either way. */}
           <div
             aria-hidden
             style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: "url('/hero/home.webp')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              mixBlendMode: "screen",
-              opacity: 0.55,
-              borderRadius: 28,
-              pointerEvents: "none",
+              position: "absolute", inset: 0, backgroundImage: "url('/hero/home.webp')",
+              backgroundSize: "cover", backgroundPosition: "center", mixBlendMode: "screen",
+              opacity: 0.5, borderRadius: 32, pointerEvents: "none",
             }}
           />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <RecoveryOrb score={score} label="How you're doing" delta={score > 0 ? "↑ going well" : undefined} />
+            <RecoveryOrb score={score} size={240} label="How you're doing" delta={score > 0 ? momentum : undefined} />
             <div
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                marginTop: 20,
-                padding: "9px 18px",
-                borderRadius: 999,
-                background: "rgba(255,255,255,0.18)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                border: "1px solid rgba(255,255,255,0.28)",
-                color: "#fff",
-                fontSize: 13,
-                fontWeight: 600,
+                display: "inline-flex", alignItems: "center", gap: 8, marginTop: 22,
+                padding: "10px 20px", borderRadius: 999,
+                background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.32)",
+                color: "#fff", fontSize: 14, fontWeight: 600,
               }}
             >
               <span aria-hidden>🔥</span>
@@ -120,136 +109,63 @@ function HomeScreen({
         </div>
       </Reveal>
 
-      {/* Recovery score */}
+      {/* ── PRIMARY ACTION: calm mode (right under the hero) ── */}
       <Reveal index={2}>
-        <Card variant="soft" style={{ marginBottom: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <div style={{ fontSize: 12, color: t.muted, marginBottom: 4 }}>How you're doing</div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                <span style={{ fontFamily: t.fontHeading, fontSize: 36, fontWeight: 700, color: t.accent, letterSpacing: "-0.02em" }}>{score}</span>
-                <span style={{ fontSize: 16, color: t.accent, fontWeight: 600 }}>/100</span>
-              </div>
-              <div style={{ fontSize: 12, color: t.emerald, fontWeight: 600, marginTop: 2 }}>{momentum}</div>
-            </div>
-            <Sparkline score={score} />
-          </div>
-        </Card>
+        <Link
+          href="/urge"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center", width: "100%",
+            padding: "18px 24px", background: t.gradHero, borderRadius: 18, color: "#fff",
+            fontSize: 15, fontWeight: 600, marginBottom: 16, minHeight: 56,
+            boxShadow: t.shadowAccent, letterSpacing: "0.01em",
+          }}
+        >
+          Feeling an urge? Open calm mode
+        </Link>
       </Reveal>
 
-      {/* Today's focus */}
+      {/* ── AI INSIGHT (real, from your data) ── */}
       <Reveal index={3}>
-        <Card variant="tint" style={{ marginBottom: 16 }}>
-          <div style={{ fontSize: 11, color: t.accent2, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
-            Today&apos;s intention
-          </div>
-          <div style={{ fontSize: 16, color: t.text, fontWeight: 600, marginBottom: 4 }}>Stay calm, stay steady</div>
-          <div style={{ fontSize: 13, color: t.sub, lineHeight: 1.6 }}>Urges are temporary. Your strength is lasting.</div>
-        </Card>
-      </Reveal>
-
-      {/* Mood / Energy / Sleep tiles */}
-      <Reveal index={4}>
-        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-          <StatTile icon="🙂" label="Mood" value="Calm" accent={t.accent} />
-          <StatTile icon="⚡" label="Energy" value="Good" accent={t.vuln} />
-          <StatTile icon="☾" label="Sleep" value="7h 20m" accent={t.accent2} />
-        </div>
-      </Reveal>
-
-      {/* AI Insight — the "recovery intelligence" layer */}
-      <Reveal index={5}>
         <Card variant="soft" style={{ marginBottom: 16, borderLeft: `3px solid ${t.accent2}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <span style={{ width: 22, height: 22, borderRadius: 7, background: t.gradHero, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12 }} aria-hidden>✦</span>
-            <span style={{ fontSize: 11, color: t.accent2, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>AI noticed</span>
+            <span style={{ fontSize: 11, color: t.accent2, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>What we noticed</span>
+          </div>
+          <p style={{ fontSize: 14, color: t.text, lineHeight: 1.6 }}>{insight}</p>
+        </Card>
+      </Reveal>
+
+      {/* ── TODAY'S FOCUS (real habits) ── */}
+      <Reveal index={4}>
+        <Card variant="soft" onClick={() => {}} ariaLabel="Today's focus" style={{ marginBottom: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Today&apos;s focus</div>
+            <Link href="/habits" style={{ fontSize: 12, color: t.accent, fontWeight: 600 }}>See all →</Link>
           </div>
           <p style={{ fontSize: 14, color: t.text, lineHeight: 1.6 }}>
-            Most urges tend to arrive late at night. A short wind-down routine before bed could ease them.
+            Small steps today. Check off a habit or write a quick note — one thing is enough.
           </p>
         </Card>
       </Reveal>
 
-      {/* Today's Focus checklist */}
-      <Reveal index={6}>
-        <Card variant="soft" style={{ marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Today&apos;s focus</div>
-            <div style={{ fontSize: 12, color: t.accent, fontWeight: 600 }}>2 of 4</div>
+      {/* ── DAILY REFLECTION ── */}
+      <Reveal index={5}>
+        <Card variant="soft" style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
+            Take a moment
           </div>
-          {[
-            { label: "Morning reflection", done: true },
-            { label: "15-minute walk", done: true },
-            { label: "Evening journal", done: false },
-            { label: "Sleep before 11 PM", done: false },
-          ].map((it) => (
-            <div key={it.label} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0" }}>
-              <span
-                style={{
-                  width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
-                  border: it.done ? "none" : `1.5px solid ${t.borderMid}`,
-                  background: it.done ? t.gradHero : "transparent",
-                  color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12,
-                }}
-                aria-hidden
-              >
-                {it.done ? "✓" : ""}
-              </span>
-              <span style={{ fontSize: 14, color: it.done ? t.muted : t.text, textDecoration: it.done ? "line-through" : "none" }}>
-                {it.label}
-              </span>
-            </div>
-          ))}
+          <p style={{ fontSize: 15, color: t.text, marginBottom: 14, lineHeight: 1.6 }}>{prompt}</p>
+          <button
+            onClick={onJournalTap}
+            style={{
+              width: "100%", padding: "12px 16px", background: t.accentSoft, border: "none",
+              borderRadius: 12, color: t.accent, fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 44,
+            }}
+          >
+            Write today&apos;s note →
+          </button>
         </Card>
       </Reveal>
-
-      {/* Primary support action */}
-      <Link
-        href="/urge"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          padding: "16px 24px",
-          background: t.gradHero,
-          borderRadius: 16,
-          color: "#fff",
-          fontSize: 15,
-          fontWeight: 600,
-          marginBottom: 12,
-          minHeight: 52,
-          boxShadow: t.shadowAccent,
-          letterSpacing: "0.01em",
-        }}
-      >
-        Feeling an urge? Open calm mode
-      </Link>
-
-      {/* Daily reflection */}
-      <Card variant="soft" style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
-          Daily reflection
-        </div>
-        <p style={{ fontSize: 15, color: t.text, marginBottom: 14, lineHeight: 1.6 }}>{prompt}</p>
-        <button
-          onClick={onJournalTap}
-          style={{
-            width: "100%",
-            padding: "12px 16px",
-            background: t.accentSoft,
-            border: "none",
-            borderRadius: 12,
-            color: t.accent,
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: "pointer",
-            minHeight: 44,
-          }}
-        >
-          Write today&apos;s note →
-        </button>
-      </Card>
 
       <button
         onClick={onRelapseTap}
@@ -271,25 +187,6 @@ function HomeScreen({
   );
 }
 
-/** Tiny inline sparkline (decorative momentum trend). */
-function Sparkline({ score }: { score: number }) {
-  const pts = [30, 38, 34, 46, 52, 60, Math.max(30, score)];
-  const w = 96, h = 44, max = 100;
-  const path = pts
-    .map((p, i) => `${(i / (pts.length - 1)) * w},${h - (p / max) * h}`)
-    .join(" ");
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden>
-      <defs>
-        <linearGradient id="spark" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#5B7CFA" />
-          <stop offset="100%" stopColor="#7C6BF0" />
-        </linearGradient>
-      </defs>
-      <polyline points={path} fill="none" stroke="url(#spark)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export default function HomeApp() {
   const { user, authReady, userId, setUser } = useAppStore();
@@ -508,6 +405,7 @@ export default function HomeApp() {
           longestStreak={longestStreak}
           momentum={momentum}
           score={score}
+          insight={deriveInsight(user?.logs, user?.triggerPatterns)}
           onJournalTap={() => setShowJournalModal(true)}
           onRelapseTap={() => setShowPostRelapse(true)}
         />

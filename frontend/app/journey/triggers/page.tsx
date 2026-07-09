@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { t } from "@/components/ui/theme";
 import { api, MeProfile } from "@/lib/api";
@@ -57,7 +58,7 @@ export default function TriggersPage() {
       />
 
       {loading ? (
-        <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 32 }}>Loading…</div>
+        <div><SkeletonCard lines={2} /><SkeletonCard lines={3} /></div>
       ) : patterns.length === 0 ? (
         <Card variant="tint" style={{ textAlign: "center" }}>
           <div style={{ fontSize: 15, fontWeight: 600, color: t.text, marginBottom: 4 }}>No patterns yet</div>

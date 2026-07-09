@@ -8,6 +8,7 @@ import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { LoadingState } from "../../components/LoadingState";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { SkeletonCard, SkeletonOrb } from "@/components/ui/Skeleton";
 import Link from "next/link";
 import {
   BarChart,
@@ -121,15 +122,16 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <LoadingState message="Loading your data..." size="lg" />
+      <div style={{ minHeight: "100vh", maxWidth: "800px", margin: "0 auto", padding: "24px 24px 120px" }}>
+        <SkeletonOrb size={120} />
+        <div style={{ height: 24 }} />
+        <SkeletonCard lines={2} />
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ flex: 1 }}><SkeletonCard lines={1} /></div>
+          <div style={{ flex: 1 }}><SkeletonCard lines={1} /></div>
+        </div>
+        <SkeletonCard lines={3} />
+        <BottomNav />
       </div>
     );
   }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LineChart, Line, BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { t } from "@/components/ui/theme";
 import { api, MeProfile } from "@/lib/api";
@@ -49,7 +50,7 @@ export default function AnalyticsPage() {
       />
 
       {loading ? (
-        <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 32 }}>Loading…</div>
+        <div><SkeletonCard lines={2} /><SkeletonCard lines={3} /></div>
       ) : !hasData ? (
         <Card variant="tint" style={{ textAlign: "center" }}>
           <div style={{ fontSize: 15, fontWeight: 600, color: t.text, marginBottom: 4 }}>Your picture is still forming</div>

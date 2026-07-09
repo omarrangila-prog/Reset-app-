@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { t } from "@/components/ui/theme";
 import { api, LogEntry } from "@/lib/api";
@@ -43,7 +44,7 @@ export default function MoodHistoryPage() {
       </header>
 
       {loading ? (
-        <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 32 }}>Loading…</div>
+        <div><SkeletonCard lines={2} /><SkeletonCard lines={3} /></div>
       ) : moods.length === 0 ? (
         <>
           <FeatureIntro
