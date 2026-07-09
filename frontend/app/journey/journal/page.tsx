@@ -51,7 +51,7 @@ export default function JournalPage() {
         <Link href="/journey" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
         <div>
           <div style={{ fontSize: 18, fontWeight: 700, color: t.text }}>Journal</div>
-          <div style={{ fontSize: 12, color: t.muted }}>Private &amp; encrypted — only you can read this</div>
+          <div style={{ fontSize: 12, color: t.muted }}>A private place to write — only you can see it</div>
         </div>
       </header>
 

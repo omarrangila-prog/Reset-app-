@@ -9,8 +9,8 @@ import { t } from "@/components/ui/theme";
 const sections = [
   { href: "/journey/mood", label: "Mood", desc: "How are you feeling right now?", icon: "◐", accent: t.accent },
   { href: "/urge", label: "Calm Mode", desc: "Ride out an urge, one breath at a time", icon: "◯", accent: t.accent2 },
-  { href: "/journey/journal", label: "Journal", desc: "Your private, encrypted space", icon: "❏", accent: t.mint },
-  { href: "/journey/timeline", label: "Reflection Timeline", desc: "Your story so far", icon: "◔", accent: t.sky },
+  { href: "/journey/journal", label: "Journal", desc: "A private place to write — only you can see it", icon: "❏", accent: t.mint },
+  { href: "/journey/timeline", label: "Your journey", desc: "Your story so far", icon: "◔", accent: t.sky },
 ];
 
 export default function JourneyPage() {

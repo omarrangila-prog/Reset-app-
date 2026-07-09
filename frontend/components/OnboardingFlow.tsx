@@ -59,19 +59,20 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
         {/* Screen 1 */}
         {screen === 1 && (
           <div style={{ textAlign: "center" }}>
-            <div style={{ marginBottom: 28 }}>
-              <PrivacyShield size={132} />
+            <div style={{ marginBottom: 24 }}>
+              <PrivacyShield size={116} />
             </div>
             <h1
               style={{
                 fontFamily: "'Bebas Neue', 'Impact', sans-serif",
-                fontSize: 40,
+                fontSize: 38,
                 color: T.text,
-                marginBottom: 16,
+                marginBottom: 12,
                 letterSpacing: "0.02em",
+                lineHeight: 1.1,
               }}
             >
-              You don't have to explain yourself.
+              A calm space to quit porn — at your own pace.
             </h1>
             <p
               style={{
@@ -79,11 +80,30 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
                 fontSize: 16,
                 color: T.textSub,
                 lineHeight: 1.7,
-                marginBottom: 40,
+                marginBottom: 24,
               }}
             >
-              RESET is a private space. No judgments. No lectures. Just tools that help.
+              When an urge hits, this app helps you get through the moment — and
+              slowly build habits that make it easier. Private. No judgment.
             </p>
+
+            {/* What you can actually do here — plain, concrete, 3 things */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28, textAlign: "left" }}>
+              {[
+                { t: "Get help in a hard moment", d: "One tap opens a calm breathing screen." },
+                { t: "Track how you're doing", d: "See your days, feelings, and small wins." },
+                { t: "Talk to a supportive coach", d: "An always-available chat, never judging." },
+              ].map((item) => (
+                <div key={item.t} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 14px", background: T.bgSurface, border: `1px solid ${T.border}`, borderRadius: 12 }}>
+                  <span style={{ width: 24, height: 24, borderRadius: "50%", background: T.recovery, color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, flexShrink: 0, marginTop: 1 }} aria-hidden>✓</span>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{item.t}</div>
+                    <div style={{ fontSize: 13, color: T.textSub, marginTop: 1 }}>{item.d}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <button
               onClick={handleNext}
               style={{
@@ -92,7 +112,7 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
                 background: T.recovery,
                 border: "none",
                 borderRadius: 12,
-                color: "#000",
+                color: "#fff",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 15,
                 fontWeight: 600,
@@ -100,7 +120,7 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
                 letterSpacing: "0.02em",
               }}
             >
-              I'm ready →
+              Get started →
             </button>
           </div>
         )}

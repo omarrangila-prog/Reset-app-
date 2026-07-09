@@ -29,8 +29,8 @@ export function computeDisciplineScore(inputs: ScoreInputs): number {
 
 /** A gentle label for the current momentum, never shaming. */
 export function momentumLabel(score: number): string {
-  if (score >= 80) return "Strong momentum";
-  if (score >= 55) return "Steady progress";
-  if (score >= 30) return "Building";
-  return "Getting started";
+  if (score >= 80) return "You're doing great";
+  if (score >= 55) return "Going well";
+  if (score >= 30) return "Off to a good start";
+  return "Just getting started";
 }

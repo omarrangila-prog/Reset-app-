@@ -95,7 +95,7 @@ function HomeScreen({
             }}
           />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <RecoveryOrb score={score} label="Recovery Score" delta={score > 0 ? "↑ building" : undefined} />
+            <RecoveryOrb score={score} label="How you're doing" delta={score > 0 ? "↑ going well" : undefined} />
             <div
               style={{
                 display: "inline-flex",
@@ -125,7 +125,7 @@ function HomeScreen({
         <Card variant="soft" style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <div style={{ fontSize: 12, color: t.muted, marginBottom: 4 }}>Recovery momentum</div>
+              <div style={{ fontSize: 12, color: t.muted, marginBottom: 4 }}>How you're doing</div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 <span style={{ fontFamily: t.fontHeading, fontSize: 36, fontWeight: 700, color: t.accent, letterSpacing: "-0.02em" }}>{score}</span>
                 <span style={{ fontSize: 16, color: t.accent, fontWeight: 600 }}>/100</span>
