@@ -8,6 +8,7 @@ import { useAppStore } from "@/lib/store";
 import { api, InterventionResponse } from "@/lib/api";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { AICoachOrb } from "@/components/ui/AICoachOrb";
+import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
 
@@ -204,6 +205,13 @@ function CoachInner() {
 
       {/* Messages */}
       <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "16px 20px 200px", display: "flex", flexDirection: "column", gap: 12, maxWidth: 560, margin: "0 auto", width: "100%" }}>
+        {messages.length <= 1 && (
+          <FeatureIntro
+            what="A supportive coach you can talk to anytime — day or night. Tell it how you feel and get gentle, practical help."
+            time="2–5 minutes"
+            benefit="Feel more in control when an urge shows up"
+          />
+        )}
         {messages.map((m) => (
           <motion.div
             key={m.id}

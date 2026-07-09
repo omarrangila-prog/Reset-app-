@@ -6,6 +6,7 @@ import { Footprints, Sunrise, Moon, BookOpen, Sparkles, Plus } from "lucide-reac
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Reveal, spring } from "@/components/ui/motion";
+import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { t } from "@/components/ui/theme";
 import { api, HabitItem } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
@@ -89,6 +90,12 @@ export default function HabitsPage() {
           </div>
         </header>
       </Reveal>
+
+      <FeatureIntro
+        what="Small daily actions that make hard moments easier — like a short walk or getting to bed on time. Tap the circle when you do one."
+        time="Under a minute"
+        benefit="Each day you show up builds real momentum"
+      />
 
       {loading ? (
         <div style={{ textAlign: "center", color: t.muted, fontSize: 13, padding: 32 }}>Loading…</div>
