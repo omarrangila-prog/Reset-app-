@@ -4,6 +4,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { QuickRescue } from "@/components/ui/QuickRescue";
+import { Atmosphere } from "@/components/ui/Atmosphere";
 
 export const metadata: Metadata = {
   title: "RESET — A calm space to break the cycle",
@@ -70,6 +71,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <AuthProvider />
+        <Atmosphere />
         <ErrorBoundary>
           <main id="main">{children}</main>
         </ErrorBoundary>

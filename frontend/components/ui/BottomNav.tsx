@@ -59,7 +59,7 @@ export function BottomNav() {
       }}
     >
       <div
-        className="glass"
+        className="glass frost"
         style={{
           pointerEvents: "auto",
           display: "flex",

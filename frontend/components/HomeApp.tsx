@@ -69,7 +69,7 @@ function HomeScreen({
       {/* ── HERO: dominant recovery orb on cinematic mesh (≈38% of screen) ── */}
       <Reveal index={1}>
         <div
-          className="mesh"
+          className="mesh pearl"
           style={{
             borderRadius: 32,
             padding: "44px 24px 32px",

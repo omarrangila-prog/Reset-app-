@@ -183,6 +183,29 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line
 @media (prefers-reduced-motion: reduce) {
   .rz-shimmer, .rz-pulse { animation: none; }
 }
+/* ── Texture layers — felt, not noticed (1–4% opacity) ── */
+/* Pearl: soft iridescent sheen that catches light across a surface. */
+.pearl::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(125deg, rgba(255,255,255,0.10) 0%, transparent 30%, rgba(124,107,240,0.04) 55%, transparent 80%);
+  mix-blend-mode: screen;
+}
+/* Frost: fine speckled frosted-glass grain on a card. */
+.frost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
 /* Cinematic mesh hero surface (pure CSS, no image). */
 .mesh {
   background: var(--mesh-hero);
