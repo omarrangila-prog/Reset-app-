@@ -25,10 +25,13 @@ export default function ProfilePage() {
   ];
 
   const links = [
-    { href: "/achievements", label: "Achievements", icon: "◆" },
+    { href: "/profile/goals", label: "Your goals", icon: "◆" },
+    { href: "/achievements", label: "Achievements", icon: "✦" },
     { href: "/habits", label: "Habits", icon: "◈" },
-    { href: "/journey/timeline", label: "Recovery Map", icon: "◔" },
-    { href: "/settings", label: "Privacy & Data", icon: "○" },
+    { href: "/learn", label: "Learn", icon: "◇" },
+    { href: "/journey/timeline", label: "Your journey", icon: "◔" },
+    { href: "/profile/notifications", label: "Reminders", icon: "◒" },
+    { href: "/profile/privacy", label: "Your privacy", icon: "○" },
   ];
 
   return (
