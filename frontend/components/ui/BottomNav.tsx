@@ -14,7 +14,7 @@ const tabs = [
   { href: "/journey", label: "Journey", icon: "◒" },
   { href: "/coach", label: "Coach", icon: "✦", center: true },
   { href: "/dashboard", label: "Insights", icon: "◔" },
-  { href: "/settings", label: "Profile", icon: "○" },
+  { href: "/profile", label: "Profile", icon: "○" },
 ];
 
 export function BottomNav() {

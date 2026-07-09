@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { api, InterventionResponse } from "@/lib/api";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { AICoachOrb } from "@/components/ui/AICoachOrb";
 import { spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
 
@@ -166,9 +167,11 @@ function CoachInner() {
         </Link>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: t.text, fontFamily: t.fontHeading }}>AI Coach</div>
-          <div style={{ fontSize: 12, color: t.muted }}>{meta.hint}</div>
+          <div style={{ fontSize: 12, color: t.muted }}>
+            {typing ? "Thinking…" : meta.hint}
+          </div>
         </div>
-        <div style={{ width: 10, height: 10, borderRadius: "50%", background: meta.accent, boxShadow: `0 0 0 4px ${meta.accent}22` }} aria-hidden />
+        <AICoachOrb size={44} state={typing ? "thinking" : "idle"} />
       </header>
 
       {/* Mode pills */}

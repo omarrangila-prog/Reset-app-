@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CalmSphere } from "@/components/ui/CalmSphere";
 
 interface UrgeModeScreenProps {
   onComplete: () => void;
@@ -8,8 +9,6 @@ interface UrgeModeScreenProps {
 
 export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
   const [stage, setStage] = useState<"message" | "breathing" | "timer" | "distraction" | "complete">("message");
-  const [breathingPhase, setBreathingPhase] = useState("inhale");
-  const [breathingScale, setBreathingScale] = useState(0.85);
   const [timerSeconds, setTimerSeconds] = useState(900); // 15 minutes
   const [timerRunning, setTimerRunning] = useState(false);
   const [trigger, setTrigger] = useState("");
@@ -37,40 +36,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
     recovery: "#2FBE6E",
   };
 
-  // Breathing exercise
-  useEffect(() => {
-    if (stage !== "breathing") return;
-
-    const timing = { inhale: 4000, hold: 7000, exhale: 8000 };
-    let phase: "inhale" | "hold" | "exhale" = "inhale";
-
-    const cycle = () => {
-      phase = "inhale";
-      setBreathingPhase("Breathe in...");
-      setBreathingScale(1.2);
-
-      const holdTimeout = setTimeout(() => {
-        phase = "hold";
-        setBreathingPhase("Hold...");
-      }, timing.inhale);
-
-      const exhaleTimeout = setTimeout(() => {
-        phase = "exhale";
-        setBreathingPhase("Breathe out...");
-        setBreathingScale(0.8);
-      }, timing.inhale + timing.hold);
-
-      const nextCycleTimeout = setTimeout(cycle, timing.inhale + timing.hold + timing.exhale);
-
-      return () => {
-        clearTimeout(holdTimeout);
-        clearTimeout(exhaleTimeout);
-        clearTimeout(nextCycleTimeout);
-      };
-    };
-
-    cycle();
-  }, [stage]);
+  // Breathing is now handled by the self-managing <CalmSphere /> component.
 
   // Timer
   useEffect(() => {
@@ -211,74 +177,25 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 color: T.textMuted,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
-                marginBottom: 32,
+                marginBottom: 28,
               }}
             >
-              4-7-8 breathing exercise
+              Take a deep breath · this feeling will pass
             </p>
 
-            <div style={{ position: "relative", width: 240, height: 240, margin: "0 auto 32px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {/* Layered concentric glow rings breathe together — depth, not a flat circle */}
-              {[1, 0.72, 0.48].map((s, i) => (
-                <div
-                  key={i}
-                  aria-hidden
-                  style={{
-                    position: "absolute",
-                    width: 240 * s,
-                    height: 240 * s,
-                    borderRadius: "50%",
-                    background: `radial-gradient(circle, rgba(91,124,250,${0.14 - i * 0.03}) 0%, transparent 70%)`,
-                    border: `1px solid rgba(124,107,240,${0.28 - i * 0.07})`,
-                    transform: `scale(${breathingScale})`,
-                    transition: "transform 3.8s cubic-bezier(0.4, 0, 0.2, 1)",
-                  }}
-                />
-              ))}
-            <div
-              style={{
-                width: 132,
-                height: 132,
-                borderRadius: "50%",
-                background: "radial-gradient(circle at 35% 30%, #8AA6FF 0%, #6E8CFB 45%, #7C6BF0 100%)",
-                boxShadow: "0 12px 40px rgba(91,124,250,0.45), inset 0 2px 8px rgba(255,255,255,0.5)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transform: `scale(${breathingScale})`,
-                transition: "transform 3.8s cubic-bezier(0.4, 0, 0.2, 1)",
-                position: "relative",
-                zIndex: 1,
-              }}
-            >
-              {/* Soft inner sheen — clean luminous orb, no glyph */}
-              <div aria-hidden style={{ width: 40, height: 40, borderRadius: "50%", background: "radial-gradient(circle at 40% 35%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%)" }} />
+            <div style={{ marginBottom: 28 }}>
+              <CalmSphere size={260} />
             </div>
-            </div>
-
-            <p
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 22,
-                color: T.text,
-                fontWeight: 600,
-                marginBottom: 16,
-                letterSpacing: "0.01em",
-                height: 32,
-              }}
-            >
-              {breathingPhase}
-            </p>
 
             <p
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 12,
                 color: T.textMuted,
-                marginBottom: 40,
+                marginBottom: 32,
               }}
             >
-              Follow the circle. 90 seconds.
+              Inhale 4s · Hold 4s · Exhale 6s
             </p>
 
             <button
@@ -287,15 +204,15 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 padding: "14px 24px",
                 background: T.accent,
                 border: "none",
-                borderRadius: 10,
-                color: "#080809",
+                borderRadius: 12,
+                color: "#fff",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: "pointer",
               }}
             >
-              I'm ready for the timer →
+              I&apos;m ready to continue →
             </button>
           </div>
         )}
