@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
 import { HeroArt } from "@/components/ui/HeroArt";
+import { PrivacyShield } from "@/components/ui/PrivacyShield";
 
 interface OnboardingFlowProps {
   onComplete: (data: { reason: string; name: string; timeOfDay: string; remindTime?: string }) => void;
@@ -58,7 +59,9 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
         {/* Screen 1 */}
         {screen === 1 && (
           <div style={{ textAlign: "center" }}>
-            <HeroArt src="/hero/onboard-1.webp" height={200} style={{ marginBottom: 28 }} />
+            <div style={{ marginBottom: 28 }}>
+              <PrivacyShield size={132} />
+            </div>
             <h1
               style={{
                 fontFamily: "'Bebas Neue', 'Impact', sans-serif",

@@ -6,7 +6,7 @@ import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { PostRelapseFlow } from "@/components/PostRelapseFlow";
 import { Modal } from "@/components/Modal";
 import { Card } from "@/components/ui/Card";
-import { RecoveryRing } from "@/components/ui/RecoveryRing";
+import { RecoveryOrb } from "@/components/ui/RecoveryOrb";
 import { StatTile } from "@/components/ui/StatTile";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
@@ -22,10 +22,6 @@ function greeting(): string {
   return "Rest well tonight";
 }
 
-// A gentle ring target: fills over a 30-day horizon, then holds full.
-function ringProgress(streak: number): number {
-  return Math.min(1, streak / 30 || 0.02);
-}
 
 function HomeScreen({
   streak,
@@ -54,13 +50,17 @@ function HomeScreen({
 
   return (
     <div style={{ maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
-      {/* Hero greeting */}
+      {/* Dynamic header — greeting + day of recovery */}
       <Reveal index={0}>
-        <header style={{ marginBottom: 22, marginTop: 8 }}>
-          <div style={{ fontSize: 13, color: t.muted, marginBottom: 4, fontWeight: 500, letterSpacing: "0.01em" }}>{greeting()}</div>
-          <h1 style={{ fontSize: 30, fontWeight: 700, color: t.text, letterSpacing: "-0.03em", lineHeight: 1.08 }}>
-            You&apos;re doing<br />beautifully.
-          </h1>
+        <header style={{ marginBottom: 20, marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: t.text, letterSpacing: "-0.02em" }}>
+              {greeting()} 👋
+            </div>
+            <div style={{ fontSize: 13, color: t.accent, fontWeight: 600, marginTop: 2 }}>
+              Day {streak} of your reset
+            </div>
+          </div>
         </header>
       </Reveal>
 
@@ -95,16 +95,13 @@ function HomeScreen({
             }}
           />
           <div style={{ position: "relative", zIndex: 1 }}>
-            <RecoveryRing
-              days={streak}
-              progress={ringProgress(streak)}
-              onMesh
-              label={longestStreak > streak ? `best · ${longestStreak} days` : "of recovery"}
-            />
+            <RecoveryOrb score={score} label="Recovery Score" delta={score > 0 ? "↑ building" : undefined} />
             <div
               style={{
                 display: "inline-flex",
-                marginTop: 18,
+                alignItems: "center",
+                gap: 8,
+                marginTop: 20,
                 padding: "9px 18px",
                 borderRadius: 999,
                 background: "rgba(255,255,255,0.18)",
@@ -116,7 +113,8 @@ function HomeScreen({
                 fontWeight: 600,
               }}
             >
-              {streak === 0 ? "A fresh start begins now" : "Keep going — you're building something"}
+              <span aria-hidden>🔥</span>
+              {streak} day streak{longestStreak > streak ? ` · best ${longestStreak}` : ""}
             </div>
           </div>
         </div>
@@ -143,7 +141,7 @@ function HomeScreen({
       <Reveal index={3}>
         <Card variant="tint" style={{ marginBottom: 16 }}>
           <div style={{ fontSize: 11, color: t.accent2, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>
-            Today&apos;s focus
+            Today&apos;s intention
           </div>
           <div style={{ fontSize: 16, color: t.text, fontWeight: 600, marginBottom: 4 }}>Stay calm, stay steady</div>
           <div style={{ fontSize: 13, color: t.sub, lineHeight: 1.6 }}>Urges are temporary. Your strength is lasting.</div>
@@ -152,11 +150,57 @@ function HomeScreen({
 
       {/* Mood / Energy / Sleep tiles */}
       <Reveal index={4}>
-        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
           <StatTile icon="🙂" label="Mood" value="Calm" accent={t.accent} />
           <StatTile icon="⚡" label="Energy" value="Good" accent={t.vuln} />
           <StatTile icon="☾" label="Sleep" value="7h 20m" accent={t.accent2} />
         </div>
+      </Reveal>
+
+      {/* AI Insight — the "recovery intelligence" layer */}
+      <Reveal index={5}>
+        <Card variant="soft" style={{ marginBottom: 16, borderLeft: `3px solid ${t.accent2}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <span style={{ width: 22, height: 22, borderRadius: 7, background: t.gradHero, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12 }} aria-hidden>✦</span>
+            <span style={{ fontSize: 11, color: t.accent2, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>AI noticed</span>
+          </div>
+          <p style={{ fontSize: 14, color: t.text, lineHeight: 1.6 }}>
+            Most urges tend to arrive late at night. A short wind-down routine before bed could ease them.
+          </p>
+        </Card>
+      </Reveal>
+
+      {/* Today's Focus checklist */}
+      <Reveal index={6}>
+        <Card variant="soft" style={{ marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Today&apos;s focus</div>
+            <div style={{ fontSize: 12, color: t.accent, fontWeight: 600 }}>2 of 4</div>
+          </div>
+          {[
+            { label: "Morning reflection", done: true },
+            { label: "15-minute walk", done: true },
+            { label: "Evening journal", done: false },
+            { label: "Sleep before 11 PM", done: false },
+          ].map((it) => (
+            <div key={it.label} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0" }}>
+              <span
+                style={{
+                  width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
+                  border: it.done ? "none" : `1.5px solid ${t.borderMid}`,
+                  background: it.done ? t.gradHero : "transparent",
+                  color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12,
+                }}
+                aria-hidden
+              >
+                {it.done ? "✓" : ""}
+              </span>
+              <span style={{ fontSize: 14, color: it.done ? t.muted : t.text, textDecoration: it.done ? "line-through" : "none" }}>
+                {it.label}
+              </span>
+            </div>
+          ))}
+        </Card>
       </Reveal>
 
       {/* Primary support action */}
@@ -391,7 +435,8 @@ export default function HomeApp() {
           margin: "0 auto",
         }}
       >
-        <div style={{ fontFamily: t.fontHeading, fontSize: 20, fontWeight: 700, color: t.text, letterSpacing: "-0.01em" }}>
+        <div style={{ fontFamily: t.fontHeading, fontSize: 18, fontWeight: 700, color: t.text, letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: 7 }}>
+          <span style={{ width: 22, height: 22, borderRadius: 7, background: t.gradHero, display: "inline-flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12 }} aria-hidden>◆</span>
           RESET
         </div>
         <div style={{ display: "flex", gap: 8 }}>

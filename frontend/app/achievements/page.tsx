@@ -1,0 +1,75 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { BottomNav } from "@/components/ui/BottomNav";
+import { Card } from "@/components/ui/Card";
+import { AchievementCrystal } from "@/components/ui/AchievementCrystal";
+import { Reveal } from "@/components/ui/motion";
+import { t } from "@/components/ui/theme";
+import { api, MeProfile } from "@/lib/api";
+import { useAppStore } from "@/lib/store";
+
+export default function AchievementsPage() {
+  const { userId } = useAppStore();
+  const [me, setMe] = useState<MeProfile | null>(null);
+
+  useEffect(() => {
+    if (userId) api.getMe().then(setMe).catch(() => {});
+  }, [userId]);
+
+  const streak = me?.streak ?? 0;
+  const totalLogs = me?.logs?.length ?? 0;
+
+  // Milestones unlock from real data — no fake badges.
+  const achievements = [
+    { title: "First Step", desc: "Started your journey", unlocked: true },
+    { title: "Self-Aware", desc: "Logged your first reflection", unlocked: totalLogs > 0 },
+    { title: "Day One", desc: "Completed a full day", unlocked: streak >= 1 },
+    { title: "Week Strong", desc: "7-day streak", unlocked: streak >= 7 },
+    { title: "Steady", desc: "14-day streak", unlocked: streak >= 14 },
+    { title: "Master", desc: "30-day streak", unlocked: streak >= 30 },
+  ];
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
+
+  return (
+    <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
+      <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
+        <Link href="/dashboard" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: t.text }}>Achievements</div>
+          <div style={{ fontSize: 12, color: t.muted }}>{unlockedCount} of {achievements.length} unlocked</div>
+        </div>
+      </header>
+
+      {/* Featured crystal */}
+      <Reveal index={0}>
+        <div className="mesh" style={{ borderRadius: 28, padding: "28px 20px", marginBottom: 20, textAlign: "center", boxShadow: t.shadowAccent }}>
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <AchievementCrystal size={120} unlocked={unlockedCount > 0} />
+            <div style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginTop: 12 }}>
+              {achievements.filter((a) => a.unlocked).slice(-1)[0]?.title ?? "Getting started"}
+            </div>
+            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 13, marginTop: 2 }}>Your latest milestone</div>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {achievements.map((a, i) => (
+          <Reveal key={a.title} index={i + 1}>
+            <Card variant="soft" style={{ textAlign: "center", opacity: a.unlocked ? 1 : 0.6 }}>
+              <AchievementCrystal size={64} unlocked={a.unlocked} />
+              <div style={{ fontSize: 14, fontWeight: 600, color: t.text, marginTop: 10 }}>{a.title}</div>
+              <div style={{ fontSize: 11, color: t.muted, marginTop: 2 }}>{a.desc}</div>
+              {!a.unlocked && <div style={{ fontSize: 10, color: t.accent, marginTop: 6, fontWeight: 600 }}>Locked</div>}
+            </Card>
+          </Reveal>
+        ))}
+      </div>
+
+      <BottomNav />
+    </div>
+  );
+}

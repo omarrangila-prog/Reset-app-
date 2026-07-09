@@ -10,10 +10,10 @@ import { t } from "./theme";
  */
 const tabs = [
   { href: "/", label: "Home", icon: "◇" },
-  { href: "/dashboard", label: "Progress", icon: "◒" },
+  { href: "/journey", label: "Journey", icon: "◒" },
   { href: "/coach", label: "Coach", icon: "✦", center: true },
-  { href: "/morning", label: "Journal", icon: "❏" },
-  { href: "/settings", label: "You", icon: "◔" },
+  { href: "/dashboard", label: "Insights", icon: "◔" },
+  { href: "/settings", label: "Profile", icon: "○" },
 ];
 
 export function BottomNav() {

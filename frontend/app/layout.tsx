@@ -18,7 +18,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "RESET - A calm place to break the cycle",
+        alt: "RESET",
       },
     ],
     type: "website",
