@@ -7,14 +7,12 @@ import { useState } from "react";
 interface StreakCardProps {
   streak: number;
   longestStreak: number;
-  disciplineScore: number;
   onShare?: () => void;
 }
 
 export function StreakCard({
   streak,
   longestStreak,
-  disciplineScore,
 }: StreakCardProps) {
   const [sharing, setSharing] = useState(false);
 
@@ -23,7 +21,6 @@ export function StreakCard({
     try {
       await shareCard({
         streakDays: streak,
-        disciplineScore,
         event: "resisted an urge",
       });
     } catch (e) {
@@ -32,14 +29,6 @@ export function StreakCard({
       setSharing(false);
     }
   };
-
-  // Score color
-  const scoreColor =
-    disciplineScore >= 70
-      ? "#1DB954"
-      : disciplineScore >= 40
-      ? "#F5A623"
-      : "#FF3333";
 
   return (
     <motion.div
@@ -123,12 +112,6 @@ export function StreakCard({
         }}
       >
         <StatItem label="Best Streak" value={`${longestStreak}d`} />
-        <StatItem
-          label="Discipline"
-          value={`${disciplineScore}`}
-          color={scoreColor}
-          suffix="/100"
-        />
       </div>
 
       {/* Share button */}

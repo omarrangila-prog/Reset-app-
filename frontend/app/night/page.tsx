@@ -449,7 +449,7 @@ export default function NightPage() {
               lineHeight: 1.5,
             }}>
               Rest well. Tomorrow brings new strength.<br />
-              Your discipline grows with each day.
+              Your calm grows with each day.
             </div>
 
             {reflection && (

@@ -45,8 +45,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For HTML pages, try network first, then cache
-  if (event.request.headers.get('accept').includes('text/html')) {
+  // NEVER cache API/auth requests — they carry per-user, sensitive, session-
+  // bound data. Always go to network; do not store responses.
+  if (new URL(event.request.url).pathname.startsWith('/api/')) {
+    return;
+  }
+
+  // Only handle GET (POST/PUT/DELETE must never be served from cache).
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // For HTML pages, try network first, then cache. Guard against a missing
+  // Accept header (previously threw a TypeError and broke offline handling).
+  const accept = event.request.headers.get('accept') || '';
+  if (accept.includes('text/html')) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {

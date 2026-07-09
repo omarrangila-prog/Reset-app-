@@ -13,7 +13,7 @@ export const colors = {
   textMuted: "#4A4A4E",
 
   // Signal colors — one per mode
-  urge: "#FF3333",      // 🔴 crisis
+  urge: "#F5A623",      // amber support
   vulnerability: "#F5A623", // 🟡 at-risk
   recovery: "#1DB954",  // 🟢 stable
 
@@ -85,10 +85,10 @@ export type BehavioralMode = "URGE" | "VULNERABILITY" | "RECOVERY";
 export const modeConfig = {
   URGE: {
     color: colors.urge,
-    bg: "#1A0505",
-    shadow: shadows.urge,
-    label: "CRISIS MODE",
-    description: "Interrupt. Reset. Now.",
+    bg: "#1A1205",
+    shadow: shadows.vulnerability,
+    label: "SUPPORT MODE",
+    description: "Notice the feeling. Choose one steady action.",
   },
   VULNERABILITY: {
     color: colors.vulnerability,

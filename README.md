@@ -209,3 +209,4 @@ The app works without a backend — all pages have demo fallbacks with realistic
 
 - If Render assigns a different backend URL, update `NEXT_PUBLIC_API_URL` in Vercel.
 - If your frontend domain differs from `https://reset-frontend.vercel.app`, update `FRONTEND_URL` in Render.
+# Reset-app-

@@ -119,7 +119,7 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
               {[
                 "I want to break a habit",
-                "I keep relapsing and I don't know why",
+                "I want more clarity on my patterns",
                 "I want to understand my triggers",
                 "I'm just curious",
               ].map((option) => (

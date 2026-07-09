@@ -32,29 +32,52 @@ export function CrisisBar({ position = "bottom" }: CrisisBarProps) {
         backdropFilter: "blur(12px)",
       }}
     >
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        style={{
-          width: "100%",
-          padding: "12px 16px",
-          background: "transparent",
-          border: "none",
-          color: T.textSub,
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 13,
-          cursor: "pointer",
-          textAlign: "center",
-          transition: "color 0.2s",
-          letterSpacing: "0.05em",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = T.text)}
-        onMouseLeave={(e) => (e.currentTarget.style.color = T.textSub)}
-      >
-        {isExpanded ? "Hide" : "Need urgent support? You're not alone."} ↓
-      </button>
+      <div style={{ display: "flex", alignItems: "stretch" }}>
+        <a
+          href="/urge"
+          style={{
+            display: "inline-flex",
+            flex: 1,
+            padding: "12px 16px",
+            background: "transparent",
+            border: "none",
+            color: T.textSub,
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 13,
+            cursor: "pointer",
+            alignItems: "center",
+            letterSpacing: "0.05em",
+            textDecoration: "none",
+            minHeight: 44,
+          }}
+        >
+          Need support now? Open the calm support page →
+        </a>
+        <button
+          type="button"
+          onClick={() => setIsExpanded((v) => !v)}
+          aria-expanded={isExpanded}
+          aria-controls="crisis-resources"
+          style={{
+            padding: "12px 16px",
+            background: "transparent",
+            border: "none",
+            borderLeft: `1px solid ${T.border}`,
+            color: T.amber,
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: "pointer",
+            minHeight: 44,
+          }}
+        >
+          {isExpanded ? "Hide help ▾" : "Crisis help ▴"}
+        </button>
+      </div>
 
       {isExpanded && (
         <div
+          id="crisis-resources"
           style={{
             padding: "16px",
             borderTop: `1px solid ${T.border}`,
@@ -76,18 +99,21 @@ export function CrisisBar({ position = "bottom" }: CrisisBarProps) {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
-              { label: "Crisis Text Line", value: "Text HOME to 741741" },
-              { label: "SAMHSA Helpline", value: "1-800-662-4357" },
-              { label: "988 Lifeline", value: "Call or text 988" },
-              { label: "Immediate danger?", value: "Call 911" },
+              { label: "988 Suicide & Crisis Lifeline", value: "Call or text 988", href: "tel:988" },
+              { label: "Crisis Text Line", value: "Text HOME to 741741", href: "sms:741741?&body=HOME" },
+              { label: "SAMHSA Helpline", value: "1-800-662-4357", href: "tel:18006624357" },
+              { label: "Immediate danger?", value: "Call 911", href: "tel:911" },
             ].map((item) => (
-              <div
+              <a
                 key={item.label}
+                href={item.href}
                 style={{
+                  display: "block",
                   padding: "10px 12px",
                   background: T.bg,
                   borderRadius: 8,
                   border: `1px solid ${T.border}`,
+                  textDecoration: "none",
                 }}
               >
                 <div
@@ -110,7 +136,7 @@ export function CrisisBar({ position = "bottom" }: CrisisBarProps) {
                 >
                   {item.value}
                 </div>
-              </div>
+              </a>
             ))}
           </div>
 

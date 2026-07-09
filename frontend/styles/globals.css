@@ -263,3 +263,47 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: 0.02em; line-
   height: 1px;
   background: rgba(255,255,255,0.08);
 }
+
+/* Responsive baseline: never allow horizontal scroll; fluid, tap-friendly. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+/* Respect the notch / safe areas on installed mobile PWAs. */
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Accessibility: keyboard skip link (visible only on focus). */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10001;
+  padding: 12px 18px;
+  background: #2FBE6E;
+  color: #000;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Visible focus outline for keyboard users across the app. */
+:focus-visible {
+  outline: 2px solid #2FBE6E;
+  outline-offset: 2px;
+}

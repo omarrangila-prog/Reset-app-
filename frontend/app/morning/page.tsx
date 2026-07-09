@@ -457,35 +457,24 @@ export default function MorningPage() {
               lineHeight: 1.5,
             }}>
               Your day begins with intention.<br />
-              Stay disciplined, stay strong.
+              Stay steady, stay strong.
             </div>
-
-            {intention && (
-              <div style={{
-                background: "#151518",
-                border: "1px solid #1E1E24",
-                borderRadius: 12,
-                padding: 20,
-                marginBottom: 24,
-                textAlign: "left",
-              }}>
-                <div style={{
-                  fontSize: 12,
-                  color: "#E8A020",
-                  marginBottom: 8,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                }}>
-                  Today's Intention
-                </div>
-                <div style={{
-                  fontSize: 16,
-                  color: "#EDEDEB",
-                }}>
-                  {intention}
-                </div>
-              </div>
-            )}
+            <div style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              color: "#18A856",
+              marginBottom: 12,
+            }}>
+              Today's Intention
+            </div>
+            <div style={{
+              fontSize: 16,
+              color: "#EDEDEB",
+              marginBottom: 32,
+            }}>
+              {intention}
+            </div>
 
             <button
               onClick={handleFinish}

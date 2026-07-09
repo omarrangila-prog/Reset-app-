@@ -242,7 +242,7 @@ export default function TasksPage() {
           color: "#7A7A80",
           lineHeight: 1.5,
         }}>
-          Behavioral interruption tasks to break compulsive patterns and build discipline.
+          Small, grounding actions to pause the moment and regain calm.
         </div>
       </div>
 

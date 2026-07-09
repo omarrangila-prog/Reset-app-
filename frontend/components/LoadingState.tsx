@@ -8,7 +8,7 @@ interface LoadingStateProps {
 }
 
 const modeColors = {
-  URGE: "#FF3333",
+  URGE: "#F5A623",
   VULNERABILITY: "#F5A623",
   RECOVERY: "#1DB954",
 };

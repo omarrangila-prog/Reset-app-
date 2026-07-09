@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { CrisisBar } from "@/components/CrisisBar";
+import { AuthProvider } from "@/components/AuthProvider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 export const metadata: Metadata = {
   title: "RESET — A calm space to break the cycle",
@@ -27,8 +30,6 @@ export const metadata: Metadata = {
     description: "Interrupt urges and rebuild one day at a time.",
     images: ["/og-image.png"],
   },
-  themeColor: "#141413",
-  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
@@ -44,6 +45,9 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: "#141413",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover" as const,
 };
 
 export default function RootLayout({
@@ -62,16 +66,21 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="RESET" />
       </head>
       <body className="noise-overlay">
-        {children}
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+        <AuthProvider />
+        <ErrorBoundary>
+          <main id="main">{children}</main>
+        </ErrorBoundary>
+        <InstallPrompt />
         <CrisisBar position="bottom" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js').catch(err => {
-                    console.log('SW registration failed: ', err);
-                  });
+                window.addEventListener('load', function () {
+                  navigator.serviceWorker.register('/sw.js').catch(function () {});
                 });
               }
             `,

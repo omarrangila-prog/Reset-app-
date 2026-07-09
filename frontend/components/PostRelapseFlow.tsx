@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "@/lib/api";
 
 interface PostRelapseFlowProps {
   onComplete: () => void;
@@ -8,6 +9,28 @@ interface PostRelapseFlowProps {
 export function PostRelapseFlow({ onComplete, previousStreak = 0 }: PostRelapseFlowProps) {
   const [stage, setStage] = useState<"compassion" | "reflection" | "reset">("compassion");
   const [reflection, setReflection] = useState({ before: "", need: "", next: "" });
+  const [saving, setSaving] = useState(false);
+
+  // Record the relapse (resets streak, no penalty) and persist the reflection
+  // as an encrypted journal entry so the user's honest processing is not lost.
+  const commitRelapse = async () => {
+    setSaving(true);
+    try {
+      await api.logRelapse();
+      const parts = [
+        reflection.before && `Before: ${reflection.before}`,
+        reflection.need && `Needed: ${reflection.need}`,
+        reflection.next && `Next time: ${reflection.next}`,
+      ].filter(Boolean);
+      if (parts.length > 0) {
+        await api.createJournal(parts.join("\n"), "relapse-reflection").catch(() => {});
+      }
+    } catch {
+      /* best-effort; the compassionate flow should never block on network */
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const T = {
     bg: "#080809",
@@ -20,10 +43,12 @@ export function PostRelapseFlow({ onComplete, previousStreak = 0 }: PostRelapseF
     amber: "#D4A574",
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (stage === "compassion") {
       setStage("reflection");
     } else if (stage === "reflection") {
+      // Confirming the reflection is the point of commitment — record it here.
+      await commitRelapse();
       setStage("reset");
     } else {
       onComplete();

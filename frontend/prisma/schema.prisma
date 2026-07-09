@@ -3,24 +3,34 @@ generator client {
 }
 
 datasource db {
+  // Production: PostgreSQL. For local dev without Postgres, set
+  // DATABASE_URL="file:./dev.db" and change provider to "sqlite".
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id              String           @id @default(cuid())
-  email           String?          @unique
-  name            String?
+  // Anonymous device identity: sha256 of the device Ed25519 public key.
+  // No email/password — see lib/auth.ts. Kept nullable + unique so legacy
+  // rows and future auth methods can coexist.
+  deviceKeyHash   String?          @unique
   streak          Int              @default(0)
   longestStreak   Int              @default(0)
   totalUrges      Int              @default(0)
   totalRelapses   Int              @default(0)
   disciplineScore Int              @default(0)
+  // Timezone-aware streak tracking. streakStartDate is the calendar date
+  // (UTC midnight of the user's local day) the current streak began.
+  streakStartDate DateTime?
+  lastStreakDate  DateTime?
+  timezone        String           @default("UTC")
   lastActiveAt    DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   sessions        Session[]
   logs            Log[]
+  journalEntries  JournalEntry[]
   triggerPatterns TriggerPattern[]
 }
 
@@ -34,18 +44,38 @@ model Session {
   outcome   String?
   createdAt DateTime      @default(now())
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
 }
 
 model Log {
   id        String   @id @default(cuid())
   userId    String
   type      LogType
+  // emotion/trigger/note are ENCRYPTED at rest (AES-256-GCM, see lib/crypto.ts).
   emotion   String?
   trigger   String?
   note      String?
   intensity Int?     @default(5)
   timestamp DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timestamp])
+  @@index([userId, type])
+}
+
+// Persistent, encrypted journal. Replaces the previous throwaway textarea.
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  // content is ENCRYPTED at rest.
+  content   String
+  mood      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 model TriggerPattern {

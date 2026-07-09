@@ -1,40 +1,28 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
+/**
+ * API client. All requests are same-origin (Next.js API routes) and rely on the
+ * httpOnly session cookie for auth — the client never sends or knows a userId.
+ */
 
 export type BehavioralMode = "URGE" | "VULNERABILITY" | "RECOVERY";
 
 export interface InterventionResponse {
   message: string;
-  mode: BehavioralMode;
+  mode: BehavioralMode | "CRISIS";
   actionSteps: string[];
-  urgencyScore: number;
-  context: {
-    streak: number;
-    disciplineScore: number;
-  };
-}
-
-export interface UserProfile {
-  id: string;
-  name?: string;
-  email?: string;
-  streak: number;
-  longestStreak: number;
-  totalUrges: number;
-  totalRelapses: number;
-  disciplineScore: number;
-  createdAt: string;
-  logs: LogEntry[];
-  triggerPatterns: TriggerPattern[];
-  weeklyStats: { urges: number; relapses: number; successes: number };
+  urgencyScore?: number;
+  crisis?: boolean;
+  resources?: Array<{ label: string; value: string; href: string }>;
+  context: { streak: number; disciplineScore?: number };
+  fallback?: boolean;
 }
 
 export interface LogEntry {
   id: string;
   type: "URGE" | "RELAPSE" | "SUCCESS" | "CHECK_IN";
-  emotion?: string;
-  trigger?: string;
-  note?: string;
-  intensity?: number;
+  emotion?: string | null;
+  trigger?: string | null;
+  note?: string | null;
+  intensity?: number | null;
   timestamp: string;
 }
 
@@ -45,72 +33,93 @@ export interface TriggerPattern {
   lastSeen: string;
 }
 
+export interface JournalEntry {
+  id: string;
+  content: string;
+  mood?: string | null;
+  createdAt: string;
+}
+
+export interface MeProfile {
+  id: string;
+  streak: number;
+  longestStreak: number;
+  totalUrges: number;
+  totalRelapses: number;
+  disciplineScore: number;
+  momentum: string;
+  timezone: string;
+  createdAt: string;
+  weeklyStats: { urges: number; relapses: number; successes: number };
+  triggerPatterns: TriggerPattern[];
+  logs: LogEntry[];
+  dailyActivity: Array<{ date: string; urges: number; successes: number; relapses: number }>;
+}
+
 export interface StreakUpdateResponse {
   streak: number;
   longestStreak: number;
   disciplineScore: number;
   totalRelapses?: number;
+  alreadyCheckedInToday?: boolean;
   message: string;
 }
 
-class ApiError extends Error {
-  constructor(
-    public status: number,
-    message: string
-  ) {
+export class ApiError extends Error {
+  constructor(public status: number, message: string) {
     super(message);
     this.name = "ApiError";
   }
 }
 
-async function apiFetch<T>(
-  endpoint: string,
-  options?: RequestInit
-): Promise<T> {
-  const res = await fetch(`${API_URL}${endpoint}`, {
+async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(endpoint, {
     headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
     ...options,
   });
-
   if (!res.ok) {
     const data = await res.json().catch(() => ({ error: "Unknown error" }));
     throw new ApiError(res.status, data.error || `HTTP ${res.status}`);
   }
-
   return res.json();
 }
 
 export const api = {
+  // Auth
+  getSession: (): Promise<{ authenticated: boolean; userId?: string }> =>
+    apiFetch("/api/auth/session"),
+  register: (payload: {
+    publicKey: string;
+    nonce: string;
+    signature: string;
+    timezone?: string;
+  }): Promise<{ ok: boolean; userId: string }> =>
+    apiFetch("/api/auth/register", { method: "POST", body: JSON.stringify(payload) }),
+  logout: (): Promise<{ ok: boolean }> =>
+    apiFetch("/api/auth/session", { method: "DELETE" }),
+
+  // Profile + analytics
+  getMe: (): Promise<MeProfile> => apiFetch("/api/me"),
+
   // Coach
-  intervene: (
-    userId: string,
-    message: string,
-    urgencyScore: number = 5
-  ): Promise<InterventionResponse> =>
+  intervene: (message: string, urgencyScore = 5): Promise<InterventionResponse> =>
     apiFetch("/api/coach/intervene", {
       method: "POST",
-      body: JSON.stringify({ userId, message, urgencyScore }),
+      body: JSON.stringify({ message, urgencyScore }),
     }),
 
   // Streak
-  incrementStreak: (userId: string): Promise<StreakUpdateResponse> =>
+  checkIn: (): Promise<StreakUpdateResponse> =>
+    apiFetch("/api/streak/update", { method: "POST", body: JSON.stringify({ action: "checkin" }) }),
+  logRelapse: (reason?: string): Promise<StreakUpdateResponse> =>
     apiFetch("/api/streak/update", {
       method: "POST",
-      body: JSON.stringify({ userId, action: "increment" }),
-    }),
-
-  resetStreak: (
-    userId: string,
-    reason?: string
-  ): Promise<StreakUpdateResponse> =>
-    apiFetch("/api/streak/update", {
-      method: "POST",
-      body: JSON.stringify({ userId, action: "reset", reason }),
+      body: JSON.stringify({ action: "relapse", reason }),
     }),
 
   // Logs
   createLog: (data: {
-    userId: string;
     type: "URGE" | "RELAPSE" | "SUCCESS" | "CHECK_IN";
     emotion?: string;
     trigger?: string;
@@ -118,39 +127,17 @@ export const api = {
     intensity?: number;
   }): Promise<LogEntry> =>
     apiFetch("/api/log", { method: "POST", body: JSON.stringify(data) }),
+  getLogs: (limit = 20): Promise<LogEntry[]> => apiFetch(`/api/log?limit=${limit}`),
+  logTrigger: (triggerType: string): Promise<TriggerPattern> =>
+    apiFetch("/api/log/trigger", { method: "POST", body: JSON.stringify({ triggerType }) }),
 
-  logTrigger: (
-    userId: string,
-    triggerType: string
-  ): Promise<TriggerPattern> =>
-    apiFetch("/api/log/trigger", {
-      method: "POST",
-      body: JSON.stringify({ userId, triggerType }),
-    }),
+  // Journal
+  createJournal: (content: string, mood?: string): Promise<JournalEntry> =>
+    apiFetch("/api/journal", { method: "POST", body: JSON.stringify({ content, mood }) }),
+  getJournal: (limit = 30): Promise<JournalEntry[]> => apiFetch(`/api/journal?limit=${limit}`),
 
-  getLogs: (userId: string, limit = 20): Promise<LogEntry[]> =>
-    apiFetch(`/api/log/${userId}?limit=${limit}`),
-
-  // User
-  createUser: (data: { email?: string; name?: string }): Promise<UserProfile> =>
-    apiFetch("/api/user", { method: "POST", body: JSON.stringify(data) }),
-
-  getUser: (userId: string): Promise<UserProfile> =>
-    apiFetch(`/api/user/${userId}`),
-
-  getAnalytics: (userId: string) =>
-    apiFetch<{
-      streak: number;
-      longestStreak: number;
-      disciplineScore: number;
-      totalUrges: number;
-      totalRelapses: number;
-      triggerPatterns: TriggerPattern[];
-      dailyActivity: Array<{
-        date: string;
-        urges: number;
-        successes: number;
-        relapses: number;
-      }>;
-    }>(`/api/user/${userId}/analytics`),
+  // Account
+  deleteAccount: (): Promise<{ ok: boolean; deleted: boolean }> =>
+    apiFetch("/api/account", { method: "DELETE" }),
+  exportUrl: "/api/account/export",
 };

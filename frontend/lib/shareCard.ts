@@ -2,7 +2,6 @@
 
 export interface ShareCardData {
   streakDays: number;
-  disciplineScore: number;
   event: string; // e.g., "resisted an urge"
   timestamp?: Date;
 }
@@ -87,7 +86,6 @@ export async function generateShareCard(data: ShareCardData): Promise<string> {
   // Stats row
   const stats = [
     { label: "STREAK", value: `${data.streakDays} DAYS` },
-    { label: "DISCIPLINE", value: `${data.disciplineScore}/100` },
   ];
 
   stats.forEach((stat, i) => {

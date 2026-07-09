@@ -2,104 +2,117 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { api } from "@/lib/api";
+import { useAppStore } from "@/lib/store";
+
+const T = {
+  bg: "#141413",
+  surface: "#1A1A18",
+  text: "#EDEDEB",
+  sub: "#A7A7AD",
+  border: "#2C2C34",
+  recovery: "#2FBE6E",
+  amber: "#E0B486",
+  danger: "#E8352C",
+};
 
 export default function SettingsPage() {
-  const [deleted, setDeleted] = useState(false);
+  const clearSession = useAppStore((s) => s.clearSession);
+  const [status, setStatus] = useState<"idle" | "deleting" | "deleted" | "error">("idle");
+  const [confirming, setConfirming] = useState(false);
 
-  const handleDeleteAccount = () => {
-    window.localStorage.clear();
-    setDeleted(true);
+  const handleExport = () => {
+    // Opens the authenticated export endpoint; the browser downloads the file.
+    window.location.href = api.exportUrl;
+  };
+
+  const handleDelete = async () => {
+    setStatus("deleting");
+    try {
+      await api.deleteAccount();
+      clearSession();
+      // Also clear any local preferences and identity key store.
+      localStorage.clear();
+      if ("indexedDB" in window) indexedDB.deleteDatabase("reset-identity");
+      setStatus("deleted");
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: "24px",
-        background: "#141413",
-        color: "#EDEDEB",
-        fontFamily: "'DM Sans', sans-serif",
-      }}
-    >
+    <div style={{ minHeight: "100vh", padding: 24, background: T.bg, color: T.text, fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 24,
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>
-            <p
-              style={{
-                fontFamily: "'Bebas Neue', 'Impact', sans-serif",
-                fontSize: 24,
-                margin: 0,
-                letterSpacing: "0.12em",
-              }}
-            >
+            <h1 style={{ fontFamily: "'Bebas Neue', 'Impact', sans-serif", fontSize: 24, margin: 0, letterSpacing: "0.12em" }}>
               Settings
-            </p>
-            <p style={{ fontSize: 14, color: "#7A7A80", margin: "8px 0 0 0" }}>
-              Control your data and privacy in one place.
-            </p>
+            </h1>
+            <p style={{ fontSize: 14, color: T.sub, margin: "8px 0 0 0" }}>Control your data and privacy in one place.</p>
           </div>
-          <Link
-            href="/"
-            style={{
-              color: "#EDEDEB",
-              textDecoration: "underline",
-              fontSize: 13,
-            }}
-          >
+          <Link href="/" style={{ color: T.text, textDecoration: "underline", fontSize: 13, minHeight: 44, display: "inline-flex", alignItems: "center" }}>
             Back home
           </Link>
         </div>
 
-        <div
-          style={{
-            background: "#1A1A18",
-            padding: "24px",
-            borderRadius: 18,
-            border: "1px solid #2C2C34",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 18,
-              margin: "0 0 12px 0",
-              color: "#EDEDEB",
-            }}
-          >
-            Delete account
-          </h2>
-          <p style={{ color: "#B0B0B8", lineHeight: 1.7, marginBottom: 20 }}>
-            This clears all local data stored by RESET in your browser. It removes your saved preferences,
-            onboarding progress, streak history, and notes.
+        {/* Export */}
+        <section style={{ background: T.surface, padding: 24, borderRadius: 18, border: `1px solid ${T.border}`, marginBottom: 20 }}>
+          <h2 style={{ fontSize: 18, margin: "0 0 12px 0" }}>Export your data</h2>
+          <p style={{ color: T.sub, lineHeight: 1.7, marginBottom: 20 }}>
+            Download everything RESET has stored for you — streak history, logs, and journal entries — as a JSON file. Your data belongs to you.
           </p>
           <button
-            onClick={handleDeleteAccount}
-            style={{
-              width: "100%",
-              padding: "16px 18px",
-              background: "#D4A574",
-              color: "#141413",
-              border: "none",
-              borderRadius: 12,
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
+            onClick={handleExport}
+            style={{ width: "100%", padding: "16px 18px", background: T.recovery, color: "#000", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", minHeight: 44 }}
           >
-            Delete account and all local data
+            Download my data
           </button>
-          {deleted && (
-            <p style={{ marginTop: 18, color: "#18A856" }}>
-              Your local account data has been cleared. Refresh the page to begin again.
+        </section>
+
+        {/* Delete */}
+        <section style={{ background: T.surface, padding: 24, borderRadius: 18, border: `1px solid ${T.danger}44` }}>
+          <h2 style={{ fontSize: 18, margin: "0 0 12px 0" }}>Delete your account</h2>
+          <p style={{ color: T.sub, lineHeight: 1.7, marginBottom: 20 }}>
+            This permanently erases <strong>all</strong> of your data from our servers — profile, streak, logs, and journal — and cannot be undone.
+          </p>
+
+          {status === "deleted" ? (
+            <p style={{ color: T.recovery }}>
+              Your account and all data have been permanently deleted. Take care of yourself.
             </p>
+          ) : !confirming ? (
+            <button
+              onClick={() => setConfirming(true)}
+              style={{ width: "100%", padding: "16px 18px", background: "transparent", color: T.danger, border: `1px solid ${T.danger}`, borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", minHeight: 44 }}
+            >
+              Delete everything
+            </button>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <p style={{ color: T.text, fontWeight: 600 }}>Are you sure? This cannot be undone.</p>
+              <div style={{ display: "flex", gap: 12 }}>
+                <button
+                  onClick={handleDelete}
+                  disabled={status === "deleting"}
+                  style={{ flex: 1, padding: "14px 18px", background: T.danger, color: "#fff", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 44, opacity: status === "deleting" ? 0.7 : 1 }}
+                >
+                  {status === "deleting" ? "Deleting…" : "Yes, delete permanently"}
+                </button>
+                <button
+                  onClick={() => setConfirming(false)}
+                  style={{ flex: 1, padding: "14px 18px", background: "transparent", color: T.sub, border: `1px solid ${T.border}`, borderRadius: 12, fontSize: 14, cursor: "pointer", minHeight: 44 }}
+                >
+                  Keep my account
+                </button>
+              </div>
+              {status === "error" && (
+                <p role="alert" style={{ color: T.danger, fontSize: 13 }}>
+                  Something went wrong. Please try again.
+                </p>
+              )}
+            </div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );

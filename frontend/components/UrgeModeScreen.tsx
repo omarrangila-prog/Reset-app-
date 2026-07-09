@@ -32,6 +32,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
     textSub: "#7A7A80",
     textMuted: "#3A3A40",
     border: "#1E1E24",
+    accent: "#F5A623",
     recovery: "#18A856",
   };
 
@@ -248,10 +249,10 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
               onClick={() => setStage("timer")}
               style={{
                 padding: "14px 24px",
-                background: "transparent",
-                border: `1px solid ${T.recovery}`,
+                background: T.accent,
+                border: "none",
                 borderRadius: 10,
-                color: T.recovery,
+                color: "#080809",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 14,
                 fontWeight: 600,
@@ -276,7 +277,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 marginBottom: 24,
               }}
             >
-              Urge surfing timer
+              Grounding timer
             </p>
 
             <div
@@ -301,7 +302,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 marginBottom: 32,
               }}
             >
-              Most urges peak and pass in 15 minutes. You can outlast this one.
+              Strong feelings often settle in 15 minutes. Stay with the process.
             </p>
 
             <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
@@ -455,8 +456,8 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 width: 100,
                 height: 100,
                 borderRadius: "50%",
-                background: `rgba(24, 168, 86, 0.12)`,
-                border: `2px solid ${T.recovery}`,
+                background: `rgba(245, 166, 35, 0.1)`,
+                border: `2px solid ${T.accent}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -472,12 +473,12 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
               style={{
                 fontFamily: "'Bebas Neue', 'Impact', sans-serif",
                 fontSize: 40,
-                color: T.recovery,
+                color: T.accent,
                 marginBottom: 12,
                 letterSpacing: "0.05em",
               }}
             >
-              LOOP INTERRUPTED
+              SUPPORT COMPLETE
             </h1>
 
             <p
@@ -489,7 +490,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 marginBottom: 32,
               }}
             >
-              You interrupted the cycle. That's not willpower — that's identity. You're becoming someone who chooses differently.
+              You paused the momentum. That choice matters. Each return to calm builds your steady response.
             </p>
 
             <button

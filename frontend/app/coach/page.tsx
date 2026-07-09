@@ -142,25 +142,25 @@ function CoachPageInner() {
 
     try {
       await audioRef.current?.resume();
-      const effectiveUserId = userId || "demo-user";
-      const result = await api.intervene(effectiveUserId, finalMessage, finalUrgency);
+      // userId comes from the session cookie server-side; never sent by client.
+      const result = await api.intervene(finalMessage, finalUrgency);
 
       setResponse(result);
-      setMode(result.mode as Mode);
+      // Crisis responses are not a coaching "mode" — keep the current visual mode.
+      if (result.mode !== "CRISIS") setMode(result.mode as Mode);
       speakResponse(result.message);
 
-      if (userId) {
-        await api.createLog({
-          userId,
-          type: "URGE",
-          note: finalMessage,
-          intensity: finalUrgency,
-        });
+      // Log the urge for analytics (note is encrypted server-side). Best-effort.
+      if (userId && !result.crisis) {
+        api
+          .createLog({ type: "URGE", note: finalMessage, intensity: finalUrgency })
+          .catch(() => {});
       }
     } catch (e) {
-      const demoResponse = getDemoResponse(finalMode, finalUrgency);
-      setResponse(demoResponse);
-      speakResponse(demoResponse.message);
+      // Network/server error — degrade to a safe scripted response, never demo fiction.
+      const safe = getDemoResponse(finalMode, finalUrgency);
+      setResponse(safe);
+      speakResponse(safe.message);
     } finally {
       setLoading(false);
     }
@@ -242,9 +242,29 @@ function CoachPageInner() {
                 >
                   <CoachMessage
                     message={response.message}
-                    mode={response.mode as Mode}
+                    mode={response.mode === "CRISIS" ? "URGE" : (response.mode as Mode)}
                     actionSteps={response.actionSteps}
                   />
+                  {response.crisis && response.resources && (
+                    <div
+                      role="alert"
+                      className="mt-6 grid gap-2 rounded-2xl border border-red-400/40 bg-red-500/10 p-5"
+                    >
+                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-200">
+                        Immediate support
+                      </p>
+                      {response.resources.map((r) => (
+                        <a
+                          key={r.label}
+                          href={r.href}
+                          className="flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white transition hover:bg-black/60"
+                        >
+                          <span className="font-medium">{r.label}</span>
+                          <span className="text-slate-200">{r.value}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </motion.section>
               ) : (
                 <motion.section
@@ -347,10 +367,6 @@ function CoachPageInner() {
                 <div className="rounded-3xl bg-black/50 p-4">
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Total urges</p>
                   <p className="mt-2 text-3xl font-semibold text-white">{user?.totalUrges ?? 0}</p>
-                </div>
-                <div className="rounded-3xl bg-black/50 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Discipline score</p>
-                  <p className="mt-2 text-3xl font-semibold text-white">{user?.disciplineScore ?? 0}/100</p>
                 </div>
                 <div className="rounded-3xl bg-black/50 p-4">
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Longest streak</p>

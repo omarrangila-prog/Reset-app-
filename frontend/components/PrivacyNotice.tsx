@@ -89,9 +89,9 @@ export function PrivacyNotice({ showOnboarding = false }: PrivacyNoticeProps) {
               Never. Your data stays yours.
             </p>
             <p style={{ margin: "0 0 0 0" }}>
-              <strong>Can I delete my account?</strong>
+              <strong>Can I clear my data?</strong>
               <br />
-              Yes. Go to Settings → Delete Account and all your data is permanently removed.
+              Yes. Go to Settings → Clear local data to remove saved RESET progress and history from your browser.
             </p>
           </div>
 

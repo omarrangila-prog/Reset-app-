@@ -21,7 +21,6 @@ import {
 interface Analytics {
   streak: number;
   longestStreak: number;
-  disciplineScore: number;
   totalUrges: number;
   totalRelapses: number;
   triggerPatterns: Array<{ id: string; type: string; frequency: number; lastSeen: string }>;
@@ -46,40 +45,51 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [streakLoading, setStreakLoading] = useState(false);
 
+  const [loadError, setLoadError] = useState(false);
+
+  const refresh = async () => {
+    const me = await api.getMe();
+    setUser(me);
+    setAnalytics({
+      streak: me.streak,
+      longestStreak: me.longestStreak,
+      totalUrges: me.totalUrges,
+      totalRelapses: me.totalRelapses,
+      triggerPatterns: me.triggerPatterns,
+      dailyActivity: me.dailyActivity,
+    });
+  };
+
   useEffect(() => {
+    let cancelled = false;
     async function loadData() {
-      if (!userId) {
-        setLoading(false);
-        return;
-      }
+      // Wait until the device session is established.
+      if (!userId) return;
       try {
-        const [userData, analyticsData] = await Promise.all([
-          api.getUser(userId),
-          api.getAnalytics(userId),
-        ]);
-        setUser(userData);
-        setAnalytics(analyticsData);
+        await refresh();
+        if (!cancelled) setLoadError(false);
       } catch (e) {
-        // Use demo data
-        setAnalytics(getDemoAnalytics());
+        // Never show fabricated data — surface an honest error instead.
+        if (!cancelled) setLoadError(true);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     loadData();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
-  const handleIncrementStreak = async () => {
+  const handleCheckIn = async () => {
     if (!userId) return;
     setStreakLoading(true);
     try {
-      const result = await api.incrementStreak(userId);
-      const updatedUser = await api.getUser(userId);
-      setUser(updatedUser);
-      const updatedAnalytics = await api.getAnalytics(userId);
-      setAnalytics(updatedAnalytics);
+      await api.checkIn();
+      await refresh();
     } catch (e) {
-      console.error("Failed to increment streak:", e);
+      setLoadError(true);
     } finally {
       setStreakLoading(false);
     }
@@ -87,16 +97,13 @@ export default function DashboardPage() {
 
   const handleResetStreak = async () => {
     if (!userId) return;
-    if (!confirm("Reset your streak? This records a relapse.")) return;
+    if (!confirm("Log a relapse? Your streak restarts at day 1 — no shame, no penalty.")) return;
     setStreakLoading(true);
     try {
-      await api.resetStreak(userId);
-      const updatedUser = await api.getUser(userId);
-      setUser(updatedUser);
-      const updatedAnalytics = await api.getAnalytics(userId);
-      setAnalytics(updatedAnalytics);
+      await api.logRelapse();
+      await refresh();
     } catch (e) {
-      console.error("Failed to reset streak:", e);
+      setLoadError(true);
     } finally {
       setStreakLoading(false);
     }
@@ -126,7 +133,52 @@ export default function DashboardPage() {
     );
   }
 
-  const data = analytics || getDemoAnalytics();
+  if (loadError || !analytics) {
+    return (
+      <div
+        role="alert"
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 16,
+          padding: 24,
+          textAlign: "center",
+          color: "#EDEDEB",
+        }}
+      >
+        <p style={{ fontSize: 16 }}>We couldn&apos;t load your data just now.</p>
+        <p style={{ fontSize: 13, color: "#9A9AA0" }}>
+          Your progress is safe. Check your connection and try again.
+        </p>
+        <button
+          onClick={() => {
+            setLoading(true);
+            setLoadError(false);
+            refresh()
+              .catch(() => setLoadError(true))
+              .finally(() => setLoading(false));
+          }}
+          style={{
+            padding: "12px 20px",
+            background: "#18A856",
+            color: "#000",
+            border: "none",
+            borderRadius: 10,
+            fontWeight: 600,
+            cursor: "pointer",
+            minHeight: 44,
+          }}
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  const data = analytics;
 
   return (
     <div style={{ minHeight: "100vh", maxWidth: "800px", margin: "0 auto", padding: "0 24px 80px" }}>
@@ -182,7 +234,6 @@ export default function DashboardPage() {
         <StreakCard
           streak={user?.streak ?? data.streak}
           longestStreak={user?.longestStreak ?? data.longestStreak}
-          disciplineScore={user?.disciplineScore ?? data.disciplineScore}
         />
 
         {/* Streak controls */}
@@ -197,10 +248,10 @@ export default function DashboardPage() {
             variant="secondary"
             size="sm"
             loading={streakLoading}
-            onClick={handleIncrementStreak}
+            onClick={handleCheckIn}
             style={{ flex: 1 }}
           >
-            ✓ Mark today clean
+            ✓ Check in for today
           </Button>
           <Button
             variant="ghost"
@@ -495,32 +546,4 @@ function Legend({ color, label }: { color: string; label: string }) {
       </span>
     </div>
   );
-}
-
-function getDemoAnalytics(): Analytics {
-  const days = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (13 - i));
-    return {
-      date: d.toISOString().split("T")[0],
-      urges: Math.floor(Math.random() * 3),
-      successes: Math.floor(Math.random() * 2 + 1),
-      relapses: Math.random() > 0.9 ? 1 : 0,
-    };
-  });
-
-  return {
-    streak: 7,
-    longestStreak: 14,
-    disciplineScore: 62,
-    totalUrges: 23,
-    totalRelapses: 3,
-    triggerPatterns: [
-      { id: "1", type: "BOREDOM", frequency: 8, lastSeen: new Date().toISOString() },
-      { id: "2", type: "LATE_NIGHT", frequency: 6, lastSeen: new Date().toISOString() },
-      { id: "3", type: "STRESS", frequency: 4, lastSeen: new Date().toISOString() },
-      { id: "4", type: "LONELINESS", frequency: 3, lastSeen: new Date().toISOString() },
-    ],
-    dailyActivity: days,
-  };
 }

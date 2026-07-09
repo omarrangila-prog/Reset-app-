@@ -35,10 +35,10 @@ const variantStyles: Record<ButtonVariant, CSSProperties> = {
     border: "none",
   },
   urge: {
-    background: "#FF3333",
-    color: "#F2F2F0",
+    background: "#F5A623",
+    color: "#080809",
     border: "none",
-    boxShadow: "0 0 40px rgba(255, 51, 51, 0.4)",
+    boxShadow: "0 0 40px rgba(245, 166, 35, 0.25)",
   },
 };
 

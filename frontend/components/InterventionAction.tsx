@@ -47,7 +47,7 @@ export function InterventionAction({ mode, onComplete }: InterventionActionProps
       : recoveryActions;
 
   const accentColor =
-    mode === "URGE" ? "#FF3333" : mode === "VULNERABILITY" ? "#F5A623" : "#1DB954";
+    mode === "URGE" ? "#F5A623" : mode === "VULNERABILITY" ? "#F5A623" : "#1DB954";
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
