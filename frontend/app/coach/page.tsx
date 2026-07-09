@@ -67,6 +67,9 @@ function CoachInner() {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  // Voice-first: open into the big coach orb; user chooses Speak or Open chat.
+  // Skip the intro if arriving in URGE mode (they need help immediately).
+  const [showIntro, setShowIntro] = useState((params.get("mode") as Mode) !== "URGE");
   const autoSentRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -121,6 +124,28 @@ function CoachInner() {
   };
 
   const suggestions = ["I'm having an urge", "I feel anxious", "I'm doing okay today"];
+
+  // ── Voice-first intro: big breathing orb, choose Speak or Open chat ──
+  if (showIntro) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 28px", textAlign: "center", background: "linear-gradient(165deg, #EAF0FF 0%, #F3EEFF 55%, #EAFBF4 100%)", position: "relative", zIndex: 1 }}>
+        <Link href="/" aria-label="Back" style={{ position: "absolute", top: 20, left: 20, width: 40, height: 40, borderRadius: 12, background: "rgba(255,255,255,0.7)", border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub }}>‹</Link>
+        <AICoachOrb size={160} state="idle" />
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: t.text, letterSpacing: "-0.02em", marginTop: 32 }}>I&apos;m here with you</h1>
+        <p style={{ fontSize: 15, color: t.sub, lineHeight: 1.6, marginTop: 8, maxWidth: 320 }}>
+          Talk to me out loud, or type — whatever feels easier right now.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 32, width: "100%", maxWidth: 320 }}>
+          <Link href="/coach/voice" style={{ padding: "16px", background: t.gradHero, color: "#fff", borderRadius: 16, fontSize: 15, fontWeight: 600, minHeight: 56, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: t.shadowAccent }}>
+            🎙 Talk out loud
+          </Link>
+          <button onClick={() => setShowIntro(false)} style={{ padding: "16px", background: "rgba(255,255,255,0.7)", color: t.text, border: `1px solid ${t.border}`, borderRadius: 16, fontSize: 15, fontWeight: 600, minHeight: 56, cursor: "pointer", backdropFilter: "blur(8px)" }}>
+            Open chat instead
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
