@@ -9,6 +9,7 @@ import { t } from "@/components/ui/theme";
 const sections = [
   { href: "/journey/mood", label: "Mood", desc: "How are you feeling right now?", icon: "◐", accent: t.accent },
   { href: "/journey/history", label: "How you've felt", desc: "See your check-ins over time", icon: "◑", accent: t.sky },
+  { href: "/journey/triggers", label: "What sets you off", desc: "Spot your patterns and plan for them", icon: "◓", accent: t.vuln },
   { href: "/urge", label: "Calm Mode", desc: "Ride out an urge, one breath at a time", icon: "◯", accent: t.accent2 },
   { href: "/journey/journal", label: "Journal", desc: "A private place to write — only you can see it", icon: "❏", accent: t.mint },
   { href: "/journey/timeline", label: "Your journey", desc: "Your story so far", icon: "◔", accent: t.sky },

@@ -172,6 +172,13 @@ function CoachInner() {
             {typing ? "Thinking…" : meta.hint}
           </div>
         </div>
+        <Link
+          href="/coach/voice"
+          aria-label="Talk out loud (voice coach)"
+          style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.accent, marginRight: 4 }}
+        >
+          🎙
+        </Link>
         <AICoachOrb size={44} state={typing ? "thinking" : "idle"} />
       </header>
 

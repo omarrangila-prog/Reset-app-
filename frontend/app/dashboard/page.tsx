@@ -225,6 +225,15 @@ export default function DashboardPage() {
         </Link>
       </header>
 
+      <div style={{ display: "flex", gap: 10, margin: "16px 0" }}>
+        <Link href="/analytics" style={{ flex: 1, textAlign: "center", padding: "12px", background: "#FFFFFF", border: "1px solid #E6EAF2", borderRadius: 12, fontSize: 13, fontWeight: 600, color: "#5B7CFA", minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+          See what&apos;s helping
+        </Link>
+        <Link href="/achievements" style={{ flex: 1, textAlign: "center", padding: "12px", background: "#FFFFFF", border: "1px solid #E6EAF2", borderRadius: 12, fontSize: 13, fontWeight: 600, color: "#5B7CFA", minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+          Achievements
+        </Link>
+      </div>
+
       {/* Streak card */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
