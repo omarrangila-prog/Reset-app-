@@ -3,22 +3,10 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useAppStore } from "../../lib/store";
 import { api } from "../../lib/api";
-import { StreakCard } from "../../components/StreakCard";
-import { Card } from "../../components/Card";
-import { Button } from "../../components/Button";
-import { LoadingState } from "../../components/LoadingState";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { SkeletonCard, SkeletonOrb } from "@/components/ui/Skeleton";
 import Link from "next/link";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Analytics {
   streak: number;
@@ -182,381 +170,72 @@ export default function DashboardPage() {
   }
 
   const data = analytics;
+  const wins = data.dailyActivity.reduce((s, d) => s + d.successes, 0);
+  const urges = data.dailyActivity.reduce((s, d) => s + d.urges, 0);
 
   return (
-    <div style={{ minHeight: "100vh", maxWidth: "800px", margin: "0 auto", padding: "0 24px 120px" }}>
-      {/* Header */}
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "24px 0",
-          marginBottom: "8px",
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        <div>
-          <Link
-            href="/"
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "20px",
-              letterSpacing: "0.1em",
-              color: "#1C2333",
-            }}
-          >
-            RESET
-          </Link>
-          <div
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "12px",
-              color: "#8A93A6",
-              marginTop: "2px",
-            }}
-          >
-            Dashboard
-          </div>
+    <div style={{ minHeight: "100vh", maxWidth: 560, margin: "0 auto", padding: "24px 22px 130px", position: "relative", zIndex: 1 }}>
+      {/* Editorial masthead — typography-led, no "dashboard" chrome */}
+      <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32, marginTop: 8 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8A93A6" }}>Your progress</div>
+        <h1 style={{ fontSize: 40, fontWeight: 700, color: "#1C2333", letterSpacing: "-0.035em", lineHeight: 1.02, marginTop: 8 }}>
+          Look how far<br />you&apos;ve come.
+        </h1>
+      </motion.header>
+
+      {/* Hero narrative stat — one sentence, not a KPI grid */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 36 }}>
+        <div style={{ fontSize: 19, color: "#1C2333", lineHeight: 1.5, fontWeight: 500 }}>
+          Over two weeks you faced{" "}
+          <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{urges} urges</span> and got through{" "}
+          <span style={{ color: "#2FBE6E", fontWeight: 700 }}>{wins}</span> of them.
         </div>
-
-        <Link href="/coach?mode=URGE&urgency=8">
-          <Button variant="danger" size="sm">
-            I Need Help Now
-          </Button>
-        </Link>
-      </header>
-
-      <div style={{ display: "flex", gap: 10, margin: "16px 0" }}>
-        <Link href="/analytics" style={{ flex: 1, textAlign: "center", padding: "12px", background: "#FFFFFF", border: "1px solid #E6EAF2", borderRadius: 12, fontSize: 13, fontWeight: 600, color: "#5B7CFA", minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-          See what&apos;s helping
-        </Link>
-        <Link href="/achievements" style={{ flex: 1, textAlign: "center", padding: "12px", background: "#FFFFFF", border: "1px solid #E6EAF2", borderRadius: 12, fontSize: 13, fontWeight: 600, color: "#5B7CFA", minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-          Achievements
-        </Link>
-      </div>
-
-      {/* Streak card */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        style={{ margin: "24px 0" }}
-      >
-        <StreakCard
-          streak={user?.streak ?? data.streak}
-          longestStreak={user?.longestStreak ?? data.longestStreak}
-        />
-
-        {/* Streak controls */}
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            marginTop: "12px",
-          }}
-        >
-          <Button
-            variant="secondary"
-            size="sm"
-            loading={streakLoading}
-            onClick={handleCheckIn}
-            style={{ flex: 1 }}
-          >
-            ✓ Check in for today
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            loading={streakLoading}
-            onClick={handleResetStreak}
-            style={{ color: "#EC6A5E" }}
-          >
-            Reset
-          </Button>
-        </div>
+        <div style={{ fontSize: 14, color: "#8A93A6", marginTop: 8 }}>That&apos;s not luck. That&apos;s you showing up.</div>
       </motion.div>
 
-      {/* Stats grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "12px",
-          marginBottom: "24px",
-        }}
-      >
-        <StatCard
-          label="Total Urges Faced"
-          value={data.totalUrges}
-          sublabel="You faced each one"
-          color="#5B7CFA"
-        />
-        <StatCard
-          label="Relapses"
-          value={data.totalRelapses}
-          sublabel={data.totalRelapses === 0 ? "Clean record" : "Each one taught you"}
-          color={data.totalRelapses === 0 ? "#2FBE6E" : "#EC6A5E"}
-        />
-      </motion.div>
-
-      {/* Activity chart */}
+      {/* Chart as a calm, wide hero (asymmetric, no card chrome) */}
       {chartData.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          style={{ marginBottom: "24px" }}
-        >
-          <Card variant="default" padding="md">
-            <div
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "#8A93A6",
-                marginBottom: "20px",
-              }}
-            >
-              14-Day Activity
-            </div>
-            <ResponsiveContainer width="100%" height={140}>
-              <BarChart data={chartData} barGap={2}>
-                <XAxis
-                  dataKey="day"
-                  tick={{ fontSize: 11, fill: "#8A93A6", fontFamily: "var(--font-body)" }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis hide />
-                <Tooltip
-                  contentStyle={{
-                    background: "#FFFFFF",
-                    border: "1px solid #E6EAF2",
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    fontFamily: "var(--font-body)",
-                    color: "#1C2333",
-                  }}
-                />
-                <Bar dataKey="urges" name="Urges" fill="#EC6A5E55" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="wins" name="Wins" fill="#2FBE6E88" radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-            <div style={{ display: "flex", gap: "16px", marginTop: "12px" }}>
-              <Legend color="#EC6A5E55" label="Urges" />
-              <Legend color="#2FBE6E88" label="Wins" />
-            </div>
-          </Card>
-        </motion.div>
+        <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 40 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A93A6", marginBottom: 18 }}>Last 14 days</div>
+          <ResponsiveContainer width="100%" height={150}>
+            <BarChart data={chartData} barGap={3}>
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#B4BCCE" }} axisLine={false} tickLine={false} />
+              <Tooltip cursor={{ fill: "#EEF1FA" }} contentStyle={{ background: "#fff", border: "1px solid #E6EAF2", borderRadius: 12, fontSize: 12, color: "#1C2333" }} />
+              <Bar dataKey="wins" name="Got through" fill="#2FBE6E" radius={[5, 5, 0, 0]} animationDuration={900} />
+              <Bar dataKey="urges" name="Urges" fill="#C7D0FF" radius={[5, 5, 0, 0]} animationDuration={900} />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.section>
       )}
 
-      {/* Trigger patterns */}
+      {/* Check-in — the one primary action, framed warmly */}
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", borderRadius: 22, background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: "1px solid #E6EAF2", boxShadow: "0 8px 24px rgba(46,62,120,0.07), inset 0 1px 0 rgba(255,255,255,0.9)" }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#1C2333" }}>Been on track today?</div>
+            <div style={{ fontSize: 13, color: "#8A93A6", marginTop: 2 }}>A quick check-in keeps your thread alive.</div>
+          </div>
+          <button onClick={handleCheckIn} disabled={streakLoading} style={{ padding: "12px 20px", borderRadius: 999, border: "none", background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 44, boxShadow: "0 10px 24px rgba(91,124,250,0.28)" }}>
+            {streakLoading ? "…" : "Check in"}
+          </button>
+        </div>
+        <button onClick={handleResetStreak} style={{ display: "block", margin: "14px auto 0", background: "none", border: "none", color: "#8A93A6", fontSize: 13, cursor: "pointer" }}>
+          I slipped — start again, gently
+        </button>
+      </motion.section>
+
+      {/* Trigger insight as one editorial line + soft link, not a bar list */}
       {data.triggerPatterns.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          style={{ marginBottom: "24px" }}
-        >
-          <Card variant="default" padding="md">
-            <div
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "#8A93A6",
-                marginBottom: "20px",
-              }}
-            >
-              Your Trigger Patterns
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {data.triggerPatterns.slice(0, 5).map((tp, i) => {
-                const maxFreq = data.triggerPatterns[0]?.frequency || 1;
-                const pct = Math.round((tp.frequency / maxFreq) * 100);
-                return (
-                  <div key={tp.id || i}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "6px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: "var(--font-body)",
-                          fontSize: "14px",
-                          color: "#1C2333",
-                        }}
-                      >
-                        {triggerLabels[tp.type] || tp.type}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "12px",
-                          color: "#8A93A6",
-                        }}
-                      >
-                        {tp.frequency}×
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        height: "4px",
-                        background: "rgba(255,255,255,0.06)",
-                        borderRadius: "var(--r-full)",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ delay: 0.5 + i * 0.1, duration: 0.6, ease: "easeOut" }}
-                        style={{
-                          height: "100%",
-                          background: i === 0 ? "#EC6A5E" : i === 1 ? "#5B7CFA" : "#8A93A6",
-                          borderRadius: "var(--r-full)",
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        </motion.div>
+        <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }} style={{ marginBottom: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A93A6", marginBottom: 10 }}>What we&apos;ve noticed</div>
+          <p style={{ fontSize: 17, color: "#1C2333", lineHeight: 1.55, fontWeight: 500 }}>
+            Your urges lean toward <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{triggerLabels[data.triggerPatterns[0].type] || "certain moments"}</span>.
+          </p>
+          <Link href="/journey/triggers" style={{ display: "inline-block", marginTop: 10, color: "#5B7CFA", fontSize: 14, fontWeight: 600 }}>See your patterns →</Link>
+        </motion.section>
       )}
 
-      {/* Weekly summary */}
-      {user?.weeklyStats && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Card variant="bordered" padding="md">
-            <div
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "#8A93A6",
-                marginBottom: "16px",
-              }}
-            >
-              This Week
-            </div>
-            <div style={{ display: "flex", gap: "32px" }}>
-              <div>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#5B7CFA" }}>
-                  {user.weeklyStats.urges}
-                </div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#8A93A6" }}>
-                  urges faced
-                </div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#2FBE6E" }}>
-                  {user.weeklyStats.successes}
-                </div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#8A93A6" }}>
-                  wins
-                </div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--font-heading)", fontSize: "28px", color: "#EC6A5E" }}>
-                  {user.weeklyStats.relapses}
-                </div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: "12px", color: "#8A93A6" }}>
-                  relapses
-                </div>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-      )}
       <BottomNav />
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  sublabel,
-  color,
-}: {
-  label: string;
-  value: number;
-  sublabel: string;
-  color: string;
-}) {
-  return (
-    <Card variant="default" padding="md">
-      <div
-        style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: "#8A93A6",
-          marginBottom: "8px",
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          fontFamily: "var(--font-heading)",
-          fontSize: "40px",
-          color,
-          lineHeight: 1,
-          marginBottom: "6px",
-        }}
-      >
-        {value}
-      </div>
-      <div
-        style={{
-          fontFamily: "var(--font-body)",
-          fontSize: "12px",
-          color: "#8A93A6",
-        }}
-      >
-        {sublabel}
-      </div>
-    </Card>
-  );
-}
-
-function Legend({ color, label }: { color: string; label: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-      <div
-        style={{
-          width: 10,
-          height: 10,
-          borderRadius: "2px",
-          background: color,
-        }}
-      />
-      <span style={{ fontSize: "12px", color: "#8A93A6", fontFamily: "var(--font-body)" }}>
-        {label}
-      </span>
     </div>
   );
 }
