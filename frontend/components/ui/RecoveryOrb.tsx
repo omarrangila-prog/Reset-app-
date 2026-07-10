@@ -82,21 +82,29 @@ export function RecoveryOrb({
           justifyContent: "center",
         }}
       >
-        {/* Internal light that slowly drifts (living energy inside) */}
+        {/* Liquid light — two counter-drifting blooms + a slow caustic sheen,
+            reading as living energy flowing inside the crystal. */}
         {!reduced && (
-          <motion.div
-            aria-hidden
-            style={{
-              position: "absolute",
-              width: "60%",
-              height: "60%",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)",
-              filter: "blur(6px)",
-            }}
-            animate={{ x: ["-14%", "16%", "-8%"], y: ["10%", "-14%", "8%"], opacity: [0.6, 0.9, 0.6] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
+          <>
+            <motion.div
+              aria-hidden
+              style={{ position: "absolute", width: "62%", height: "62%", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)", filter: "blur(7px)" }}
+              animate={{ x: ["-14%", "16%", "-8%"], y: ["10%", "-14%", "8%"], opacity: [0.55, 0.9, 0.55] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              aria-hidden
+              style={{ position: "absolute", width: "42%", height: "42%", borderRadius: "50%", background: "radial-gradient(circle, rgba(180,205,255,0.5), transparent 72%)", filter: "blur(8px)" }}
+              animate={{ x: ["18%", "-16%", "12%"], y: ["-8%", "14%", "-10%"], opacity: [0.4, 0.7, 0.4] }}
+              transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              aria-hidden
+              style={{ position: "absolute", inset: "8%", borderRadius: "50%", background: "conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.18) 60deg, transparent 140deg, rgba(150,180,255,0.14) 240deg, transparent 320deg)", filter: "blur(4px)", mixBlendMode: "screen" }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+            />
+          </>
         )}
 
         {/* Specular highlight */}

@@ -37,27 +37,32 @@ export function Card({
     padding,
     ...style,
   };
+  // Sculpted-glass surface: a faint top-lit gradient (not flat white) + an inner
+  // rim highlight in the shadow so every card reads as a polished material.
+  const sculpted = "linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 55%, #F7F8FD 100%)";
+  const innerRim = "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 2px rgba(46,62,120,0.03)";
   const variants: Record<string, CSSProperties> = {
-    soft: { background: t.surface, border: `1px solid ${t.border}`, boxShadow: t.shadowSm },
-    float: { background: t.surface, border: `1px solid ${t.border}`, boxShadow: t.shadowMd },
+    soft: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${t.shadowSm}, ${innerRim}` },
+    float: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${t.shadowMd}, ${innerRim}` },
     glass: {
       background: t.glass,
-      backdropFilter: "blur(20px) saturate(140%)",
-      WebkitBackdropFilter: "blur(20px) saturate(140%)",
-      border: "1px solid rgba(255,255,255,0.6)",
-      boxShadow: t.shadowMd,
+      backdropFilter: "blur(24px) saturate(160%)",
+      WebkitBackdropFilter: "blur(24px) saturate(160%)",
+      border: "1px solid rgba(255,255,255,0.65)",
+      boxShadow: `${t.shadowMd}, ${innerRim}`,
     },
-    tint: { background: t.accentSoft, border: `1px solid ${t.accent}22`, boxShadow: "none" },
+    tint: { background: `linear-gradient(180deg, ${t.accentSoft} 0%, #EEF0FE 100%)`, border: `1px solid ${t.accent}22`, boxShadow: innerRim },
   };
 
-  const merged = { ...base, ...variants[variant] };
+  const merged = { ...base, ...variants[variant], position: "relative" as const, overflow: "hidden" as const };
 
   if (!onClick) {
-    return <div style={merged}>{children}</div>;
+    return <div className="pearl" style={merged}>{children}</div>;
   }
 
   return (
     <motion.button
+      className="pearl"
       onClick={onClick}
       aria-label={ariaLabel}
       whileHover={reduced ? undefined : { y: -3, boxShadow: t.shadowLg }}
