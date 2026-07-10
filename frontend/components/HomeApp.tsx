@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
+import { Splash } from "@/components/Splash";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { PostRelapseFlow } from "@/components/PostRelapseFlow";
 import { Modal } from "@/components/Modal";
@@ -199,6 +201,7 @@ export default function HomeApp() {
   const [journalSaving, setJournalSaving] = useState(false);
   const [journalSaved, setJournalSaved] = useState(false);
   const [showJournalModal, setShowJournalModal] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   const streak = user?.streak ?? 0;
   const longestStreak = user?.longestStreak ?? 0;
@@ -255,6 +258,7 @@ export default function HomeApp() {
 
   return (
     <div style={{ minHeight: "100vh", color: t.text }}>
+      <AnimatePresence>{showSplash && <Splash onDone={() => setShowSplash(false)} />}</AnimatePresence>
       {showOnboarding && <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingComplete} />}
       {showPostRelapse && <PostRelapseFlow onComplete={handleRelapseComplete} previousStreak={streak} />}
 
