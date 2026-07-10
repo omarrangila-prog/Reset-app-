@@ -9,6 +9,7 @@ import {
   verifyDeviceSignature,
 } from "@/lib/auth";
 import { enforceRateLimit, LIMITS } from "@/lib/rateLimit";
+import { encrypt } from "@/lib/crypto";
 import { audit, log } from "@/lib/logger";
 
 /**
@@ -37,6 +38,10 @@ export async function POST(req: NextRequest) {
     const keyHash = hashPublicKey(body.publicKey);
     const timezone = body.timezone && body.timezone.length > 0 ? body.timezone : "UTC";
     const user = store.upsertUserByKey(keyHash, timezone);
+
+    // Seed a realistic 2-week history so the app never feels empty on first open.
+    // Idempotent — only seeds a fresh account.
+    store.seedDemoData(user.id, encrypt);
 
     const token = createSessionToken(user.id);
     audit("register.success", user.id);

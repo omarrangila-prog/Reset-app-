@@ -313,6 +313,57 @@ export const store = {
     return rows.map(rowToTrigger);
   },
 
+  /**
+   * Seed a realistic 2-week history so a brand-new account never looks empty.
+   * `encJournal` is a caller-provided function that encrypts journal content
+   * (keeps this module free of crypto imports). Idempotent: only seeds once.
+   */
+  seedDemoData(userId: string, encJournal: (s: string) => string): void {
+    const already = db.prepare("SELECT COUNT(*) c FROM logs WHERE userId = ?").get(userId) as { c: number };
+    if (already.c > 0) return;
+
+    const now = Date.now();
+    const DAY = 24 * 60 * 60 * 1000;
+    const insLog = db.prepare(
+      "INSERT INTO logs (id, userId, type, emotion, trigger, note, intensity, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+    const moods = ["Calm", "Calm", "Anxious", "Tired", "Happy", "Neutral", "Calm", "Low", "Happy", "Anxious", "Calm", "Tired"];
+
+    const seed = db.transaction(() => {
+      // 12 days of activity: a daily check-in win, a few urges faced, mood logs.
+      for (let d = 12; d >= 1; d--) {
+        const ts = now - d * DAY;
+        insLog.run(id("log"), userId, "SUCCESS", null, null, null, null, ts + 8 * 3600e3);
+        insLog.run(id("log"), userId, "CHECK_IN", moods[d % moods.length], null, null, null, ts + 9 * 3600e3);
+        // Some late-night urges (drives the "late night" insight).
+        if (d % 3 === 0) insLog.run(id("log"), userId, "URGE", null, null, null, 6, ts + 23.5 * 3600e3);
+        if (d % 5 === 0) insLog.run(id("log"), userId, "URGE", null, null, null, 4, ts + 15 * 3600e3);
+      }
+
+      // Trigger patterns.
+      const trig: [TriggerType, number][] = [["LATE_NIGHT", 5], ["STRESS", 3], ["BOREDOM", 2], ["LONELINESS", 1]];
+      const insTrig = db.prepare("INSERT INTO triggers (id, userId, type, frequency, lastSeen, createdAt) VALUES (?, ?, ?, ?, ?, ?)");
+      trig.forEach(([type, freq]) => insTrig.run(id("trg"), userId, type, freq, now, now - 12 * DAY));
+
+      // A few warm journal entries (encrypted).
+      const entries = [
+        "First day trying this. Feeling nervous but hopeful. One step at a time.",
+        "Made it through a tough evening by going for a walk instead. Small win.",
+        "Slept better last night and the whole day felt easier. Noting that.",
+        "Reached out to a friend today. Felt good to not be in my head so much.",
+      ];
+      const insJ = db.prepare("INSERT INTO journal (id, userId, content, mood, createdAt) VALUES (?, ?, ?, ?, ?)");
+      entries.forEach((e, i) => insJ.run(id("jrn"), userId, encJournal(e), null, now - (10 - i * 2) * DAY));
+
+      // Set a believable streak + score + totals on the user.
+      db.prepare(
+        `UPDATE users SET streak = 12, longestStreak = 12, totalUrges = 6, totalRelapses = 0,
+          disciplineScore = 68, lastStreakDate = ?, streakStartDate = ? WHERE id = ?`
+      ).run(now - DAY, now - 12 * DAY, userId);
+    });
+    seed();
+  },
+
   // ── sessions ──
   createSession(userId: string, mode: SessionMode): SessionRow {
     const s: SessionRow = { id: id("ses"), userId, mode, startedAt: new Date() };
