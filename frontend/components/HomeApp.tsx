@@ -66,21 +66,19 @@ function HomeScreen({
         </header>
       </Reveal>
 
-      {/* ── HERO: dominant recovery orb on cinematic mesh (≈38% of screen) ── */}
+      {/* ── HERO: compact orb + stats side-by-side (≈28% of screen) ── */}
       <Reveal index={1}>
         <div
           className="mesh pearl"
           style={{
             borderRadius: 32,
-            padding: "44px 24px 32px",
-            marginBottom: 16,
-            textAlign: "center",
+            padding: "22px 22px",
+            marginBottom: 14,
             boxShadow: t.shadowAccent,
             position: "relative",
-            minHeight: "42vh",
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
+            alignItems: "center",
+            gap: 18,
           }}
         >
           <div
@@ -88,22 +86,26 @@ function HomeScreen({
             style={{
               position: "absolute", inset: 0, backgroundImage: "url('/hero/home.webp')",
               backgroundSize: "cover", backgroundPosition: "center", mixBlendMode: "screen",
-              opacity: 0.5, borderRadius: 32, pointerEvents: "none",
+              opacity: 0.45, borderRadius: 32, pointerEvents: "none",
             }}
           />
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <RecoveryOrb score={score} size={240} label="How you're doing" delta={score > 0 ? momentum : undefined} />
+          <div style={{ position: "relative", zIndex: 1, flexShrink: 0 }}>
+            <RecoveryOrb score={score} size={128} label="" />
+          </div>
+          <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>How you&apos;re doing</div>
+            <div style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginTop: 4 }}>{momentum}</div>
             <div
               style={{
-                display: "inline-flex", alignItems: "center", gap: 8, marginTop: 22,
-                padding: "10px 20px", borderRadius: 999,
+                display: "inline-flex", alignItems: "center", gap: 7, marginTop: 12,
+                padding: "8px 14px", borderRadius: 999,
                 background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)",
                 WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.32)",
-                color: "#fff", fontSize: 14, fontWeight: 600,
+                color: "#fff", fontSize: 13, fontWeight: 600,
               }}
             >
               <span aria-hidden>🔥</span>
-              {streak} day streak{longestStreak > streak ? ` · best ${longestStreak}` : ""}
+              {streak} day streak
             </div>
           </div>
         </div>
