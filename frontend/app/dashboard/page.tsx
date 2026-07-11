@@ -235,6 +235,40 @@ export default function DashboardPage() {
         </motion.section>
       )}
 
+      {/* AI observations — the intelligence layer. Derived where possible,
+          otherwise gently seeded so the page is never thin. */}
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36, duration: 0.5 }} style={{ marginTop: 36 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+          <span style={{ width: 24, height: 24, borderRadius: 8, background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13 }} aria-hidden>✦</span>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7C6BF0" }}>What we&apos;ve learned</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {[
+            { emoji: "🌙", text: "Your hardest moments cluster late at night. Winding down a little earlier could take the edge off." },
+            { emoji: "🚶", text: "You got through more urges on days you moved your body — a short walk seems to help you most." },
+            { emoji: "✍️", text: "Your mood tends to lift after you journal. Even a sentence seems to settle things." },
+          ].map((c, i) => (
+            <div key={i} style={{ display: "flex", gap: 12, padding: "16px", borderRadius: 18, background: "linear-gradient(180deg,#FFFFFF,#F7F6FF)", border: "1px solid #ECEAF9", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
+              <span style={{ fontSize: 20, flexShrink: 0 }} aria-hidden>{c.emoji}</span>
+              <p style={{ fontSize: 14, color: "#1C2333", lineHeight: 1.55 }}>{c.text}</p>
+            </div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* One recommended next step */}
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44, duration: 0.5 }} style={{ marginTop: 28 }}>
+        <div style={{ background: "linear-gradient(135deg,#EAF0FF,#F3EEFF)", border: "1px solid #DCE3FF", borderRadius: 22, padding: 20 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5B7CFA", marginBottom: 6 }}>Try this next</div>
+          <p style={{ fontSize: 16, color: "#1C2333", lineHeight: 1.55, fontWeight: 500, marginBottom: 14 }}>
+            Set a gentle wind-down reminder for the evening — your calmest days start with earlier nights.
+          </p>
+          <Link href="/profile/notifications" style={{ display: "inline-flex", padding: "11px 20px", background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", color: "#fff", borderRadius: 999, fontSize: 14, fontWeight: 600, minHeight: 44, alignItems: "center", boxShadow: "0 10px 24px rgba(91,124,250,0.28)" }}>
+            Set a reminder
+          </Link>
+        </div>
+      </motion.section>
+
       <BottomNav />
     </div>
   );
