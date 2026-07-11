@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CalmSphere } from "@/components/ui/CalmSphere";
 import { loadPlan, UrgeAction } from "@/lib/urgePlan";
+import { loadLetter } from "@/lib/wins";
 
 interface UrgeModeScreenProps {
   onComplete: () => void;
@@ -11,7 +12,8 @@ interface UrgeModeScreenProps {
 
 export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
   const [plan, setPlan] = useState<UrgeAction[]>([]);
-  useEffect(() => { setPlan(loadPlan()); }, []);
+  const [letter, setLetter] = useState("");
+  useEffect(() => { setPlan(loadPlan()); setLetter(loadLetter()); }, []);
   const [stage, setStage] = useState<"message" | "breathing" | "timer" | "distraction" | "complete">("message");
   const [timerSeconds, setTimerSeconds] = useState(900); // 15 minutes
   const [timerRunning, setTimerRunning] = useState(false);
@@ -181,6 +183,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
             <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
               <Link href="/urge/delay" style={{ padding: "9px 15px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, border: `1px solid ${T.border}` }}>Wait 10 minutes</Link>
               <Link href="/urge/environment" style={{ padding: "9px 15px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, border: `1px solid ${T.border}` }}>Change environment</Link>
+              {letter && <Link href="/profile/letter" style={{ padding: "9px 15px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, border: `1px solid ${T.border}` }}>Read your letter</Link>}
             </div>
 
             {/* Always-available crisis resources. */}
