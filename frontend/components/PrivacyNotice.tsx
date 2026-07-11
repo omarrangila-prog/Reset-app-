@@ -12,8 +12,8 @@ export function PrivacyNotice({ showOnboarding = false }: PrivacyNoticeProps) {
     bgSurface: "#FFFFFF",
     text: "#1C2333",
     textSub: "#5A6478",
-    textMuted: "#3A3A40",
-    border: "#1E1E24",
+    textMuted: "#646E80",
+    border: "#E6EAF2",
     recovery: "#2FBE6E",
   };
 

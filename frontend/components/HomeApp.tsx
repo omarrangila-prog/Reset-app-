@@ -10,6 +10,7 @@ import { Modal } from "@/components/Modal";
 import { Card } from "@/components/ui/Card";
 import { RecoveryOrb } from "@/components/ui/RecoveryOrb";
 import { deriveInsight } from "@/lib/insights";
+import { deriveReflection } from "@/lib/reflection";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
@@ -30,6 +31,7 @@ function HomeScreen({
   momentum,
   score,
   insight,
+  reflection,
   onJournalTap,
   onRelapseTap,
 }: {
@@ -37,6 +39,7 @@ function HomeScreen({
   momentum: string;
   score: number;
   insight: string;
+  reflection: string;
   onJournalTap: () => void;
   onRelapseTap: () => void;
 }) {
@@ -66,8 +69,24 @@ function HomeScreen({
         </header>
       </Reveal>
 
-      {/* ── HERO: compact orb + stats side-by-side (≈28% of screen) ── */}
+      {/* ── DAILY REFLECTION: a warm, personalized read on your recent journey ── */}
       <Reveal index={1}>
+        <div
+          className="frost"
+          style={{
+            borderRadius: 20, padding: "16px 18px", marginBottom: 14,
+            border: `1px solid ${t.border}`, display: "flex", gap: 13, alignItems: "flex-start",
+          }}
+        >
+          <span aria-hidden style={{ fontSize: 22, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>🌅</span>
+          <p style={{ fontSize: 15, color: t.text, lineHeight: 1.55, fontWeight: 500, margin: 0 }}>
+            {reflection}
+          </p>
+        </div>
+      </Reveal>
+
+      {/* ── HERO: compact orb + stats side-by-side (≈28% of screen) ── */}
+      <Reveal index={2}>
         <div
           className="mesh pearl"
           style={{
@@ -104,7 +123,7 @@ function HomeScreen({
       </Reveal>
 
       {/* ── PRIMARY ACTION: calm mode (right under the hero) ── */}
-      <Reveal index={2}>
+      <Reveal index={3}>
         <Link
           href="/urge"
           style={{
@@ -119,7 +138,7 @@ function HomeScreen({
       </Reveal>
 
       {/* ── AI INSIGHT (real, from your data) ── */}
-      <Reveal index={3}>
+      <Reveal index={4}>
         <Card variant="soft" style={{ marginBottom: 16, borderLeft: `3px solid ${t.accent2}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <span style={{ width: 22, height: 22, borderRadius: 7, background: t.gradHero, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12 }} aria-hidden>✦</span>
@@ -130,7 +149,7 @@ function HomeScreen({
       </Reveal>
 
       {/* ── TODAY'S FOCUS (real habits) ── */}
-      <Reveal index={4}>
+      <Reveal index={5}>
         <Card variant="soft" style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Today&apos;s focus</div>
@@ -142,8 +161,8 @@ function HomeScreen({
         </Card>
       </Reveal>
 
-      {/* ── DAILY REFLECTION ── */}
-      <Reveal index={5}>
+      {/* ── DAILY REFLECTION PROMPT ── */}
+      <Reveal index={6}>
         <Card variant="soft" style={{ marginBottom: 12 }}>
           <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
             Take a moment
@@ -400,6 +419,7 @@ export default function HomeApp() {
           momentum={momentum}
           score={score}
           insight={deriveInsight(user?.logs, user?.triggerPatterns)}
+          reflection={deriveReflection(user?.logs, user?.dailyActivity, streak)}
           onJournalTap={() => setShowJournalModal(true)}
           onRelapseTap={() => setShowPostRelapse(true)}
         />

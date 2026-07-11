@@ -1,322 +1,284 @@
+"use client";
+
 import { useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { AICoachOrb } from "@/components/ui/AICoachOrb";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
-import { PrivacyShield } from "@/components/ui/PrivacyShield";
+import { haptic } from "@/lib/haptics";
 
 interface OnboardingFlowProps {
-  onComplete: (data: { reason: string; name: string; timeOfDay: string; remindTime?: string }) => void;
+  onComplete: (data: { reason: string; name: string; timeOfDay: string }) => void;
   onSkip: () => void;
 }
 
+// Brand-consistent light palette (mirrors theme.ts; kept local so onboarding
+// renders before the app store / theme is hydrated).
+const T = {
+  bg: "radial-gradient(120% 90% at 50% 12%, #EEF1FF 0%, #F1EEFF 46%, #E9F1FF 100%)",
+  surface: "#FFFFFF",
+  text: "#1C2333",
+  sub: "#5A6478",
+  muted: "#646E80",
+  border: "#E6EAF2",
+  accent: "#5B7CFA",
+  accent2: "#7C6BF0",
+  mint: "#34C9A3",
+  ctaDeep: "#4257C9", // AA (>4.5:1) with white
+};
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+const TOTAL = 4;
+
 export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
-  const [screen, setScreen] = useState<1 | 2 | 3>(1);
-  const [reason, setReason] = useState("");
-  const [name, setName] = useState("");
-  const [timeOfDay, setTimeOfDay] = useState("");
+  const reduced = useReducedMotion();
+  const [screen, setScreen] = useState(0); // 0..3
+  const [dir, setDir] = useState(1);
 
-  const T = {
-    bg: "#F5F7FC",
-    bgSurface: "#FFFFFF",
-    text: "#1C2333",
-    textSub: "#5A6478",
-    textMuted: "#8A93A6",
-    border: "#E6EAF2",
-    recovery: "#2FBE6E",
-    recoveryDeep: "#128A4E", // AA (4.5:1) with white text
+  const go = (next: number) => {
+    haptic("select");
+    setDir(next > screen ? 1 : -1);
+    setScreen(next);
   };
 
-  const handleNext = () => {
-    if (screen === 1) setScreen(2);
-    else if (screen === 2) setScreen(3);
-    else if (screen === 3) {
-      onComplete({ reason, name: name || "You", timeOfDay });
-    }
+  const finish = () => {
+    haptic("success");
+    // Content is educational; we still hand back a light identity so downstream
+    // greeting copy has something to use. Defaults keep the flow frictionless.
+    onComplete({ reason: "", name: "You", timeOfDay: "" });
   };
 
-  const handleSkip = () => {
-    if (screen === 2) {
-      setScreen(3);
-    } else {
-      onSkip();
-    }
+  const variants = {
+    enter: (d: number) => ({ x: reduced ? 0 : d * 40, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({ x: reduced ? 0 : d * -40, opacity: 0 }),
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: T.bg,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "24px",
-        zIndex: 10000,
-      }}
-    >
-      <div style={{ maxWidth: 480, width: "100%" }}>
-        {/* Screen 1 */}
-        {screen === 1 && (
-          <div style={{ textAlign: "center" }}>
-            <div style={{ marginBottom: 24 }}>
-              <PrivacyShield size={116} />
+    <div style={{ position: "fixed", inset: 0, background: T.bg, zIndex: 10000, display: "flex", flexDirection: "column" }}>
+      {/* Top bar: progress dots + skip */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 22px 0", maxWidth: 480, width: "100%", margin: "0 auto" }}>
+        <div style={{ display: "flex", gap: 7 }} aria-hidden>
+          {Array.from({ length: TOTAL }).map((_, i) => (
+            <motion.span
+              key={i}
+              animate={{ width: i === screen ? 22 : 7, background: i <= screen ? T.accent : T.border }}
+              transition={{ duration: 0.35, ease: EASE }}
+              style={{ height: 7, borderRadius: 999, display: "block" }}
+            />
+          ))}
+        </div>
+        <button
+          onClick={() => { haptic("tap"); onSkip(); }}
+          style={{ background: "none", border: "none", color: T.muted, fontSize: 14, fontWeight: 500, cursor: "pointer", padding: "8px 4px", minHeight: 40 }}
+        >
+          Skip
+        </button>
+      </div>
+
+      {/* Illustration + copy */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "0 28px", maxWidth: 480, width: "100%", margin: "0 auto", textAlign: "center", overflow: "hidden" }}>
+        <AnimatePresence mode="wait" custom={dir}>
+          <motion.div
+            key={screen}
+            custom={dir}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: reduced ? 0.15 : 0.45, ease: EASE }}
+            style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}
+          >
+            <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 34 }}>
+              {screen === 0 && <OrbEmergence reduced={!!reduced} />}
+              {screen === 1 && <RippleArt reduced={!!reduced} />}
+              {screen === 2 && <ConnectedModules reduced={!!reduced} />}
+              {screen === 3 && <PrivacyArt reduced={!!reduced} />}
             </div>
-            <h1
-              style={{
-                fontFamily: "'Bebas Neue', 'Impact', sans-serif",
-                fontSize: 38,
-                color: T.text,
-                marginBottom: 12,
-                letterSpacing: "0.02em",
-                lineHeight: 1.1,
-              }}
-            >
-              A calm space to quit porn — at your own pace.
+
+            <h1 style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: 27, fontWeight: 700, color: T.text, lineHeight: 1.2, letterSpacing: "-0.01em", marginBottom: 14, maxWidth: 340 }}>
+              {COPY[screen].title}
             </h1>
-            <p
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 16,
-                color: T.textSub,
-                lineHeight: 1.7,
-                marginBottom: 24,
-              }}
-            >
-              When an urge hits, this app helps you get through the moment — and
-              slowly build habits that make it easier. Private. No judgment.
+            <p style={{ fontSize: 15.5, color: T.sub, lineHeight: 1.65, maxWidth: 330, marginBottom: screen === 2 ? 20 : 0 }}>
+              {COPY[screen].body}
             </p>
 
-            {/* What you can actually do here — plain, concrete, 3 things */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28, textAlign: "left" }}>
-              {[
-                { t: "Get help in a hard moment", d: "One tap opens a calm breathing screen." },
-                { t: "Track how you're doing", d: "See your days, feelings, and small wins." },
-                { t: "Talk to a supportive coach", d: "An always-available chat, never judging." },
-              ].map((item) => (
-                <div key={item.t} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 14px", background: T.bgSurface, border: `1px solid ${T.border}`, borderRadius: 12 }}>
-                  <span style={{ width: 24, height: 24, borderRadius: "50%", background: T.recovery, color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, flexShrink: 0, marginTop: 1 }} aria-hidden>✓</span>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{item.t}</div>
-                    <div style={{ fontSize: 13, color: T.textSub, marginTop: 1 }}>{item.d}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={handleNext}
-              style={{
-                width: "100%",
-                padding: "16px 24px",
-                background: T.recoveryDeep,
-                border: "none",
-                borderRadius: 12,
-                color: "#fff",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-                letterSpacing: "0.02em",
-              }}
-            >
-              Get started →
-            </button>
-          </div>
-        )}
-
-        {/* Screen 2 */}
-        {screen === 2 && (
-          <div>
-            <h2
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 13,
-                color: T.textMuted,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                marginBottom: 24,
-              }}
-            >
-              What brings you here?
-            </h2>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
-              {[
-                "I want to break a habit",
-                "I want more clarity on my patterns",
-                "I want to understand my triggers",
-                "I'm just curious",
-              ].map((option) => (
-                <button
-                  key={option}
-                  onClick={() => setReason(option)}
-                  style={{
-                    padding: "16px 18px",
-                    background: reason === option ? T.recovery + "20" : "transparent",
-                    border: `1px solid ${reason === option ? T.recovery : T.border}`,
-                    borderRadius: 10,
-                    color: T.text,
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 15,
-                    cursor: "pointer",
-                    textAlign: "left",
-                    transition: "all 0.15s",
-                  }}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: "flex", gap: 12 }}>
-              <button
-                onClick={handleSkip}
-                style={{
-                  flex: 1,
-                  padding: "12px 18px",
-                  background: "transparent",
-                  border: `1px solid ${T.border}`,
-                  borderRadius: 8,
-                  color: T.textSub,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  cursor: "pointer",
-                }}
-              >
-                Skip
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!reason}
-                style={{
-                  flex: 1,
-                  padding: "12px 18px",
-                  background: reason ? T.recovery : T.border,
-                  border: "none",
-                  borderRadius: 8,
-                  color: reason ? "#000" : T.textMuted,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: reason ? "pointer" : "not-allowed",
-                }}
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Screen 3 */}
-        {screen === 3 && (
-          <div>
-            <h2
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 13,
-                color: T.textMuted,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                marginBottom: 20,
-              }}
-            >
-              Almost there
-            </h2>
-
-            <div style={{ marginBottom: 24 }}>
-              <label
-                style={{
-                  display: "block",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 12,
-                  color: T.textMuted,
-                  marginBottom: 8,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                }}
-              >
-                What do you want to be called?
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="or we'll just say 'you'"
-                style={{
-                  width: "100%",
-                  padding: "12px 14px",
-                  background: T.bgSurface,
-                  border: `1px solid ${T.border}`,
-                  borderRadius: 8,
-                  color: T.text,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  outline: "none",
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: 24 }}>
-              <label
-                style={{
-                  display: "block",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 12,
-                  color: T.textMuted,
-                  marginBottom: 8,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                }}
-              >
-                When do you usually struggle most?
-              </label>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {["Morning", "Evening", "Late night", "Random times"].map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => setTimeOfDay(time.toLowerCase())}
-                    style={{
-                      padding: "12px 14px",
-                      background: timeOfDay === time.toLowerCase() ? T.recovery + "20" : "transparent",
-                      border: `1px solid ${timeOfDay === time.toLowerCase() ? T.recovery : T.border}`,
-                      borderRadius: 8,
-                      color: T.text,
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 14,
-                      cursor: "pointer",
-                      textAlign: "left",
-                    }}
+            {/* Screen 3: the four connected modules, named */}
+            {screen === 2 && (
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8, maxWidth: 300 }}>
+                {["Journal", "Recovery", "Habits", "Insights"].map((m, i) => (
+                  <motion.span
+                    key={m}
+                    initial={reduced ? undefined : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 + i * 0.08, ease: EASE }}
+                    style={{ padding: "8px 14px", borderRadius: 999, background: T.surface, border: `1px solid ${T.border}`, fontSize: 13.5, fontWeight: 600, color: T.text, boxShadow: "0 2px 8px rgba(91,124,250,0.06)" }}
                   >
-                    {time}
-                  </button>
+                    {m}
+                  </motion.span>
                 ))}
               </div>
-            </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-            <button
-              onClick={handleNext}
-              style={{
-                width: "100%",
-                padding: "16px 24px",
-                background: T.recovery,
-                border: "none",
-                borderRadius: 12,
-                color: "#000",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-                letterSpacing: "0.02em",
-              }}
-            >
-              Start my reset →
-            </button>
-            <div style={{ marginTop: 24 }}>
-              <PrivacyNotice showOnboarding />
-            </div>
+      {/* CTA */}
+      <div style={{ padding: "0 28px 34px", maxWidth: 480, width: "100%", margin: "0 auto" }}>
+        {screen === 3 && (
+          <div style={{ marginBottom: 18 }}>
+            <PrivacyNotice />
           </div>
         )}
+        <motion.button
+          whileTap={reduced ? undefined : { scale: 0.97 }}
+          onClick={() => (screen < TOTAL - 1 ? go(screen + 1) : finish())}
+          style={{
+            width: "100%", padding: "17px 24px", borderRadius: 16, border: "none",
+            background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`,
+            color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 600,
+            cursor: "pointer", letterSpacing: "0.01em", minHeight: 56,
+            boxShadow: "0 10px 30px rgba(91,124,250,0.35)",
+          }}
+        >
+          {screen < TOTAL - 1 ? "Continue" : "Begin My Journey"}
+        </motion.button>
       </div>
+    </div>
+  );
+}
+
+const COPY = [
+  {
+    title: "Welcome to RESET",
+    body: "RESET helps you understand and reduce compulsive phone and adult-content habits — through reflection, awareness, and healthier routines.",
+  },
+  {
+    title: "Notice Before You React",
+    body: "Moods, urges, and triggers pass more easily once you can see them. RESET helps you build that awareness, one calm moment at a time.",
+  },
+  {
+    title: "Build Better Habits",
+    body: "Small daily actions create lasting change. Your journal, recovery, habits, and insights all work together.",
+  },
+  {
+    title: "Private By Design",
+    body: "Everything stays on your device unless you choose otherwise. No judgment. No shame. Only support.",
+  },
+];
+
+/* ─── Illustrations (inline SVG/CSS, reduced-motion aware) ─────────────────── */
+
+// Screen 1 — the Recovery Orb emerging from darkness into soft light.
+function OrbEmergence({ reduced }: { reduced: boolean }) {
+  return (
+    <div style={{ position: "relative", width: 220, height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {/* darkness vignette that lifts */}
+      <motion.div
+        aria-hidden
+        style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "radial-gradient(circle, rgba(28,35,51,0.55) 0%, transparent 68%)" }}
+        initial={reduced ? { opacity: 0 } : { opacity: 0.9, scale: 1.1 }}
+        animate={{ opacity: 0, scale: 1.4 }}
+        transition={{ duration: 1.6, ease: EASE }}
+      />
+      <motion.div
+        initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.1, ease: EASE }}
+      >
+        <AICoachOrb size={150} state="idle" />
+      </motion.div>
+    </div>
+  );
+}
+
+// Screen 2 — a calm ripple expanding through water.
+function RippleArt({ reduced }: { reduced: boolean }) {
+  return (
+    <div style={{ position: "relative", width: 220, height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {[0, 1, 2, 3].map((i) => (
+        <motion.div
+          key={i}
+          aria-hidden
+          style={{ position: "absolute", borderRadius: "50%", border: "1.5px solid rgba(91,124,250,0.5)" }}
+          initial={{ width: 26, height: 26, opacity: 0.7 }}
+          animate={reduced
+            ? { width: 60 + i * 46, height: 60 + i * 46, opacity: 0.5 - i * 0.12 }
+            : { width: [26, 200], height: [26, 200], opacity: [0.6, 0] }}
+          transition={reduced
+            ? { duration: 0.4 }
+            : { duration: 3, repeat: Infinity, delay: i * 0.75, ease: "easeOut" }}
+        />
+      ))}
+      <div aria-hidden style={{ width: 26, height: 26, borderRadius: "50%", background: `radial-gradient(circle at 35% 30%, #fff, ${T.accent})`, boxShadow: "0 6px 20px rgba(91,124,250,0.5)" }} />
+    </div>
+  );
+}
+
+// Screen 3 — four modules orbiting a center, all connected.
+function ConnectedModules({ reduced }: { reduced: boolean }) {
+  const nodes = [
+    { x: 0, y: -64, c: T.accent2 },
+    { x: 64, y: 0, c: T.accent },
+    { x: 0, y: 64, c: T.mint },
+    { x: -64, y: 0, c: "#4FB6F5" },
+  ];
+  return (
+    <div style={{ position: "relative", width: 220, height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <svg width="220" height="220" viewBox="0 0 220 220" aria-hidden style={{ position: "absolute", inset: 0 }}>
+        {nodes.map((n, i) => (
+          <motion.line
+            key={i}
+            x1="110" y1="110" x2={110 + n.x} y2={110 + n.y}
+            stroke="rgba(91,124,250,0.3)" strokeWidth="1.5"
+            initial={reduced ? { pathLength: 1 } : { pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.15 + i * 0.12, ease: EASE }}
+          />
+        ))}
+      </svg>
+      {nodes.map((n, i) => (
+        <motion.div
+          key={i}
+          aria-hidden
+          style={{ position: "absolute", width: 34, height: 34, borderRadius: 12, background: `${n.c}22`, border: `1.5px solid ${n.c}`, transform: `translate(${n.x}px, ${n.y}px)` }}
+          initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.3 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.25 + i * 0.12, ease: EASE }}
+        />
+      ))}
+      <div aria-hidden style={{ zIndex: 1 }}>
+        <AICoachOrb size={64} state="idle" />
+      </div>
+    </div>
+  );
+}
+
+// Screen 4 — a shield of soft light (privacy).
+function PrivacyArt({ reduced }: { reduced: boolean }) {
+  return (
+    <div style={{ position: "relative", width: 220, height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <motion.div
+        aria-hidden
+        style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: `radial-gradient(circle, ${T.accent2}22, transparent 65%)`, filter: "blur(8px)" }}
+        animate={reduced ? undefined : { scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.svg
+        width="120" height="140" viewBox="0 0 120 140" fill="none" aria-hidden
+        initial={reduced ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: EASE }}
+      >
+        <defs>
+          <linearGradient id="shieldG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={T.accent} />
+            <stop offset="1" stopColor={T.accent2} />
+          </linearGradient>
+        </defs>
+        <path d="M60 6 L108 26 V70 C108 104 86 126 60 134 C34 126 12 104 12 70 V26 Z"
+          fill="url(#shieldG)" opacity="0.14" stroke="url(#shieldG)" strokeWidth="2.5" />
+        <path d="M44 70 L55 82 L78 56" stroke="url(#shieldG)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </motion.svg>
     </div>
   );
 }
