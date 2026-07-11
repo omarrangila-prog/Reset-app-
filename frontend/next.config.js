@@ -31,6 +31,13 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Surface the Vercel commit SHA to the client as a public env var so the
+  // deployed build can report exactly which commit it was built from
+  // (Settings → About). Vercel injects VERCEL_GIT_COMMIT_SHA at build time.
+  env: {
+    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
+      process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || "",
+  },
   outputFileTracingRoot: path.resolve(__dirname),
   // Native module — must not be bundled; loaded at runtime on the server.
   serverExternalPackages: ["better-sqlite3"],

@@ -82,7 +82,22 @@ export default function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function () {
-                  navigator.serviceWorker.register('/sw.js').catch(function () {});
+                  navigator.serviceWorker.register('/sw.js').then(function (reg) {
+                    // Check for a new worker on every load so fresh deploys are
+                    // picked up promptly instead of lingering on a stale build.
+                    reg.update();
+                    reg.addEventListener('updatefound', function () {
+                      var sw = reg.installing;
+                      if (!sw) return;
+                      sw.addEventListener('statechange', function () {
+                        // A new worker took control while a page was already open —
+                        // reload once to swap in the new assets.
+                        if (sw.state === 'activated' && navigator.serviceWorker.controller) {
+                          window.location.reload();
+                        }
+                      });
+                    });
+                  }).catch(function () {});
                 });
               }
             `,

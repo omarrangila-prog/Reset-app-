@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { APP_BUILD_VERSION } from "@/lib/version";
 
 const T = {
   bg: "#F5F7FC",
@@ -116,6 +117,15 @@ export default function SettingsPage() {
             </div>
           )}
         </section>
+
+        {/* About — quiet footer with the build marker so a deployed version can
+            be compared against the latest Git commit. */}
+        <div style={{ textAlign: "center", marginTop: 28, marginBottom: 8 }}>
+          <div style={{ fontSize: 13, color: T.sub, fontWeight: 600 }}>RESET</div>
+          <div style={{ fontSize: 11, color: T.sub, opacity: 0.7, marginTop: 2 }}>
+            Build: {APP_BUILD_VERSION}
+          </div>
+        </div>
       </div>
     </div>
   );
