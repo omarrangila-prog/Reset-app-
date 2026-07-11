@@ -32,8 +32,10 @@ export default function JourneyPage() {
   const lastMood = me?.logs?.find((l) => l.type === "CHECK_IN" && l.emotion)?.emotion;
 
   const tools = [
+    { href: "/journey/start", label: "First 7 days", desc: "Guided start", Icon: Sparkles, color: t.accent },
     { href: "/journey/triggers", label: "Triggers", desc: "What sets you off", Icon: Compass, color: t.vuln },
     { href: "/urge", label: "Calm mode", desc: "Ride out an urge", Icon: Wind, color: t.accent2 },
+    { href: "/journey/review", label: "Weekly review", desc: "Your week in words", Icon: LineChart, color: t.sky },
     { href: "/journey/history", label: "Mood history", desc: "How you've felt", Icon: LineChart, color: t.sky },
     { href: "/journey/timeline", label: "Recovery map", desc: "Your milestones", Icon: Sparkles, color: t.emerald },
   ];

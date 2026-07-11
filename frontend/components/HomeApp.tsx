@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { RecoveryOrb } from "@/components/ui/RecoveryOrb";
 import { deriveInsight } from "@/lib/insights";
 import { deriveReflection } from "@/lib/reflection";
-import { loadProfile, deriveRecovery } from "@/lib/recoveryProfile";
+import { loadProfile, deriveRecovery, deriveBriefing, DEFAULT_PROFILE, Briefing, RiskLevel } from "@/lib/recoveryProfile";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
@@ -24,6 +24,20 @@ function greeting(): string {
   if (h < 17) return "Good afternoon";
   if (h < 22) return "Good evening";
   return "Rest well tonight";
+}
+
+function RiskChip({ risk }: { risk: RiskLevel }) {
+  const map: Record<RiskLevel, { label: string; color: string; bg: string }> = {
+    low: { label: "Low risk now", color: "var(--recovery)", bg: "color-mix(in srgb, var(--recovery) 14%, transparent)" },
+    moderate: { label: "Stay mindful", color: "var(--vuln)", bg: "color-mix(in srgb, var(--vuln) 16%, transparent)" },
+    elevated: { label: "Higher-risk time", color: "var(--urge)", bg: "color-mix(in srgb, var(--urge) 16%, transparent)" },
+  };
+  const m = map[risk];
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700, color: m.color, background: m.bg, borderRadius: 999, padding: "3px 9px" }}>
+      <span aria-hidden style={{ width: 6, height: 6, borderRadius: "50%", background: m.color }} /> {m.label}
+    </span>
+  );
 }
 
 // Status read as words, so the orb isn't carrying a bare number.
@@ -48,6 +62,7 @@ function HomeScreen({
   insight,
   reflection,
   focus,
+  briefing,
   onJournalTap,
   onRelapseTap,
 }: {
@@ -57,6 +72,7 @@ function HomeScreen({
   insight: string;
   reflection: string;
   focus: string;
+  briefing: Briefing;
   onJournalTap: () => void;
   onRelapseTap: () => void;
 }) {
@@ -86,19 +102,25 @@ function HomeScreen({
         </header>
       </Reveal>
 
-      {/* ── DAILY REFLECTION: a warm, personalized read on your recent journey ── */}
+      {/* ── DAILY BRIEFING: personalized read + current risk + next action ── */}
       <Reveal index={1}>
-        <div
-          className="frost"
-          style={{
-            borderRadius: 20, padding: "16px 18px", marginBottom: 14,
-            border: `1px solid ${t.border}`, display: "flex", gap: 13, alignItems: "flex-start",
-          }}
-        >
-          <span aria-hidden style={{ fontSize: 22, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>🌅</span>
-          <p style={{ fontSize: 15, color: t.text, lineHeight: 1.55, fontWeight: 500, margin: 0 }}>
-            {reflection}
-          </p>
+        <div className="frost" style={{ borderRadius: 20, padding: "16px 18px", marginBottom: 14, border: `1px solid ${t.border}` }}>
+          <div style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
+            <span aria-hidden style={{ fontSize: 22, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>🌅</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: t.text }}>{briefing.greeting}</span>
+                <RiskChip risk={briefing.risk} />
+              </div>
+              <p style={{ fontSize: 14.5, color: t.text, lineHeight: 1.55, fontWeight: 500, margin: 0 }}>{briefing.message}</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 12, borderTop: `1px solid ${t.border}` }}>
+            <span style={{ fontSize: 12.5, color: t.sub }}>{reflection}</span>
+          </div>
+          <Link href={briefing.nextAction.href} style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10, padding: "9px 16px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, minHeight: 40 }}>
+            {briefing.nextAction.label} →
+          </Link>
         </div>
       </Reveal>
 
@@ -255,8 +277,10 @@ export default function HomeApp() {
   const [homeFocus, setHomeFocus] = useState(
     "Small steps today. Check off a habit or write a quick note — one thing is enough."
   );
+  const [briefing, setBriefing] = useState<Briefing>(() => deriveBriefing(DEFAULT_PROFILE));
   useEffect(() => {
     const p = loadProfile();
+    setBriefing(deriveBriefing(p));
     if (p.onboardingCompleted && (p.triggers.length || p.highRiskTimes.length || p.locations.length)) {
       setHomeFocus(deriveRecovery(p).firstStep);
     }
@@ -505,6 +529,7 @@ export default function HomeApp() {
           insight={deriveInsight(user?.logs, user?.triggerPatterns)}
           reflection={deriveReflection(user?.logs, user?.dailyActivity, streak)}
           focus={homeFocus}
+          briefing={briefing}
           onJournalTap={() => setShowJournalModal(true)}
           onRelapseTap={() => setShowPostRelapse(true)}
         />

@@ -132,6 +132,10 @@ export default function ProfilePage() {
             <Divider />
             <LinkRow href="/wins" label="Victories" />
             <Divider />
+            <LinkRow href="/search" label="Search" />
+            <Divider />
+            <LinkRow href="/profile/accountability" label="Accountability" />
+            <Divider />
             <LinkRow href="/profile/letter" label="Letter to future me" />
             <Divider />
             <LinkRow href="/urge/plan" label="My urge plan" />

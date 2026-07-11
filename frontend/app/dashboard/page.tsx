@@ -8,6 +8,7 @@ import { SkeletonCard, SkeletonOrb } from "@/components/ui/Skeleton";
 import Link from "next/link";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { DEMO_ANALYTICS, hasUsefulAnalytics } from "@/lib/demoInsights";
+import { deriveTriggerDiscovery } from "@/lib/recoveryMetrics";
 
 interface Analytics {
   streak: number;
@@ -209,6 +210,7 @@ export default function DashboardPage() {
   }
 
   const data = analytics;
+  const discovery = deriveTriggerDiscovery(user?.logs, data.triggerPatterns);
   const wins = data.dailyActivity.reduce((s, d) => s + d.successes, 0);
   const urges = data.dailyActivity.reduce((s, d) => s + d.urges, 0);
 
@@ -315,6 +317,25 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
+      {/* Trigger Discovery — patterns behind difficult moments */}
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.46, duration: 0.5 }} style={{ marginTop: 36 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)" }}>What we&apos;re noticing</div>
+          {!discovery.hasRealData && (
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--accent-text)", background: "var(--accent-soft)", border: "1px solid var(--border)", borderRadius: 999, padding: "3px 8px" }}>Sample</span>
+          )}
+        </div>
+        <p style={{ fontSize: 14, color: "var(--text-sub)", lineHeight: 1.55, marginBottom: 18 }}>Patterns build up as you check in — private to you.</p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <DiscoveryTile label="Hardest time" value={discovery.hardestTime} />
+          <DiscoveryTile label="Strongest emotion" value={discovery.strongestEmotion} />
+          <DiscoveryTile label="Most successful response" value={discovery.bestResponse} />
+          <DiscoveryTile label="Longest difficult moment survived" value={`${discovery.longestUrgeMinutes} min`} />
+          <DiscoveryTile label="Most successful day" value={discovery.bestDay} />
+          <DiscoveryTile label="Highest-risk day" value={discovery.riskiestDay} />
+        </div>
+      </motion.section>
+
       {/* Recovery factors — what shapes your recovery, explained */}
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }} style={{ marginTop: 36 }}>
         <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6 }}>What shapes your recovery</div>
@@ -325,6 +346,15 @@ export default function DashboardPage() {
       </motion.section>
 
       <BottomNav />
+    </div>
+  );
+}
+
+function DiscoveryTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 16, padding: "14px 15px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ fontSize: 11, color: "var(--text-muted)", lineHeight: 1.35, marginBottom: 6 }}>{label}</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.01em" }}>{value}</div>
     </div>
   );
 }

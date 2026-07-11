@@ -113,3 +113,25 @@ export function deriveRecovery(p: RecoveryProfile): DerivedRecovery {
 
   return { primaryGoal, topTrigger, highRiskTime, highRiskPlace, firstStep, weeklyFocus, reminderTime, confidence };
 }
+
+// ── Daily briefing + risk level (Home) ────────────────────────────────────────
+export type RiskLevel = "low" | "moderate" | "elevated";
+
+export interface Briefing { greeting: string; message: string; risk: RiskLevel; nextAction: { label: string; href: string } }
+
+export function deriveBriefing(p: RecoveryProfile): Briefing {
+  const h = new Date().getHours();
+  const greeting = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+
+  const lateRisk = p.highRiskTimes.some((x) => /late night|evening|after work/i.test(x));
+  const inLateWindow = h >= 21 || h < 2;
+  const risk: RiskLevel = lateRisk && inLateWindow ? "elevated" : lateRisk || inLateWindow ? "moderate" : "low";
+
+  let message = "However today feels, showing up is the win. One small step is enough.";
+  if (risk === "elevated") message = "The next couple of hours have been your most challenging. Try putting your phone away 15 minutes earlier tonight.";
+  else if (risk === "moderate") message = "A calmer evening starts with a small choice now. A short wind-down goes a long way.";
+  else if (p.triggers.some((x) => /stress/i.test(x))) message = "If stress builds today, a 3-minute reset before your phone can change the whole evening.";
+
+  const nextAction = risk !== "low" ? { label: "Open Calm Mode", href: "/urge" } : { label: "Add a win", href: "/wins" };
+  return { greeting, message, risk, nextAction };
+}
