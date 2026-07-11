@@ -25,7 +25,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
   );
 
   const T = {
-    // Calm-mode palette — pure PURE RISE lavender/blue/pearl (no green).
+    // Calm-mode palette — RESET lavender/blue/pearl (no green).
     bg: "linear-gradient(165deg, #EEF1FF 0%, #F1EEFF 50%, #E9EEFF 100%)",
     bgSurface: "#FFFFFF",
     text: "#1C2333",

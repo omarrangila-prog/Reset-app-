@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { MarkLessonRead } from "@/components/MarkLessonRead";
 import { t } from "@/components/ui/theme";
 import { LESSONS, getLesson } from "@/lib/lessons";
 
@@ -18,6 +19,7 @@ export default async function LessonPage({ params }: { params: Promise<{ slug: s
 
   return (
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
+      <MarkLessonRead slug={slug} />
       <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
         <Link href="/learn" aria-label="Back to Learn" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
         <div style={{ fontSize: 12, color: t.muted }}>{lesson.category} · {lesson.minutes} min read</div>
