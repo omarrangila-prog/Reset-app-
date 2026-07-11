@@ -122,7 +122,7 @@ export default function SettingsPage() {
             be compared against the latest Git commit. */}
         <div style={{ textAlign: "center", marginTop: 28, marginBottom: 8 }}>
           <div style={{ fontSize: 13, color: T.sub, fontWeight: 600 }}>RESET</div>
-          <div style={{ fontSize: 11, color: T.sub, opacity: 0.7, marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: T.sub, marginTop: 2 }}>
             Build: {APP_BUILD_VERSION}
           </div>
         </div>

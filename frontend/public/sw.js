@@ -2,7 +2,7 @@
 // Because this string changes, the sw.js bytes change, so the browser detects
 // a new worker, installs it, and the activate handler below purges every old
 // cache — preventing stale HTML/JS from surviving a deploy.
-const CACHE_VERSION = 'v2-2026-07-11';
+const CACHE_VERSION = 'v3-2026-07-11-icons';
 const CACHE_NAME = `reset-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline';
 

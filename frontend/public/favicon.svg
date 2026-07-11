@@ -1,11 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#E8352C" />
-      <stop offset="100%" stop-color="#18A856" />
-    </linearGradient>
+    <radialGradient id="o" cx="38%" cy="32%" r="72%">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="30%" stop-color="#DfE4FF"/>
+      <stop offset="64%" stop-color="#9B87F0"/>
+      <stop offset="100%" stop-color="#5B7CFA"/>
+    </radialGradient>
   </defs>
-  <rect width="128" height="128" rx="28" fill="#080809" />
-  <circle cx="64" cy="64" r="48" fill="url(#g)" opacity="0.18" />
-  <text x="50%" y="52%" text-anchor="middle" dominant-baseline="central" font-family="Bebas Neue, sans-serif" font-size="66" fill="#EDEDEB">R</text>
+  <rect width="32" height="32" rx="8" fill="#EEF1FF"/>
+  <circle cx="16" cy="15" r="10.5" fill="url(#o)"/>
+  <ellipse cx="12.5" cy="11.5" rx="4" ry="2.8" fill="#FFFFFF" opacity="0.8"/>
 </svg>
