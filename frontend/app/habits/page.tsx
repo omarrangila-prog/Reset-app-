@@ -49,8 +49,17 @@ export default function HabitsPage() {
   const [newName, setNewName] = useState("");
 
   useEffect(() => {
-    if (!userId) return;
-    api.getHabits().then(setHabits).catch(() => {}).finally(() => setLoading(false));
+    // Don't get stuck on the skeleton: if the session isn't ready yet, keep
+    // showing the skeleton but never hang — a short fallback ends loading.
+    if (!userId) {
+      const fallback = setTimeout(() => setLoading(false), 2500);
+      return () => clearTimeout(fallback);
+    }
+    let done = false;
+    api.getHabits().then((h) => { done = true; setHabits(h); }).catch(() => {}).finally(() => setLoading(false));
+    // Safety timeout in case the request hangs.
+    const t = setTimeout(() => { if (!done) setLoading(false); }, 6000);
+    return () => clearTimeout(t);
   }, [userId]);
 
   const doneCount = habits.filter((h) => h.doneToday).length;

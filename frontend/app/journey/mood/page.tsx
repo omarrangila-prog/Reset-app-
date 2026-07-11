@@ -42,8 +42,8 @@ export default function MoodPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
-      <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+    <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 110px", position: "relative", zIndex: 1, display: "flex", flexDirection: "column" }}>
+      <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexShrink: 0 }}>
         <Link href="/journey" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
         <div>
           <div style={{ fontSize: 18, fontWeight: 700, color: t.text }}>How are you feeling?</div>
@@ -51,8 +51,8 @@ export default function MoodPage() {
         </div>
       </header>
 
-      {/* Bubble field */}
-      <div style={{ position: "relative", height: 420, marginTop: 8 }}>
+      {/* Bubble field — grows to fill and centers the orb vertically on screen */}
+      <div style={{ position: "relative", flex: 1, minHeight: 380 }}>
         {MOODS.map((m, i) => {
           const isSel = selected === m.key;
           const dim = selected && !isSel;
