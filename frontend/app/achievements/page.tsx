@@ -55,15 +55,41 @@ export default function AchievementsPage() {
         </div>
       </Reveal>
 
-      {/* Grid */}
+      {/* Progress to next unlock */}
+      {(() => {
+        const next = achievements.find((a) => !a.unlocked);
+        if (!next) return null;
+        // Progress toward the next streak milestone.
+        const targets: Record<string, number> = { "Day One": 1, "Week Strong": 7, Steady: 14, Master: 30 };
+        const target = targets[next.title] ?? 1;
+        const pct = Math.min(1, streak / target);
+        return (
+          <Reveal index={1}>
+            <div style={{ background: "linear-gradient(135deg,#EAF0FF,#F3EEFF)", border: "1px solid #DCE3FF", borderRadius: 22, padding: 18, marginBottom: 22, display: "flex", alignItems: "center", gap: 16 }}>
+              <AchievementCrystal size={56} unlocked={false} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: t.accentText, marginBottom: 4 }}>Next up</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: t.text }}>{next.title}</div>
+                <div style={{ fontSize: 12, color: t.sub, marginTop: 2 }}>{next.desc} · {Math.round(pct * 100)}% there</div>
+                <div style={{ height: 6, background: "#FFFFFF", borderRadius: 3, overflow: "hidden", marginTop: 8 }}>
+                  <div style={{ width: `${pct * 100}%`, height: "100%", background: t.gradHero, borderRadius: 3 }} />
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        );
+      })()}
+
+      {/* Collection */}
+      <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginBottom: 12 }}>Your collection</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {achievements.map((a, i) => (
-          <Reveal key={a.title} index={i + 1}>
+          <Reveal key={a.title} index={i + 2}>
             <Card variant="soft" style={{ textAlign: "center", opacity: a.unlocked ? 1 : 0.6 }}>
               <AchievementCrystal size={64} unlocked={a.unlocked} />
               <div style={{ fontSize: 14, fontWeight: 600, color: t.text, marginTop: 10 }}>{a.title}</div>
               <div style={{ fontSize: 11, color: t.muted, marginTop: 2 }}>{a.desc}</div>
-              {!a.unlocked && <div style={{ fontSize: 10, color: t.accent, marginTop: 6, fontWeight: 600 }}>Locked</div>}
+              {!a.unlocked && <div style={{ fontSize: 10, color: t.accentText, marginTop: 6, fontWeight: 600 }}>Locked</div>}
             </Card>
           </Reveal>
         ))}
