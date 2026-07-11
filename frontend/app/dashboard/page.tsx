@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/ui/BottomNav";
 import { SkeletonCard, SkeletonOrb } from "@/components/ui/Skeleton";
 import Link from "next/link";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { DEMO_ANALYTICS, hasUsefulAnalytics } from "@/lib/demoInsights";
 
 interface Analytics {
   streak: number;
@@ -34,8 +35,9 @@ export default function DashboardPage() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [streakLoading, setStreakLoading] = useState(false);
-
   const [loadError, setLoadError] = useState(false);
+  // True when we're showing seeded sample data instead of the user's own.
+  const [isDemo, setIsDemo] = useState(false);
 
   const refresh = async () => {
     const me = await api.getMe();
@@ -48,26 +50,63 @@ export default function DashboardPage() {
       triggerPatterns: me.triggerPatterns,
       dailyActivity: me.dailyActivity,
     });
+    setIsDemo(false);
+    return me;
   };
 
   useEffect(() => {
     let cancelled = false;
+    // Skeleton can never persist: after 2.5s we fall back to sample insights so
+    // the tab always shows meaningful content (covers auth that never resolves,
+    // a hung request, or a session that never establishes).
+    const fallback = setTimeout(() => {
+      if (cancelled) return;
+      setAnalytics((prev) => {
+        if (prev) return prev; // real data already arrived
+        setIsDemo(true);
+        return DEMO_ANALYTICS;
+      });
+      setLoading(false);
+    }, 2500);
+
     async function loadData() {
-      // Wait until the device session is established.
-      if (!userId) return;
       try {
-        await refresh();
-        if (!cancelled) setLoadError(false);
-      } catch (e) {
-        // Never show fabricated data — surface an honest error instead.
-        if (!cancelled) setLoadError(true);
+        // No session yet → show sample insights rather than hang forever.
+        if (!userId) {
+          if (!cancelled) {
+            setAnalytics(DEMO_ANALYTICS);
+            setIsDemo(true);
+          }
+          return;
+        }
+        const me = await refresh();
+        if (!cancelled) {
+          if (!hasUsefulAnalytics(me)) {
+            // Session exists but no real activity yet — seed a sample so the
+            // page teaches what Insights will look like.
+            setAnalytics(DEMO_ANALYTICS);
+            setIsDemo(true);
+          }
+          setLoadError(false);
+        }
+      } catch {
+        // API failed — prefer sample data over a dead-end error screen.
+        if (!cancelled) {
+          setAnalytics(DEMO_ANALYTICS);
+          setIsDemo(true);
+          setLoadError(false);
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          clearTimeout(fallback);
+          setLoading(false);
+        }
       }
     }
     loadData();
     return () => {
       cancelled = true;
+      clearTimeout(fallback);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
@@ -177,7 +216,14 @@ export default function DashboardPage() {
     <div style={{ minHeight: "100vh", maxWidth: 560, margin: "0 auto", padding: "24px 22px 130px", position: "relative", zIndex: 1 }}>
       {/* Editorial masthead — typography-led, no "dashboard" chrome */}
       <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32, marginTop: 8 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#646E80" }}>Your progress</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#646E80" }}>Your progress</div>
+          {isDemo && (
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5B4FC4", background: "#EDEBFB", border: "1px solid #DAD5F5", borderRadius: 999, padding: "3px 8px" }}>
+              Sample insights
+            </span>
+          )}
+        </div>
         <h1 style={{ fontSize: 40, fontWeight: 700, color: "#1C2333", letterSpacing: "-0.035em", lineHeight: 1.02, marginTop: 8 }}>
           Look how far<br />you&apos;ve come.
         </h1>
