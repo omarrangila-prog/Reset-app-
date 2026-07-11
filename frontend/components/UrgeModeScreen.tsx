@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { CalmSphere } from "@/components/ui/CalmSphere";
+import { loadPlan, UrgeAction } from "@/lib/urgePlan";
 
 interface UrgeModeScreenProps {
   onComplete: () => void;
 }
 
 export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
+  const [plan, setPlan] = useState<UrgeAction[]>([]);
+  useEffect(() => { setPlan(loadPlan()); }, []);
   const [stage, setStage] = useState<"message" | "breathing" | "timer" | "distraction" | "complete">("message");
   const [timerSeconds, setTimerSeconds] = useState(900); // 15 minutes
   const [timerRunning, setTimerRunning] = useState(false);
@@ -150,6 +154,34 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
             >
               Let's breathe →
             </button>
+
+            {/* Your personal recovery plan — shown first, one tap each. */}
+            {plan.length > 0 && (
+              <div style={{ marginTop: 28, textAlign: "left", background: "var(--bg-surface)", border: `1px solid ${T.border}`, borderRadius: 18, padding: "16px 18px" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--accent-text)", marginBottom: 12 }}>Your recovery plan</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {plan.slice(0, 5).map((a, i) => {
+                    const row = (
+                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <span style={{ width: 24, height: 24, borderRadius: "50%", background: "var(--grad-hero)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{i + 1}</span>
+                        <span style={{ fontSize: 14.5, color: T.text, fontWeight: 500 }}>{a.label}</span>
+                        {a.href && <span style={{ marginLeft: "auto", color: T.textMuted, fontSize: 16 }} aria-hidden>›</span>}
+                      </div>
+                    );
+                    return a.href
+                      ? <Link key={a.id} href={a.href} style={{ display: "block", padding: "8px 0" }}>{row}</Link>
+                      : <div key={a.id} style={{ padding: "8px 0" }}>{row}</div>;
+                  })}
+                </div>
+                <Link href="/urge/plan" style={{ display: "inline-block", marginTop: 12, fontSize: 12.5, color: "var(--accent-text)", fontWeight: 600 }}>Edit my plan →</Link>
+              </div>
+            )}
+
+            {/* Quick tools */}
+            <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+              <Link href="/urge/delay" style={{ padding: "9px 15px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, border: `1px solid ${T.border}` }}>Wait 10 minutes</Link>
+              <Link href="/urge/environment" style={{ padding: "9px 15px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, border: `1px solid ${T.border}` }}>Change environment</Link>
+            </div>
 
             {/* Always-available crisis resources. */}
             <div style={{ marginTop: 28, display: "grid", gap: 8 }}>

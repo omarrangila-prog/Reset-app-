@@ -130,6 +130,8 @@ export default function ProfilePage() {
           <div className="pearl" style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 22, padding: "6px 18px", boxShadow: t.shadowSm }}>
             <LinkRow href="/journey/timeline" label="Your journey" />
             <Divider />
+            <LinkRow href="/urge/plan" label="My urge plan" />
+            <Divider />
             <LinkRow href="/profile/notifications" label="Reminders" />
             <Divider />
             <LinkRow href="/settings" label="Settings & privacy" />
