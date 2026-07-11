@@ -164,7 +164,7 @@ export default function SettingsPage() {
         <Group title="About" delay={0.26}>
           <NavRow label="Privacy policy" href="/profile/privacy" />
           <Divider />
-          <NavRow label="Support" href="/coach" />
+          <NavRow label="Getting more support" href="/support" />
           <Divider />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 4px" }}>
             <span style={{ fontSize: 14, color: t.sub }}>Version</span>
