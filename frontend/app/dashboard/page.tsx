@@ -269,7 +269,108 @@ export default function DashboardPage() {
         </div>
       </motion.section>
 
+      {/* Recovery factors — what shapes your recovery, explained */}
+      <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }} style={{ marginTop: 36 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#646E80", marginBottom: 6 }}>What shapes your recovery</div>
+        <p style={{ fontSize: 14, color: "#5A6478", lineHeight: 1.55, marginBottom: 18 }}>
+          A few gentle habits move the needle most. Tap any to see why.
+        </p>
+        <RecoveryFactors data={data} logs={user?.logs} />
+      </motion.section>
+
       <BottomNav />
     </div>
+  );
+}
+
+function RecoveryFactors({ data, logs }: { data: Analytics; logs?: any[] }) {
+  const checkins = (logs ?? []).filter((l: any) => l.type === "CHECK_IN").length;
+  const successes = (logs ?? []).filter((l: any) => l.type === "SUCCESS").length;
+
+  // Simple, honest signals — "strong / building / worth attention".
+  const factors = [
+    {
+      key: "mood",
+      name: "Noticing how you feel",
+      color: "#5B7CFA",
+      level: checkins >= 5 ? "Strong" : checkins > 0 ? "Building" : "Just starting",
+      why: "Catching a feeling early gives you a moment to choose what happens next.",
+      how: "Check in on the Mood screen once a day — even a quick tap counts.",
+      href: "/journey/mood",
+    },
+    {
+      key: "urge",
+      name: "Riding out urges",
+      color: "#7C6BF0",
+      level: data.totalUrges > 0 ? "Building" : "Just starting",
+      why: "Every urge you sit with instead of acting on makes the next one weaker.",
+      how: "When one hits, open Calm Mode and breathe until it passes.",
+      href: "/urge",
+    },
+    {
+      key: "sleep",
+      name: "Getting enough rest",
+      color: "#4FB6F5",
+      level: "Worth attention",
+      why: "Tired brains reach harder for quick escapes, so urges feel stronger.",
+      how: "Aim to be in bed a little earlier — even 20 minutes helps.",
+      href: "/profile/goals",
+    },
+    {
+      key: "journal",
+      name: "Writing things down",
+      color: "#34C9A3",
+      level: "Building",
+      why: "Putting a feeling into words takes away some of its grip.",
+      how: "Write one honest sentence in your journal tonight.",
+      href: "/journey/journal",
+    },
+    {
+      key: "habits",
+      name: "Small daily habits",
+      color: "#F0B24B",
+      level: successes >= 5 ? "Strong" : "Building",
+      why: "Steady routines give hard moments something better to fall back on.",
+      how: "Keep one small habit going — a short walk, an earlier night.",
+      href: "/habits",
+    },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {factors.map((f, i) => (
+        <FactorRow key={f.key} f={f} index={i} />
+      ))}
+    </div>
+  );
+}
+
+function FactorRow({ f, index }: { f: any; index: number }) {
+  const [open, setOpen] = useState(false);
+  const levelColor = f.level === "Strong" ? "#2FBE6E" : f.level === "Building" ? f.color : "#646E80";
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index }}
+      style={{ background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: "1px solid #E6EAF2", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
+      <button onClick={() => setOpen((o) => !o)} aria-expanded={open}
+        style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "15px 16px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", minHeight: 44 }}>
+        <span style={{ width: 10, height: 10, borderRadius: "50%", background: f.color, flexShrink: 0 }} aria-hidden />
+        <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: "#1C2333" }}>{f.name}</span>
+        <span style={{ fontSize: 12, fontWeight: 600, color: levelColor }}>{f.level}</span>
+        <span style={{ color: "#646E80", fontSize: 15, transform: open ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} aria-hidden>›</span>
+      </button>
+      {open && (
+        <div style={{ padding: "0 16px 16px 38px", display: "flex", flexDirection: "column", gap: 10 }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#8A93A6", marginBottom: 3 }}>Why it matters</div>
+            <p style={{ fontSize: 13, color: "#1C2333", lineHeight: 1.55 }}>{f.why}</p>
+          </div>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#8A93A6", marginBottom: 3 }}>One way to grow it</div>
+            <p style={{ fontSize: 13, color: "#1C2333", lineHeight: 1.55 }}>{f.how}</p>
+          </div>
+          <Link href={f.href} style={{ fontSize: 13, fontWeight: 600, color: "#4257C9", marginTop: 2 }}>Do this now →</Link>
+        </div>
+      )}
+    </motion.div>
   );
 }
