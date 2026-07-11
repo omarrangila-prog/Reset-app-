@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Splash } from "@/components/Splash";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
@@ -237,11 +237,23 @@ export default function HomeApp() {
   const [journalSaving, setJournalSaving] = useState(false);
   const [journalSaved, setJournalSaved] = useState(false);
   const [showJournalModal, setShowJournalModal] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
+  // Splash shows once per *session* (fresh launch/reopen), NOT on internal
+  // navigation back to Home. sessionStorage is cleared when the tab/PWA is fully
+  // closed, so a fresh launch gets a fresh session and the splash replays.
+  // Start false during SSR; a layout effect decides synchronously before paint.
+  const [showSplash, setShowSplash] = useState(false);
 
   const streak = user?.streak ?? 0;
   const score = user?.disciplineScore ?? 0;
   const momentum = user?.momentum ?? "Getting started";
+
+  // Decide splash before first paint: show once per session (fresh launch),
+  // not on internal navigation back to Home. Independent of onboarding.
+  useLayoutEffect(() => {
+    if (sessionStorage.getItem("reset_splash_seen") !== "true") {
+      setShowSplash(true);
+    }
+  }, []);
 
   useEffect(() => {
     const seen = localStorage.getItem("onboarding_seen");
@@ -262,12 +274,17 @@ export default function HomeApp() {
       if (document.visibilityState === "hidden") {
         hiddenAt = Date.now();
       } else if (document.visibilityState === "visible" && hiddenAt) {
-        if (Date.now() - hiddenAt > RELAUNCH_MS) setShowSplash(true);
+        if (Date.now() - hiddenAt > RELAUNCH_MS) {
+          sessionStorage.removeItem("reset_splash_seen");
+          setShowSplash(true);
+        }
         hiddenAt = 0;
       }
     };
     // bfcache restore (PWA reopen) fires pageshow with persisted=true.
-    const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) setShowSplash(true); };
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) { sessionStorage.removeItem("reset_splash_seen"); setShowSplash(true); }
+    };
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pageshow", onPageShow);
     return () => {
@@ -318,7 +335,7 @@ export default function HomeApp() {
 
   return (
     <div style={{ minHeight: "100vh", color: t.text }}>
-      <AnimatePresence>{showSplash && <Splash onDone={() => setShowSplash(false)} />}</AnimatePresence>
+      <AnimatePresence>{showSplash && <Splash onDone={() => { sessionStorage.setItem("reset_splash_seen", "true"); setShowSplash(false); }} />}</AnimatePresence>
       {showOnboarding && <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingComplete} />}
       {showPostRelapse && <PostRelapseFlow onComplete={handleRelapseComplete} />}
 

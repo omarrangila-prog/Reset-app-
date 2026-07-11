@@ -92,17 +92,19 @@ export default function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function () {
+                  // Only reload for a genuine UPDATE (a controller already existed).
+                  // On the first-ever install there is no prior controller, so we
+                  // must NOT reload — that caused the page (and splash) to restart.
+                  var hadController = !!navigator.serviceWorker.controller;
+                  var reloaded = false;
                   navigator.serviceWorker.register('/sw.js').then(function (reg) {
-                    // Check for a new worker on every load so fresh deploys are
-                    // picked up promptly instead of lingering on a stale build.
                     reg.update();
                     reg.addEventListener('updatefound', function () {
                       var sw = reg.installing;
                       if (!sw) return;
                       sw.addEventListener('statechange', function () {
-                        // A new worker took control while a page was already open —
-                        // reload once to swap in the new assets.
-                        if (sw.state === 'activated' && navigator.serviceWorker.controller) {
+                        if (sw.state === 'activated' && hadController && !reloaded) {
+                          reloaded = true;
                           window.location.reload();
                         }
                       });

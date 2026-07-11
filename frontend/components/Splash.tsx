@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { AICoachOrb } from "@/components/ui/AICoachOrb";
 
@@ -18,16 +18,23 @@ export function Splash({ onDone }: { onDone: () => void }) {
   // stage: 0 light → 1 orb → 2 wordmark
   const [stage, setStage] = useState(0);
 
+  // Keep onDone in a ref so the timer effect runs ONCE and isn't restarted by
+  // parent re-renders (which would keep resetting the completion timeout and
+  // prevent the splash from ever finishing).
+  const onDoneRef = useRef(onDone);
+  useEffect(() => { onDoneRef.current = onDone; }, [onDone]);
+
   useEffect(() => {
+    const fire = () => onDoneRef.current();
     if (reduced) {
-      const t = setTimeout(onDone, 500);
+      const t = setTimeout(fire, 500);
       return () => clearTimeout(t);
     }
     const t1 = setTimeout(() => setStage(1), 450);
     const t2 = setTimeout(() => setStage(2), 1050);
-    const done = setTimeout(onDone, 1850);
+    const done = setTimeout(fire, 1850);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(done); };
-  }, [onDone, reduced]);
+  }, [reduced]);
 
   return (
     <motion.div
@@ -37,7 +44,7 @@ export function Splash({ onDone }: { onDone: () => void }) {
       style={{
         position: "fixed", inset: 0, zIndex: 10001,
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28,
-        background: "radial-gradient(120% 80% at 50% 20%, #EEF1FF 0%, #F1EEFF 48%, #E9EEFF 100%)",
+        background: "var(--splash-bg)",
         overflow: "hidden",
       }}
     >
@@ -58,8 +65,8 @@ export function Splash({ onDone }: { onDone: () => void }) {
           aria-hidden
           style={{
             position: "absolute", width: 210, height: 210, borderRadius: "50%",
-            background: "linear-gradient(145deg, #F7F9FF, #E7ECFA)",
-            boxShadow: "-14px -14px 30px rgba(255,255,255,0.9), 16px 16px 34px rgba(90,100,150,0.16), inset 1px 1px 0 rgba(255,255,255,0.7)",
+            background: "var(--splash-pad)",
+            boxShadow: "var(--splash-pad-shadow)",
           }}
           initial={{ scale: 0.2, opacity: 0 }}
           animate={{ scale: stage >= 1 ? 1 : 0.2, opacity: stage >= 1 ? 1 : 0 }}
@@ -87,10 +94,10 @@ export function Splash({ onDone }: { onDone: () => void }) {
         animate={{ y: reduced || stage >= 2 ? 0 : 16, opacity: reduced || stage >= 2 ? 1 : 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: 30, fontWeight: 700, letterSpacing: "0.1em", color: "#1C2333" }}>
+        <div style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: 30, fontWeight: 700, letterSpacing: "0.1em", color: "var(--text)" }}>
           RESET
         </div>
-        <div style={{ fontSize: 14, color: "#5A6478", marginTop: 8, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 14, color: "var(--text-sub)", marginTop: 8, lineHeight: 1.5 }}>
           Break the pattern.<br />Take back control.
         </div>
       </motion.div>
