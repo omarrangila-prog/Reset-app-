@@ -3,7 +3,9 @@
 import { useState, ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bell, Shield, Mic2, Download, Trash2, ChevronRight, Lock, Sparkles } from "lucide-react";
+import { Bell, Shield, Mic2, Download, Trash2, ChevronRight, Lock, Sparkles, FileSpreadsheet, FileText } from "lucide-react";
+import { exportCSV, exportSummary } from "@/lib/exportData";
+import { useToast } from "@/components/ui/SaveToast";
 import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/ui/BottomNav";
@@ -24,6 +26,7 @@ function stateLabel(score: number): string {
 
 export default function SettingsPage() {
   const { user } = useAppStore();
+  const { toast } = useToast();
   const clearSession = useAppStore((s) => s.clearSession);
   const [status, setStatus] = useState<"idle" | "deleting" | "deleted" | "error">("idle");
   const [confirming, setConfirming] = useState(false);
@@ -126,16 +129,28 @@ export default function SettingsPage() {
 
         {/* ── DATA (two compact tactile modules) ── */}
         <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: t.muted, margin: "26px 4px 12px" }}>Data</div>
-        <div style={{ display: "flex", gap: 12, marginBottom: 22 }}>
+        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
           <button onClick={handleExport} className="neu-btn" style={{ flex: 1, borderRadius: 20, padding: "18px 14px", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8, cursor: "pointer", color: t.text }}>
             <Download size={20} color="var(--accent)" />
-            <span style={{ fontSize: 14, fontWeight: 700 }}>Export data</span>
-            <span style={{ fontSize: 12, color: t.sub, textAlign: "left" }}>Download everything as JSON</span>
+            <span style={{ fontSize: 14, fontWeight: 700 }}>Export JSON</span>
+            <span style={{ fontSize: 12, color: t.sub, textAlign: "left" }}>Everything, machine-readable</span>
           </button>
           <button onClick={() => setConfirming(true)} className="neu-btn" style={{ flex: 1, borderRadius: 20, padding: "18px 14px", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8, cursor: "pointer", color: t.text }}>
             <Trash2 size={20} color="var(--danger)" />
             <span style={{ fontSize: 14, fontWeight: 700 }}>Delete data</span>
             <span style={{ fontSize: 12, color: t.sub, textAlign: "left" }}>Erase your account permanently</span>
+          </button>
+        </div>
+        <div style={{ display: "flex", gap: 12, marginBottom: 22 }}>
+          <button onClick={() => { exportCSV(); toast("Exported", { kind: "success", subtitle: "CSV saved to your device." }); }} className="neu-btn" style={{ flex: 1, borderRadius: 20, padding: "16px 14px", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8, cursor: "pointer", color: t.text }}>
+            <FileSpreadsheet size={20} color="var(--accent)" />
+            <span style={{ fontSize: 14, fontWeight: 700 }}>Export CSV</span>
+            <span style={{ fontSize: 12, color: t.sub, textAlign: "left" }}>Wins & summary as a spreadsheet</span>
+          </button>
+          <button onClick={exportSummary} className="neu-btn" style={{ flex: 1, borderRadius: 20, padding: "16px 14px", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 8, cursor: "pointer", color: t.text }}>
+            <FileText size={20} color="var(--accent)" />
+            <span style={{ fontSize: 14, fontWeight: 700 }}>Printable summary</span>
+            <span style={{ fontSize: 12, color: t.sub, textAlign: "left" }}>Save as PDF to keep or share</span>
           </button>
         </div>
 
