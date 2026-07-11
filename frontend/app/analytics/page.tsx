@@ -76,7 +76,7 @@ export default function AnalyticsPage() {
             <ResponsiveContainer width="100%" height={140}>
               <LineChart data={chart}>
                 <XAxis dataKey="day" tick={{ fontSize: 11, fill: t.muted }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: `1px solid ${t.border}`, fontSize: 12 }} />
+                <Tooltip contentStyle={{ borderRadius: 12, border: `1px solid ${t.border}`, fontSize: 12, background: "var(--bg-surface)", color: "var(--text)" }} />
                 <Line type="monotone" dataKey="wins" stroke={t.emerald} strokeWidth={2.5} dot={false} animationDuration={800} />
               </LineChart>
             </ResponsiveContainer>
@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
             <ResponsiveContainer width="100%" height={140}>
               <BarChart data={chart}>
                 <XAxis dataKey="day" tick={{ fontSize: 11, fill: t.muted }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: `1px solid ${t.border}`, fontSize: 12 }} cursor={{ fill: t.bgTint }} />
+                <Tooltip contentStyle={{ borderRadius: 12, border: `1px solid ${t.border}`, fontSize: 12, background: "var(--bg-surface)", color: "var(--text)" }} cursor={{ fill: t.bgTint }} />
                 <Bar dataKey="urges" fill={t.accent} radius={[4, 4, 0, 0]} animationDuration={800} />
               </BarChart>
             </ResponsiveContainer>

@@ -344,11 +344,15 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line
   .neu-btn { transition: none; }
 }
 
-/* ── Skeleton shimmer + pulse (app always feels alive) ── */
+/* ── Skeleton shimmer + pulse (app always feels alive) — theme-aware ── */
 .rz-shimmer {
-  background: linear-gradient(100deg, #EEF1FA 30%, #F7F9FE 50%, #EEF1FA 70%);
+  background: linear-gradient(100deg, var(--bg-tint) 30%, var(--bg-surface) 50%, var(--bg-tint) 70%);
   background-size: 200% 100%;
   animation: rz-shimmer 1.4s ease-in-out infinite;
+}
+:root[data-theme="dark"] .rz-shimmer {
+  background: linear-gradient(100deg, #171C31 30%, #222842 50%, #171C31 70%);
+  background-size: 200% 100%;
 }
 @keyframes rz-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .rz-pulse { animation: rz-pulse 2s ease-in-out infinite; }
