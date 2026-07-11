@@ -9,14 +9,15 @@ interface CrisisBarProps {
 export function CrisisBar(_props: CrisisBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Theme-aware via CSS vars so the SOS affordance follows dark mode.
   const T = {
-    bg: "#FFFFFF",
-    bgSurface: "rgba(255,255,255,0.82)",
-    text: "#1C2333",
-    textSub: "#5A6478",
-    textMuted: "#8A93A6",
-    border: "#E6EAF2",
-    amber: "#EC6A5E",
+    bg: "var(--bg-surface)",
+    bgSurface: "var(--bg-glass-strong)",
+    text: "var(--text)",
+    textSub: "var(--text-sub)",
+    textMuted: "var(--text-muted)",
+    border: "var(--border)",
+    amber: "var(--urge)",
   };
 
   // Floating, compact SOS affordance. Anchored top-right so it never collides

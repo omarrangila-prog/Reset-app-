@@ -25,17 +25,16 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
   );
 
   const T = {
-    // Calm-mode palette — RESET lavender/blue/pearl (no green).
-    bg: "linear-gradient(165deg, #EEF1FF 0%, #F1EEFF 50%, #E9EEFF 100%)",
-    bgSurface: "#FFFFFF",
-    text: "#1C2333",
-    textSub: "#5A6478",
-    textMuted: "#646E80",
-    border: "#E6EAF2",
-    accent: "#5B7CFA",
-    // "recovery" now maps to the lavender gradient for all primary CTAs.
-    recovery: "linear-gradient(135deg, #6E8CFB 0%, #9B7BF2 100%)",
-    recoverySolid: "#6E8CFB",
+    // Calm-mode palette — theme-aware so SOS/calm mode follows dark mode.
+    bg: "var(--grad-calm)",
+    bgSurface: "var(--bg-surface)",
+    text: "var(--text)",
+    textSub: "var(--text-sub)",
+    textMuted: "var(--text-muted)",
+    border: "var(--border)",
+    accent: "var(--accent)",
+    recovery: "var(--grad-hero)",
+    recoverySolid: "var(--accent)",
   };
 
   // Breathing is now handled by the self-managing <CalmSphere /> component.
@@ -80,6 +79,20 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
         overflowY: "auto",
       }}
     >
+      {/* Leave — a calm exit, always available */}
+      <button
+        onClick={onComplete}
+        aria-label="Leave calm mode"
+        style={{
+          position: "absolute", top: "calc(env(safe-area-inset-top) + 16px)", right: 18,
+          width: 44, height: 44, borderRadius: 14, border: `1px solid ${T.border}`,
+          background: "var(--bg-glass)", backdropFilter: "blur(10px)", color: T.textMuted,
+          display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 20,
+        }}
+      >
+        ✕
+      </button>
+
       <div style={{ maxWidth: 520, width: "100%", maxHeight: "100vh", display: "flex", flexDirection: "column" }}>
         {/* Message Stage */}
         {stage === "message" && (
@@ -154,7 +167,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                   style={{
                     padding: "10px 14px",
                     borderRadius: 12,
-                    background: "#FFFFFF",
+                    background: "var(--bg-surface)",
                     border: `1px solid ${T.border}`,
                     color: T.text,
                     fontSize: 13,
