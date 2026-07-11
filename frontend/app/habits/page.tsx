@@ -117,7 +117,7 @@ export default function HabitsPage() {
                     </span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 15, fontWeight: 600, color: t.text }}>{h.name}</div>
-                      <div style={{ fontSize: 12, color: t.muted, marginTop: 2 }}>{h.streak} day streak</div>
+                      <div style={{ fontSize: 12, color: t.sub, marginTop: 2 }}>{h.streak} day streak</div>
                     </div>
                     <motion.div whileTap={{ scale: 0.9 }} transition={spring}>
                       <CompletionRing done={h.doneToday} accent={h.accent} />
@@ -147,7 +147,7 @@ export default function HabitsPage() {
           ) : (
             <button
               onClick={() => setCreating(true)}
-              style={{ width: "100%", marginTop: 4, padding: "16px", background: "transparent", border: `1.5px dashed ${t.borderMid}`, borderRadius: 16, color: t.accent, fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 52, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+              style={{ width: "100%", marginTop: 4, padding: "16px", background: "transparent", border: `1.5px dashed ${t.borderMid}`, borderRadius: 16, color: t.accentText, fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 52, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
             >
               <Plus size={18} /> Create a new habit
             </button>

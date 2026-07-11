@@ -141,7 +141,7 @@ function HomeScreen({
 
       {/* ── TODAY'S FOCUS (real habits) ── */}
       <Reveal index={4}>
-        <Card variant="soft" onClick={() => {}} ariaLabel="Today's focus" style={{ marginBottom: 16 }}>
+        <Card variant="soft" style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Today&apos;s focus</div>
             <Link href="/habits" style={{ fontSize: 12, color: t.accent, fontWeight: 600 }}>See all →</Link>

@@ -29,7 +29,7 @@ export function FeatureIntro({
       <p style={{ fontSize: 14, color: t.text, lineHeight: 1.6, marginBottom: 8 }}>{what}</p>
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 12, color: t.sub }}>
         <span>🕒 {time}</span>
-        <span style={{ color: t.accent, fontWeight: 600 }}>💙 {benefit}</span>
+        <span style={{ color: t.accentText, fontWeight: 600 }}>💙 {benefit}</span>
       </div>
     </div>
   );

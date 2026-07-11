@@ -114,7 +114,7 @@ export default function JournalPage() {
                   key={p}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setText(p + "\n\n")}
-                  style={{ padding: "10px 14px", borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.accent}22`, color: t.accent, fontSize: 13, fontWeight: 500, cursor: "pointer", textAlign: "left", minHeight: 40 }}
+                  style={{ padding: "10px 14px", borderRadius: 999, background: t.accentSoft, border: `1px solid ${t.accent}22`, color: t.accentText, fontSize: 13, fontWeight: 500, cursor: "pointer", textAlign: "left", minHeight: 40 }}
                 >
                   {p}
                 </motion.button>

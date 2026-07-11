@@ -17,7 +17,7 @@
   /* Text (all AA+ on light surfaces) */
   --text:         #1C2333;   /* near-slate ink */
   --text-sub:     #5A6478;   /* secondary */
-  --text-muted:   #8A93A6;   /* tertiary / captions */
+  --text-muted:   #646E80;   /* tertiary / captions */
 
   /* Brand accents */
   --accent:       #5B7CFA;   /* soft blue — primary */

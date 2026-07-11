@@ -10,9 +10,11 @@ export const t = {
 
   text: "#1C2333",
   sub: "#5A6478",
-  muted: "#8A93A6",
+  muted: "#646E80",
 
   accent: "#5B7CFA",
+  // Darker accent for text on tinted/soft backgrounds (meets WCAG AA 4.5:1).
+  accentText: "#4257C9",
   accent2: "#7C6BF0",
   accentSoft: "#EAF0FF",
   sky: "#4FB6F5",

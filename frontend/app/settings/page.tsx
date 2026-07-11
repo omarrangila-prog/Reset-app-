@@ -15,6 +15,7 @@ const T = {
   recovery: "#2FBE6E",
   amber: "#5B7CFA",
   danger: "#E5687C",
+  dangerText: "#C4425A", // AA-compliant for danger text on white
 };
 
 export default function SettingsPage() {
@@ -85,7 +86,7 @@ export default function SettingsPage() {
           ) : !confirming ? (
             <button
               onClick={() => setConfirming(true)}
-              style={{ width: "100%", padding: "16px 18px", background: "transparent", color: T.danger, border: `1px solid ${T.danger}`, borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", minHeight: 44 }}
+              style={{ width: "100%", padding: "16px 18px", background: "transparent", color: T.dangerText, border: `1px solid ${T.danger}`, borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: "pointer", minHeight: 44 }}
             >
               Delete everything
             </button>
@@ -108,7 +109,7 @@ export default function SettingsPage() {
                 </button>
               </div>
               {status === "error" && (
-                <p role="alert" style={{ color: T.danger, fontSize: 13 }}>
+                <p role="alert" style={{ color: T.dangerText, fontSize: 13 }}>
                   Something went wrong. Please try again.
                 </p>
               )}
