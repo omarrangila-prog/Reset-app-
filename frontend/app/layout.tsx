@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../styles/globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
+import { ToastProvider } from "@/components/ui/SaveToast";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { QuickRescue } from "@/components/ui/QuickRescue";
@@ -79,13 +80,15 @@ export default function RootLayout({
           Skip to content
         </a>
         <ThemeProvider>
-          <AuthProvider />
-          <Atmosphere />
-          <ErrorBoundary>
-            <main id="main">{children}</main>
-          </ErrorBoundary>
-          <QuickRescue />
-          <InstallPrompt />
+          <ToastProvider>
+            <AuthProvider />
+            <Atmosphere />
+            <ErrorBoundary>
+              <main id="main">{children}</main>
+            </ErrorBoundary>
+            <QuickRescue />
+            <InstallPrompt />
+          </ToastProvider>
         </ThemeProvider>
         <script
           dangerouslySetInnerHTML={{

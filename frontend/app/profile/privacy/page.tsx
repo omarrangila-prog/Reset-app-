@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { PrivacyShield } from "@/components/ui/PrivacyShield";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 
@@ -32,7 +32,7 @@ export default function PrivacyCenterPage() {
   return (
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
       <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-        <Link href="/profile" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
+        <BackButton fallbackHref="/profile" />
         <div style={{ fontSize: 18, fontWeight: 700, color: t.text }}>Your privacy</div>
       </header>
 

@@ -11,6 +11,7 @@ import { AICoachOrb } from "@/components/ui/AICoachOrb";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 
 type Mode = "URGE" | "VULNERABILITY" | "RECOVERY";
 
@@ -129,7 +130,7 @@ function CoachInner() {
   if (showIntro) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 28px", textAlign: "center", background: "var(--grad-calm)", position: "relative", zIndex: 1 }}>
-        <Link href="/" aria-label="Back" style={{ position: "absolute", top: 20, left: 20, width: 40, height: 40, borderRadius: 12, background: "var(--bg-glass)", border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub }}>‹</Link>
+        <BackButton fallbackHref="/" />
         <AICoachOrb size={160} state="idle" />
         <h1 style={{ fontSize: 26, fontWeight: 700, color: t.text, letterSpacing: "-0.02em", marginTop: 32 }}>I&apos;m here with you</h1>
         <p style={{ fontSize: 15, color: t.sub, lineHeight: 1.6, marginTop: 8, maxWidth: 320 }}>

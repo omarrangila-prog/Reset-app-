@@ -8,6 +8,7 @@ import { BottomNav } from "@/components/ui/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Reveal, spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 
 // Premium wellness cards — beautiful moments, not notifications.
 const RITUALS = [
@@ -49,7 +50,7 @@ export default function NotificationsPage() {
   return (
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 120px", position: "relative", zIndex: 1 }}>
       <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
-        <Link href="/profile" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
+        <BackButton fallbackHref="/profile" />
         <div>
           <div style={{ fontSize: 18, fontWeight: 700, color: t.text }}>Gentle rituals</div>
           <div style={{ fontSize: 12, color: t.muted }}>Small, kind moments for your day</div>

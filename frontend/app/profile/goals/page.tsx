@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Moon, PenLine, Footprints, Smartphone, CalendarCheck } from "lucide-react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal, spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 import { haptic } from "@/lib/haptics";
 
 interface Goal {
@@ -64,7 +64,7 @@ export default function GoalsPage() {
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "22px 20px 120px", position: "relative", zIndex: 1 }}>
       <Reveal index={0}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-          <Link href="/profile" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm, flexShrink: 0 }}>‹</Link>
+          <BackButton fallbackHref="/profile" />
           <div>
             <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: t.muted }}>Your goals</div>
             <h1 style={{ fontSize: 26, fontWeight: 700, color: t.text, letterSpacing: "-0.02em", lineHeight: 1.1 }}>Small aims, real change.</h1>

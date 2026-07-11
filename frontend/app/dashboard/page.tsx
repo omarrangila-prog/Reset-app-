@@ -304,8 +304,8 @@ export default function DashboardPage() {
 
       {/* One recommended next step */}
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44, duration: 0.5 }} style={{ marginTop: 28 }}>
-        <div style={{ background: "linear-gradient(135deg,#EAF0FF,#F3EEFF)", border: "1px solid #DCE3FF", borderRadius: 22, padding: 20 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5B7CFA", marginBottom: 6 }}>Try this next</div>
+        <div style={{ background: "linear-gradient(145deg, var(--accent-soft), var(--bg-surface))", border: "1px solid var(--border)", borderRadius: 22, padding: 20, boxShadow: "var(--shadow-card, var(--shadow-sm))" }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--accent-text)", marginBottom: 6 }}>Try this next</div>
           <p style={{ fontSize: 16, color: "var(--text)", lineHeight: 1.55, fontWeight: 500, marginBottom: 14 }}>
             Set a gentle wind-down reminder for the evening — your calmest days start with earlier nights.
           </p>

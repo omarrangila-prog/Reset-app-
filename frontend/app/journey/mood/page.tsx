@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 import { api } from "@/lib/api";
 import { haptic } from "@/lib/haptics";
 import { useAppStore } from "@/lib/store";
@@ -44,7 +44,7 @@ export default function MoodPage() {
   return (
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "20px 20px 110px", position: "relative", zIndex: 1, display: "flex", flexDirection: "column" }}>
       <header style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8, flexShrink: 0 }}>
-        <Link href="/journey" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
+        <BackButton fallbackHref="/journey" />
         <div>
           <div style={{ fontSize: 18, fontWeight: 700, color: t.text }}>How are you feeling?</div>
           <div style={{ fontSize: 12, color: t.muted }}>Tap the bubble that fits right now</div>

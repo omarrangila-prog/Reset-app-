@@ -8,6 +8,7 @@ import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
+import { BackButton } from "@/components/ui/BackButton";
 import { APP_BUILD_VERSION } from "@/lib/version";
 import { DEMO_PROFILE } from "@/lib/demoProfile";
 import { t } from "@/components/ui/theme";
@@ -57,6 +58,7 @@ export default function SettingsPage() {
 
         {/* ── HERO ── */}
         <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} style={{ marginBottom: 24 }}>
+          <div style={{ marginBottom: 16 }}><BackButton fallbackHref="/profile" /></div>
           <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: t.muted }}>Your RESET</div>
           <h1 style={{ fontFamily: t.fontHeading, fontSize: 34, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.05, marginTop: 8, color: t.text }}>
             Shape the app around<br />how you want to recover.

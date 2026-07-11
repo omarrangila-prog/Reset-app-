@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Mic, Square, Volume2, VolumeX, RotateCcw, MessageSquare, PhoneOff } from "lucide-react";
 import { AICoachOrb, OrbState } from "@/components/ui/AICoachOrb";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 import { api } from "@/lib/api";
 import { haptic } from "@/lib/haptics";
 
@@ -210,7 +211,7 @@ export default function VoiceCoachPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1, background: "var(--grad-calm)" }}>
       <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/coach" aria-label="Back to chat" style={{ width: 40, height: 40, borderRadius: 12, background: t.glass, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub }}>‹</Link>
+          <BackButton fallbackHref="/coach" />
           <div style={{ fontSize: 16, fontWeight: 700, color: t.text }}>Voice coach</div>
         </div>
         {phase !== "unsupported" && (

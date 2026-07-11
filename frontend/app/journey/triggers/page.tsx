@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Zap, Coffee, CloudRain, Moon, Users, Frown, Clock, HeartCrack } from "lucide-react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { spring } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { BackButton } from "@/components/ui/BackButton";
 import { api, MeProfile } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 
@@ -46,7 +46,7 @@ export default function TriggersPage() {
     <div style={{ minHeight: "100vh", maxWidth: 520, margin: "0 auto", padding: "24px 22px 130px", position: "relative", zIndex: 1 }}>
       {/* Editorial masthead */}
       <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 12, display: "flex", alignItems: "flex-start", gap: 12 }}>
-        <Link href="/journey" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm, flexShrink: 0 }}>‹</Link>
+        <BackButton fallbackHref="/journey" />
         <div>
           <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: t.muted }}>What sets you off</div>
           <h1 style={{ fontSize: 30, fontWeight: 700, color: t.text, letterSpacing: "-0.03em", lineHeight: 1.05, marginTop: 6 }}>Know your<br />patterns.</h1>

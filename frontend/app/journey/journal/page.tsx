@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { BackButton } from "@/components/ui/BackButton";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
 import { api, JournalEntry } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
+import { useToast } from "@/components/ui/SaveToast";
 
 // Gentle, emotional prompts — tap one to start writing.
 const PROMPTS = [
@@ -21,6 +22,7 @@ const PROMPTS = [
 
 export default function JournalPage() {
   const { userId } = useAppStore();
+  const { toast } = useToast();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
@@ -34,16 +36,18 @@ export default function JournalPage() {
 
   const save = async () => {
     const content = text.trim();
-    if (!content) return;
+    if (!content || saving) return; // guard duplicate saves while processing
     setSaving(true);
     try {
       await api.createJournal(content);
       setText("");
       setJustSaved(true);
       setTimeout(() => setJustSaved(false), 2500);
+      toast("Saved", { kind: "success", subtitle: "Your reflection is safe." });
       await load();
     } catch {
-      alert("Couldn't save just now — your note is still here.");
+      // Keep the writing visible; surface a calm, non-blocking error toast.
+      toast("Couldn’t save yet", { kind: "error", subtitle: "Your note is still here — try again." });
     } finally {
       setSaving(false);
     }
@@ -56,7 +60,7 @@ export default function JournalPage() {
       {/* Hero — warm, personal */}
       <Reveal index={0}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <Link href="/journey" aria-label="Back" style={{ width: 40, height: 40, borderRadius: 12, background: t.surface, border: `1px solid ${t.border}`, display: "inline-flex", alignItems: "center", justifyContent: "center", color: t.sub, boxShadow: t.shadowSm }}>‹</Link>
+          <BackButton fallbackHref="/journey" />
           <div style={{ fontSize: 12, color: t.muted }}>{today}</div>
         </div>
         <h1 style={{ fontSize: 30, fontWeight: 700, color: t.text, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 4 }}>My safe space</h1>
