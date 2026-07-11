@@ -79,7 +79,9 @@ export function Modal({ open, onClose, title, children, align = "center" }: Moda
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(0, 0, 0, 0.8)",
+        background: "rgba(28, 35, 51, 0.42)",
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
         display: "flex",
         flexDirection: "column",
         justifyContent: align === "bottom" ? "flex-end" : "center",
@@ -95,13 +97,15 @@ export function Modal({ open, onClose, title, children, align = "center" }: Moda
         aria-modal="true"
         aria-labelledby={titleId}
         style={{
-          background: "#1A1A18",
-          borderRadius: align === "bottom" ? "16px 16px 0 0" : 16,
+          background: "#FFFFFF",
+          borderRadius: align === "bottom" ? "24px 24px 0 0" : 20,
           padding: 24,
           maxHeight: "80vh",
           maxWidth: 520,
           width: "100%",
           margin: align === "bottom" ? undefined : "0 auto",
+          border: "1px solid #E6EAF2",
+          boxShadow: "0 -8px 40px rgba(28,35,51,0.16)",
           display: "flex",
           flexDirection: "column",
           overflowY: "auto",
@@ -112,7 +116,7 @@ export function Modal({ open, onClose, title, children, align = "center" }: Moda
           style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 13,
-            color: "#8A8A90",
+            color: "#646E80",
             letterSpacing: "0.05em",
             textTransform: "uppercase",
             marginBottom: 12,

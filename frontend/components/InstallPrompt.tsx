@@ -80,22 +80,22 @@ export function InstallPrompt() {
         zIndex: 9998,
         maxWidth: 520,
         margin: "0 auto",
-        background: "#1A1A18",
-        border: "1px solid #2C2C34",
-        borderRadius: 14,
+        background: "#FFFFFF",
+        border: "1px solid #E6EAF2",
+        borderRadius: 16,
         padding: 16,
         display: "flex",
         alignItems: "center",
         gap: 12,
-        boxShadow: "0 8px 30px rgba(0,0,0,0.5)",
+        boxShadow: "0 8px 30px rgba(28,35,51,0.14)",
         fontFamily: "'DM Sans', sans-serif",
       }}
     >
       <div style={{ flex: 1 }}>
-        <div style={{ color: "#EDEDEB", fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
+        <div style={{ color: "#1C2333", fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
           Install RESET
         </div>
-        <div style={{ color: "#A7A7AD", fontSize: 12, lineHeight: 1.5 }}>
+        <div style={{ color: "#5A6478", fontSize: 12, lineHeight: 1.5 }}>
           {iosHint
             ? "Tap the Share icon, then “Add to Home Screen” for a private, app-like experience."
             : "Add it to your home screen — private, fast, works offline."}
@@ -105,8 +105,8 @@ export function InstallPrompt() {
         <button
           onClick={install}
           style={{
-            background: "#2FBE6E",
-            color: "#000",
+            background: "linear-gradient(135deg, #5B7CFA, #7C6BF0)",
+            color: "#fff",
             border: "none",
             borderRadius: 10,
             padding: "10px 16px",
@@ -124,8 +124,8 @@ export function InstallPrompt() {
         aria-label="Dismiss install prompt"
         style={{
           background: "transparent",
-          color: "#A7A7AD",
-          border: "1px solid #2C2C34",
+          color: "#646E80",
+          border: "1px solid #E6EAF2",
           borderRadius: 10,
           padding: "10px 12px",
           fontSize: 13,
