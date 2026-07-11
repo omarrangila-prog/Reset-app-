@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { LifeBuoy } from "lucide-react";
+import { haptic } from "@/lib/haptics";
 import { t } from "./theme";
 
 /**
@@ -19,7 +20,7 @@ export function QuickRescue() {
 
   return (
     <motion.button
-      onClick={() => router.push("/urge")}
+      onClick={() => { haptic("orb"); router.push("/urge"); }}
       aria-label="Quick rescue — open calm mode"
       whileTap={reduced ? undefined : { scale: 0.9 }}
       whileHover={reduced ? undefined : { scale: 1.06 }}

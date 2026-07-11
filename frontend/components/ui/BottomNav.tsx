@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Home, Compass, Sparkles, BarChart3, User } from "lucide-react";
+import { haptic } from "@/lib/haptics";
 import { t } from "./theme";
 
 /**
@@ -83,6 +84,7 @@ export function BottomNav() {
                 href={tab.href}
                 aria-label={tab.label}
                 aria-current={active ? "page" : undefined}
+              onClick={() => haptic("tap")}
                 style={{ flexShrink: 0 }}
               >
                 <motion.span
@@ -114,6 +116,7 @@ export function BottomNav() {
               href={tab.href}
               aria-label={tab.label}
               aria-current={active ? "page" : undefined}
+              onClick={() => haptic("tap")}
               style={{ flex: active ? "0 0 auto" : "1", display: "flex", justifyContent: "center", minWidth: 0 }}
             >
               <motion.span

@@ -10,6 +10,7 @@ import { Reveal, spring } from "@/components/ui/motion";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
 import { t } from "@/components/ui/theme";
 import { api, HabitItem } from "@/lib/api";
+import { haptic } from "@/lib/haptics";
 import { useAppStore } from "@/lib/store";
 
 // Map stored icon keys → lucide components (premium icon language, no emoji).
@@ -56,6 +57,9 @@ export default function HabitsPage() {
   const pct = habits.length ? Math.round((doneCount / habits.length) * 100) : 0;
 
   const toggle = async (id: string) => {
+    // haptic: satisfying confirm when completing, soft tap when un-completing
+    const wasDone = habits.find((h) => h.id === id)?.doneToday;
+    haptic(wasDone ? "tap" : "success");
     // optimistic
     setHabits((hs) => hs.map((h) => (h.id === id ? { ...h, doneToday: !h.doneToday, streak: h.doneToday ? h.streak - 1 : h.streak + 1 } : h)));
     try {

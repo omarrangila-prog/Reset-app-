@@ -1,6 +1,7 @@
 "use client";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { CSSProperties, ReactNode } from "react";
+import { haptic } from "@/lib/haptics";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "urge";
 type ButtonSize = "sm" | "md" | "lg" | "xl";
@@ -57,10 +58,15 @@ export function Button({
   fullWidth = false,
   disabled,
   style,
+  onClick,
   ...props
 }: ButtonProps) {
   return (
     <motion.button
+      onClick={(e) => {
+        if (!loading && !disabled) haptic(variant === "danger" ? "warning" : "tap");
+        onClick?.(e);
+      }}
       whileTap={{ scale: loading || disabled ? 1 : 0.97 }}
       whileHover={loading || disabled ? undefined : { y: -1, filter: "brightness(1.04)" }}
       whileFocus={loading || disabled ? undefined : { boxShadow: "0 0 0 3px rgba(91,124,250,0.35)" }}

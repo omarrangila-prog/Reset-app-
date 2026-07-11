@@ -3,6 +3,7 @@
 import { CSSProperties, ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { spring } from "./motion";
+import { haptic } from "@/lib/haptics";
 import { t } from "./theme";
 
 /**
@@ -63,7 +64,7 @@ export function Card({
   return (
     <motion.button
       className="pearl"
-      onClick={onClick}
+      onClick={() => { haptic("tap"); onClick(); }}
       aria-label={ariaLabel}
       whileHover={reduced ? undefined : { y: -3, boxShadow: t.shadowLg }}
       whileTap={reduced ? undefined : { scale: 0.985 }}

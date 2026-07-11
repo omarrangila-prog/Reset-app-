@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { t } from "@/components/ui/theme";
 import { api } from "@/lib/api";
+import { haptic } from "@/lib/haptics";
 import { useAppStore } from "@/lib/store";
 
 /**
@@ -30,6 +31,7 @@ export default function MoodPage() {
   const [saved, setSaved] = useState(false);
 
   const pick = (mood: string) => {
+    haptic("select");
     setSelected(mood);
     if (userId) api.createLog({ type: "CHECK_IN", emotion: mood }).catch(() => {});
   };
