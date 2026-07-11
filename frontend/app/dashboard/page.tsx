@@ -176,11 +176,11 @@ export default function DashboardPage() {
           gap: 16,
           padding: 24,
           textAlign: "center",
-          color: "#1C2333",
+          color: "var(--text)",
         }}
       >
         <p style={{ fontSize: 16 }}>We couldn&apos;t load your data just now.</p>
-        <p style={{ fontSize: 13, color: "#9A9AA0" }}>
+        <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
           Your progress is safe. Check your connection and try again.
         </p>
         <button
@@ -217,36 +217,36 @@ export default function DashboardPage() {
       {/* Editorial masthead — typography-led, no "dashboard" chrome */}
       <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32, marginTop: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#646E80" }}>Your progress</div>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>Your progress</div>
           {isDemo && (
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5B4FC4", background: "#EDEBFB", border: "1px solid #DAD5F5", borderRadius: 999, padding: "3px 8px" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--accent-2)", background: "var(--accent-soft)", border: "1px solid var(--border)", borderRadius: 999, padding: "3px 8px" }}>
               Sample insights
             </span>
           )}
         </div>
-        <h1 style={{ fontSize: 40, fontWeight: 700, color: "#1C2333", letterSpacing: "-0.035em", lineHeight: 1.02, marginTop: 8 }}>
+        <h1 style={{ fontSize: 40, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.035em", lineHeight: 1.02, marginTop: 8 }}>
           Look how far<br />you&apos;ve come.
         </h1>
       </motion.header>
 
       {/* Hero narrative stat — one sentence, not a KPI grid */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 36 }}>
-        <div style={{ fontSize: 19, color: "#1C2333", lineHeight: 1.5, fontWeight: 500 }}>
+        <div style={{ fontSize: 19, color: "var(--text)", lineHeight: 1.5, fontWeight: 500 }}>
           Over two weeks you faced{" "}
           <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{urges} urges</span> and got through{" "}
           <span style={{ color: "#2FBE6E", fontWeight: 700 }}>{wins}</span> of them.
         </div>
-        <div style={{ fontSize: 14, color: "#646E80", marginTop: 8 }}>That&apos;s not luck. That&apos;s you showing up.</div>
+        <div style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 8 }}>That&apos;s not luck. That&apos;s you showing up.</div>
       </motion.div>
 
       {/* Chart as a calm, wide hero (asymmetric, no card chrome) */}
       {chartData.length > 0 && (
         <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 40 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#646E80", marginBottom: 18 }}>Last 14 days</div>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 18 }}>Last 14 days</div>
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={chartData} barGap={3}>
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#B4BCCE" }} axisLine={false} tickLine={false} />
-              <Tooltip cursor={{ fill: "#EEF1FA" }} contentStyle={{ background: "#fff", border: "1px solid #E6EAF2", borderRadius: 12, fontSize: 12, color: "#1C2333" }} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
+              <Tooltip cursor={{ fill: "var(--bg-tint)" }} contentStyle={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12, color: "var(--text)" }} />
               <Bar dataKey="wins" name="Got through" fill="#2FBE6E" radius={[5, 5, 0, 0]} animationDuration={900} />
               <Bar dataKey="urges" name="Urges" fill="#C7D0FF" radius={[5, 5, 0, 0]} animationDuration={900} />
             </BarChart>
@@ -256,16 +256,16 @@ export default function DashboardPage() {
 
       {/* Check-in — the one primary action, framed warmly */}
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", borderRadius: 22, background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: "1px solid #E6EAF2", boxShadow: "0 8px 24px rgba(46,62,120,0.07), inset 0 1px 0 rgba(255,255,255,0.9)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", borderRadius: 22, background: "var(--bg-surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(46,62,120,0.07), inset 0 1px 0 rgba(255,255,255,0.9)" }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#1C2333" }}>Been on track today?</div>
-            <div style={{ fontSize: 13, color: "#646E80", marginTop: 2 }}>A quick check-in keeps your thread alive.</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text)" }}>Been on track today?</div>
+            <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>A quick check-in keeps your thread alive.</div>
           </div>
           <button onClick={handleCheckIn} disabled={streakLoading} style={{ padding: "12px 20px", borderRadius: 999, border: "none", background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 44, boxShadow: "0 10px 24px rgba(91,124,250,0.28)" }}>
             {streakLoading ? "…" : "Check in"}
           </button>
         </div>
-        <button onClick={handleResetStreak} style={{ display: "block", margin: "14px auto 0", background: "none", border: "none", color: "#646E80", fontSize: 13, cursor: "pointer" }}>
+        <button onClick={handleResetStreak} style={{ display: "block", margin: "14px auto 0", background: "none", border: "none", color: "var(--text-muted)", fontSize: 13, cursor: "pointer" }}>
           I slipped — start again, gently
         </button>
       </motion.section>
@@ -273,8 +273,8 @@ export default function DashboardPage() {
       {/* Trigger insight as one editorial line + soft link, not a bar list */}
       {data.triggerPatterns.length > 0 && (
         <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }} style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#646E80", marginBottom: 10 }}>What we&apos;ve noticed</div>
-          <p style={{ fontSize: 17, color: "#1C2333", lineHeight: 1.55, fontWeight: 500 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 10 }}>What we&apos;ve noticed</div>
+          <p style={{ fontSize: 17, color: "var(--text)", lineHeight: 1.55, fontWeight: 500 }}>
             Your urges lean toward <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{triggerLabels[data.triggerPatterns[0].type] || "certain moments"}</span>.
           </p>
           <Link href="/journey/triggers" style={{ display: "inline-block", marginTop: 10, color: "#4257C9", fontSize: 14, fontWeight: 600 }}>See your patterns →</Link>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36, duration: 0.5 }} style={{ marginTop: 36 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
           <span style={{ width: 24, height: 24, borderRadius: 8, background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13 }} aria-hidden>✦</span>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5B4FC4" }}>What we&apos;ve learned</div>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent-2)" }}>What we&apos;ve learned</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {[
@@ -294,9 +294,9 @@ export default function DashboardPage() {
             { emoji: "🚶", text: "You got through more urges on days you moved your body — a short walk seems to help you most." },
             { emoji: "✍️", text: "Your mood tends to lift after you journal. Even a sentence seems to settle things." },
           ].map((c, i) => (
-            <div key={i} style={{ display: "flex", gap: 12, padding: "16px", borderRadius: 18, background: "linear-gradient(180deg,#FFFFFF,#F7F6FF)", border: "1px solid #ECEAF9", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
+            <div key={i} style={{ display: "flex", gap: 12, padding: "16px", borderRadius: 18, background: "var(--bg-surface)", border: "1px solid var(--border)", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
               <span style={{ fontSize: 20, flexShrink: 0 }} aria-hidden>{c.emoji}</span>
-              <p style={{ fontSize: 14, color: "#1C2333", lineHeight: 1.55 }}>{c.text}</p>
+              <p style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.55 }}>{c.text}</p>
             </div>
           ))}
         </div>
@@ -306,7 +306,7 @@ export default function DashboardPage() {
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44, duration: 0.5 }} style={{ marginTop: 28 }}>
         <div style={{ background: "linear-gradient(135deg,#EAF0FF,#F3EEFF)", border: "1px solid #DCE3FF", borderRadius: 22, padding: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#5B7CFA", marginBottom: 6 }}>Try this next</div>
-          <p style={{ fontSize: 16, color: "#1C2333", lineHeight: 1.55, fontWeight: 500, marginBottom: 14 }}>
+          <p style={{ fontSize: 16, color: "var(--text)", lineHeight: 1.55, fontWeight: 500, marginBottom: 14 }}>
             Set a gentle wind-down reminder for the evening — your calmest days start with earlier nights.
           </p>
           <Link href="/profile/notifications" style={{ display: "inline-flex", padding: "11px 20px", background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", color: "#fff", borderRadius: 999, fontSize: 14, fontWeight: 600, minHeight: 44, alignItems: "center", boxShadow: "0 10px 24px rgba(91,124,250,0.28)" }}>
@@ -317,8 +317,8 @@ export default function DashboardPage() {
 
       {/* Recovery factors — what shapes your recovery, explained */}
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }} style={{ marginTop: 36 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#646E80", marginBottom: 6 }}>What shapes your recovery</div>
-        <p style={{ fontSize: 14, color: "#5A6478", lineHeight: 1.55, marginBottom: 18 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6 }}>What shapes your recovery</div>
+        <p style={{ fontSize: 14, color: "var(--text-sub)", lineHeight: 1.55, marginBottom: 18 }}>
           A few gentle habits move the needle most. Tap any to see why.
         </p>
         <RecoveryFactors data={data} logs={user?.logs} />
@@ -393,26 +393,26 @@ function RecoveryFactors({ data, logs }: { data: Analytics; logs?: any[] }) {
 
 function FactorRow({ f, index }: { f: any; index: number }) {
   const [open, setOpen] = useState(false);
-  const levelColor = f.level === "Strong" ? "#2FBE6E" : f.level === "Building" ? f.color : "#646E80";
+  const levelColor = f.level === "Strong" ? "#2FBE6E" : f.level === "Building" ? f.color : "var(--text-muted)";
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index }}
-      style={{ background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: "1px solid #E6EAF2", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
+      style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
       <button onClick={() => setOpen((o) => !o)} aria-expanded={open}
         style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "15px 16px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", minHeight: 44 }}>
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: f.color, flexShrink: 0 }} aria-hidden />
-        <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: "#1C2333" }}>{f.name}</span>
+        <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: "var(--text)" }}>{f.name}</span>
         <span style={{ fontSize: 12, fontWeight: 600, color: levelColor }}>{f.level}</span>
-        <span style={{ color: "#646E80", fontSize: 15, transform: open ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} aria-hidden>›</span>
+        <span style={{ color: "var(--text-muted)", fontSize: 15, transform: open ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} aria-hidden>›</span>
       </button>
       {open && (
         <div style={{ padding: "0 16px 16px 38px", display: "flex", flexDirection: "column", gap: 10 }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#646E80", marginBottom: 3 }}>Why it matters</div>
-            <p style={{ fontSize: 13, color: "#1C2333", lineHeight: 1.55 }}>{f.why}</p>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: 3 }}>Why it matters</div>
+            <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.55 }}>{f.why}</p>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#646E80", marginBottom: 3 }}>One way to grow it</div>
-            <p style={{ fontSize: 13, color: "#1C2333", lineHeight: 1.55 }}>{f.how}</p>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: 3 }}>One way to grow it</div>
+            <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.55 }}>{f.how}</p>
           </div>
           <Link href={f.href} style={{ fontSize: 13, fontWeight: 600, color: "#4257C9", marginTop: 2 }}>Do this now →</Link>
         </div>

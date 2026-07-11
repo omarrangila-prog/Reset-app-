@@ -21,6 +21,7 @@
 
   /* Brand accents */
   --accent:       #5B7CFA;   /* soft blue — primary */
+  --accent-text:  #4257C9;   /* darker accent for text on tint (AA 4.5:1) */
   --accent-2:     #7C6BF0;   /* lavender — secondary */
   --accent-soft:  #EAF0FF;   /* accent-tinted surface */
   --sky:          #4FB6F5;
@@ -99,6 +100,74 @@
   --font-heading: 'Sora', 'DM Sans', system-ui, sans-serif;
   --font-body:    'DM Sans', system-ui, sans-serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+
+  /* neumorphic light-source pair (light theme) */
+  --neu-light: rgba(255, 255, 255, 0.92);
+  --neu-dark:  rgba(77, 88, 140, 0.15);
+  color-scheme: light;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK THEME — deep navy-charcoal, midnight glass, pink/lavender.
+   Applied via data-theme="dark" on <html> (set by ThemeProvider).
+   Not a naive invert: surfaces are tuned, shadows restrained.
+   ───────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --bg:           #0D1020;
+  --bg-tint:      #131735;
+  --bg-elevated:  #151A2E;
+  --bg-surface:   #1B2038;
+  --bg-glass:     rgba(27, 32, 56, 0.62);
+  --bg-glass-strong: rgba(27, 32, 56, 0.85);
+
+  --text:         #F6F7FC;
+  --text-sub:     #B5BDD2;
+  --text-muted:   #9AA3BE;
+
+  --accent:       #A78BFA;      /* lavender reads better on dark */
+  --accent-text:  #C4B0FF;      /* accent text on dark tint (AA) */
+  --accent-2:     #F06BA8;      /* pink */
+  --accent-soft:  #26234A;      /* accent-tinted dark surface */
+  --sky:          #6CC5FF;
+  --mint:         #4FE0BC;
+  --emerald:      #46D68A;
+
+  --urge:         #FF8478;
+  --vuln:         #F6C168;
+  --recovery:     #46D68A;
+  --danger:       #FF7A96;
+
+  --grad-hero:    linear-gradient(135deg, #6E5DE0 0%, #B8489B 100%);
+  --grad-ring:    linear-gradient(135deg, #A78BFA 0%, #F06BA8 60%, #6CC5FF 100%);
+  --grad-calm:    linear-gradient(160deg, #171B33 0%, #221B36 100%);
+
+  --border:       #262C48;
+  --border-mid:   #313860;
+  --border-strong:#3C446E;
+
+  /* restrained dark shadows (no harsh pure black) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.38);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.44);
+  --shadow-accent: 0 8px 26px rgba(167, 139, 250, 0.30), 0 16px 40px rgba(240, 107, 168, 0.18);
+
+  --glass-hi: rgba(27, 32, 56, 0.62);
+  --glass-lo: rgba(27, 32, 56, 0.45);
+  --glass-stroke: rgba(148, 160, 210, 0.18);
+
+  --mesh-hero:
+    radial-gradient(38% 44% at 18% 22%, rgba(167, 139, 250, 0.40) 0%, transparent 60%),
+    radial-gradient(42% 46% at 82% 18%, rgba(108, 197, 255, 0.30) 0%, transparent 62%),
+    radial-gradient(46% 50% at 72% 88%, rgba(240, 107, 168, 0.32) 0%, transparent 60%),
+    radial-gradient(50% 54% at 25% 84%, rgba(110, 93, 224, 0.38) 0%, transparent 60%),
+    linear-gradient(135deg, #2A2350 0%, #3A2246 100%);
+
+  /* neumorphic pair (dark theme): highlight from a lighter navy, shadow deeper */
+  --neu-light: rgba(60, 72, 120, 0.28);
+  --neu-dark:  rgba(0, 0, 0, 0.45);
+
+  color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -181,6 +250,30 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line
     0 12px 34px rgba(74, 80, 130, 0.16),
     0 2px 8px rgba(74, 80, 130, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Dark-theme material overrides — midnight glass + restrained neu depth. */
+:root[data-theme="dark"] .dock {
+  background: rgba(21, 26, 46, 0.72);
+  border: 1px solid rgba(148, 160, 210, 0.16);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(148, 160, 210, 0.14);
+}
+:root[data-theme="dark"] .glass {
+  background: rgba(27, 32, 56, 0.6);
+  border: 1px solid rgba(148, 160, 210, 0.16);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(148, 160, 210, 0.14);
+}
+:root[data-theme="dark"] .neu,
+:root[data-theme="dark"] .neu-btn {
+  background: linear-gradient(145deg, #1A2038, #12172B);
+  box-shadow: -7px -7px 16px rgba(60, 72, 120, 0.22), 8px 8px 20px rgba(0, 0, 0, 0.45), inset 1px 1px 0 rgba(148, 160, 210, 0.10);
+}
+:root[data-theme="dark"] .neu-inset {
+  background: linear-gradient(145deg, #12172B, #1A2038);
+  box-shadow: inset 5px 5px 12px rgba(0, 0, 0, 0.4), inset -5px -5px 12px rgba(60, 72, 120, 0.18);
+}
+:root[data-theme="dark"] .pearl::after {
+  background: linear-gradient(125deg, rgba(148,160,210,0.08) 0%, transparent 30%, rgba(240,107,168,0.05) 55%, transparent 80%);
 }
 
 /* ── Modern soft neumorphism (consistent light source: upper-left) ──

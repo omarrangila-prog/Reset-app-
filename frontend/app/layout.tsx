@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
+import { ThemeProvider, themeInitScript } from "@/lib/theme";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { QuickRescue } from "@/components/ui/QuickRescue";
@@ -59,6 +60,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Pre-paint theme init — sets data-theme before first paint (no flash). */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <meta name="theme-color" content="#F5F7FC" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -70,13 +73,15 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <AuthProvider />
-        <Atmosphere />
-        <ErrorBoundary>
-          <main id="main">{children}</main>
-        </ErrorBoundary>
-        <QuickRescue />
-        <InstallPrompt />
+        <ThemeProvider>
+          <AuthProvider />
+          <Atmosphere />
+          <ErrorBoundary>
+            <main id="main">{children}</main>
+          </ErrorBoundary>
+          <QuickRescue />
+          <InstallPrompt />
+        </ThemeProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `
