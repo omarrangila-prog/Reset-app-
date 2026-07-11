@@ -251,6 +251,31 @@ export default function HomeApp() {
     }
   }, []);
 
+  // Show the splash on every *fresh* launch, not only first install. A PWA that
+  // resumes from the background (or a bfcache restore) does not re-mount, so we
+  // re-trigger the splash when the app returns to the foreground after being
+  // hidden for a while — which is what relaunching a closed PWA looks like.
+  useEffect(() => {
+    let hiddenAt = 0;
+    const RELAUNCH_MS = 60_000; // treat >60s backgrounded as a fresh launch
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        hiddenAt = Date.now();
+      } else if (document.visibilityState === "visible" && hiddenAt) {
+        if (Date.now() - hiddenAt > RELAUNCH_MS) setShowSplash(true);
+        hiddenAt = 0;
+      }
+    };
+    // bfcache restore (PWA reopen) fires pageshow with persisted=true.
+    const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) setShowSplash(true); };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, []);
+
   const refreshUser = useCallback(async () => {
     if (!userId) return;
     try {
