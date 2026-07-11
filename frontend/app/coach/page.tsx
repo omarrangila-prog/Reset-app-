@@ -149,25 +149,6 @@ function CoachInner() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
-      {/* Ambient coach-orb art. Drop /public/hero/coach.webp to activate; absent = nothing. */}
-      <div
-        aria-hidden
-        style={{
-          position: "fixed",
-          top: "18%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: 380,
-          height: 380,
-          backgroundImage: "url('/hero/coach.webp')",
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          opacity: 0.35,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
       {/* Header */}
       <header
         style={{

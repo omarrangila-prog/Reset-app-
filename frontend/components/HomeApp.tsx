@@ -83,14 +83,6 @@ function HomeScreen({
             gap: 18,
           }}
         >
-          <div
-            aria-hidden
-            style={{
-              position: "absolute", inset: 0, backgroundImage: "url('/hero/home.webp')",
-              backgroundSize: "cover", backgroundPosition: "center", mixBlendMode: "screen",
-              opacity: 0.45, borderRadius: 32, pointerEvents: "none",
-            }}
-          />
           <div style={{ position: "relative", zIndex: 1, flexShrink: 0 }}>
             <RecoveryOrb score={score} size={128} label="" />
           </div>

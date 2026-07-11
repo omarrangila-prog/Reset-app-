@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
-import { HeroArt } from "@/components/ui/HeroArt";
 import { PrivacyShield } from "@/components/ui/PrivacyShield";
 
 interface OnboardingFlowProps {
@@ -128,7 +127,6 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
         {/* Screen 2 */}
         {screen === 2 && (
           <div>
-            <HeroArt src="/hero/onboard-2.webp" height={170} style={{ marginBottom: 24 }} />
             <h2
               style={{
                 fontFamily: "'DM Sans', sans-serif",
