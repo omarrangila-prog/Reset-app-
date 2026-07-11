@@ -50,19 +50,35 @@ export function Splash({ onDone }: { onDone: () => void }) {
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* Point of light → orb */}
-      <motion.div
-        style={{ position: "relative", zIndex: 1 }}
-        initial={{ scale: 0.05, opacity: 0 }}
-        animate={{ scale: reduced ? 1 : stage >= 1 ? 1 : 0.12, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 180, damping: 18 }}
-      >
-        {reduced || stage >= 1 ? (
-          <AICoachOrb size={150} state="idle" />
-        ) : (
-          <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", boxShadow: "0 0 24px 6px rgba(255,255,255,0.9)" }} />
-        )}
-      </motion.div>
+      {/* Orb + the neumorphic surface it rises from, in one shared frame so the
+          pad stays concentric with the orb throughout the animation. */}
+      <div style={{ position: "relative", zIndex: 1, width: 230, height: 230, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Sculpted pad with soft dual light — the orb is seated, not floating. */}
+        <motion.div
+          aria-hidden
+          style={{
+            position: "absolute", width: 210, height: 210, borderRadius: "50%",
+            background: "linear-gradient(145deg, #F7F9FF, #E7ECFA)",
+            boxShadow: "-14px -14px 30px rgba(255,255,255,0.9), 16px 16px 34px rgba(90,100,150,0.16), inset 1px 1px 0 rgba(255,255,255,0.7)",
+          }}
+          initial={{ scale: 0.2, opacity: 0 }}
+          animate={{ scale: stage >= 1 ? 1 : 0.2, opacity: stage >= 1 ? 1 : 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        />
+        {/* Point of light → orb */}
+        <motion.div
+          style={{ position: "relative", zIndex: 1 }}
+          initial={{ scale: 0.05, opacity: 0 }}
+          animate={{ scale: reduced ? 1 : stage >= 1 ? 1 : 0.12, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 180, damping: 18 }}
+        >
+          {reduced || stage >= 1 ? (
+            <AICoachOrb size={140} state="idle" />
+          ) : (
+            <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", boxShadow: "0 0 24px 6px rgba(255,255,255,0.9)" }} />
+          )}
+        </motion.div>
+      </div>
 
       {/* Wordmark */}
       <motion.div

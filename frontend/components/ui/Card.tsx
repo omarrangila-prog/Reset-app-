@@ -40,11 +40,15 @@ export function Card({
   };
   // Sculpted-glass surface: a faint top-lit gradient (not flat white) + an inner
   // rim highlight in the shadow so every card reads as a polished material.
-  const sculpted = "linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 55%, #F7F8FD 100%)";
-  const innerRim = "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 2px rgba(46,62,120,0.03)";
+  const sculpted = "linear-gradient(145deg, #FFFFFF 0%, #FaFbFF 55%, #F1F4FC 100%)";
+  // Modern soft-neumorphic dual light (source: upper-left) — a bright highlight
+  // and a soft cool shadow so cards read as raised physical surfaces.
+  const neuRaised =
+    "-7px -7px 16px rgba(255,255,255,0.85), 8px 8px 20px rgba(90,100,150,0.10)";
+  const innerRim = "inset 1px 1px 0 rgba(255,255,255,0.9), inset 0 -1px 2px rgba(46,62,120,0.03)";
   const variants: Record<string, CSSProperties> = {
-    soft: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${t.shadowSm}, ${innerRim}` },
-    float: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${t.shadowMd}, ${innerRim}` },
+    soft: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${neuRaised}, ${innerRim}` },
+    float: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${neuRaised}, ${innerRim}` },
     glass: {
       background: t.glass,
       backdropFilter: "blur(24px) saturate(160%)",
@@ -66,8 +70,8 @@ export function Card({
       className="pearl"
       onClick={() => { haptic("tap"); onClick(); }}
       aria-label={ariaLabel}
-      whileHover={reduced ? undefined : { y: -3, boxShadow: t.shadowLg }}
-      whileTap={reduced ? undefined : { scale: 0.985 }}
+      whileHover={reduced ? undefined : { y: -3, boxShadow: "-9px -9px 20px rgba(255,255,255,0.9), 10px 10px 26px rgba(90,100,150,0.13)" }}
+      whileTap={reduced ? undefined : { scale: 0.985, boxShadow: "inset 5px 5px 12px rgba(90,100,150,0.14), inset -5px -5px 12px rgba(255,255,255,0.85)" }}
       whileFocus={reduced ? undefined : { boxShadow: `0 0 0 2px ${t.accent}` }}
       transition={spring}
       style={{ ...merged, cursor: "pointer", textAlign: "left", width: "100%", display: "block" }}

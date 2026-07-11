@@ -1,85 +1,72 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { t } from "./theme";
 
 /**
- * RecoveryOrb — the hero. A living crystal-glass sphere: breathes, glows, with
- * internal light that drifts and soft particles orbiting it. Pure CSS/SVG +
- * Framer Motion (no 3D deps). Reduced-motion falls back to a calm static orb.
+ * RecoveryOrb — the hero. A living liquid-crystal sphere: it breathes, with
+ * internal light that drifts and a moving specular highlight, grounded by a
+ * soft contact shadow on the surface beneath it. Pure CSS/SVG + Framer Motion.
+ *
+ * Deliberately has NO number inside and NO orbiting particles — status is read
+ * from the material, lighting, and motion. Present the score as text outside.
+ * Reduced-motion falls back to a calm static orb.
  */
-export function RecoveryOrb({
-  score,
-  size = 200,
-  label = "How you're doing",
-  delta,
-}: {
-  score: number;
-  size?: number;
-  label?: string;
-  delta?: string;
-}) {
+export function RecoveryOrb({ size = 200 }: { score?: number; size?: number; label?: string; delta?: string }) {
   const reduced = useReducedMotion();
-  const particleCount = 6;
 
   return (
-    <div style={{ width: size, height: size, position: "relative", margin: "0 auto" }}>
-      {/* Outer ambient glow */}
+    <div style={{ width: size, height: size * 1.14, position: "relative", margin: "0 auto" }}>
+      {/* Grounding contact shadow beneath the orb */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          inset: -size * 0.18,
-          background: "radial-gradient(circle, rgba(124,107,240,0.4) 0%, transparent 62%)",
-          filter: "blur(10px)",
+          left: "50%",
+          bottom: 0,
+          transform: "translateX(-50%)",
+          width: size * 0.62,
+          height: size * 0.1,
+          borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(74,80,130,0.28) 0%, transparent 70%)",
+          filter: "blur(6px)",
         }}
       />
 
-      {/* Orbiting particles */}
-      {!reduced &&
-        Array.from({ length: particleCount }).map((_, i) => {
-          const angle = (i / particleCount) * 360;
-          const radius = size * (0.52 + (i % 2) * 0.06);
-          return (
-            <motion.div
-              key={i}
-              aria-hidden
-              style={{ position: "absolute", top: "50%", left: "50%", width: 5, height: 5 }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 14 + i * 2, repeat: Infinity, ease: "linear" }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  transform: `rotate(${angle}deg) translateX(${radius}px)`,
-                  width: 5,
-                  height: 5,
-                  borderRadius: "50%",
-                  background: "rgba(255,255,255,0.9)",
-                  boxShadow: "0 0 8px rgba(255,255,255,0.9)",
-                }}
-              />
-            </motion.div>
-          );
-        })}
+      {/* Outer ambient bloom */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: size,
+          height: size,
+          inset: undefined,
+          margin: -size * 0.16,
+          marginLeft: -size * 0.16,
+          background: "radial-gradient(circle, rgba(124,107,240,0.32) 0%, transparent 62%)",
+          filter: "blur(12px)",
+        }}
+      />
 
-      {/* The sphere — breathes */}
+      {/* The sphere — breathes and lifts gently off its shadow */}
       <motion.div
-        animate={reduced ? undefined : { y: [0, -8, 0], scale: [1, 1.02, 1] }}
+        animate={reduced ? undefined : { y: [0, -7, 0], scale: [1, 1.02, 1] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         style={{
           position: "absolute",
-          inset: 0,
+          top: 0,
+          left: "50%",
+          marginLeft: -size / 2,
+          width: size,
+          height: size,
           borderRadius: "50%",
           background:
-            "radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95) 0%, rgba(190,205,255,0.6) 22%, rgba(124,107,240,0.55) 60%, rgba(91,124,250,0.5) 100%)",
+            "radial-gradient(circle at 32% 26%, rgba(255,255,255,0.97) 0%, rgba(200,212,255,0.62) 24%, rgba(124,107,240,0.55) 62%, rgba(91,124,250,0.5) 100%)",
           boxShadow:
-            "0 24px 64px rgba(91,124,250,0.4), inset 0 6px 24px rgba(255,255,255,0.65), inset 0 -12px 32px rgba(91,124,250,0.28)",
+            "0 30px 60px rgba(91,124,250,0.4), 0 10px 22px rgba(74,80,130,0.18), inset 0 8px 26px rgba(255,255,255,0.7), inset 0 -14px 34px rgba(91,124,250,0.3), inset 0 0 0 1px rgba(255,255,255,0.35)",
           overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
         }}
       >
         {/* Liquid light — two counter-drifting blooms + a slow caustic sheen,
@@ -88,13 +75,13 @@ export function RecoveryOrb({
           <>
             <motion.div
               aria-hidden
-              style={{ position: "absolute", width: "62%", height: "62%", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)", filter: "blur(7px)" }}
+              style={{ position: "absolute", top: "19%", left: "19%", width: "62%", height: "62%", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)", filter: "blur(7px)" }}
               animate={{ x: ["-14%", "16%", "-8%"], y: ["10%", "-14%", "8%"], opacity: [0.55, 0.9, 0.55] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
               aria-hidden
-              style={{ position: "absolute", width: "42%", height: "42%", borderRadius: "50%", background: "radial-gradient(circle, rgba(180,205,255,0.5), transparent 72%)", filter: "blur(8px)" }}
+              style={{ position: "absolute", top: "29%", left: "29%", width: "42%", height: "42%", borderRadius: "50%", background: "radial-gradient(circle, rgba(180,205,255,0.5), transparent 72%)", filter: "blur(8px)" }}
               animate={{ x: ["18%", "-16%", "12%"], y: ["-8%", "14%", "-10%"], opacity: [0.4, 0.7, 0.4] }}
               transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -107,8 +94,8 @@ export function RecoveryOrb({
           </>
         )}
 
-        {/* Specular highlight */}
-        <div
+        {/* Moving specular highlight — the glass catching light */}
+        <motion.div
           aria-hidden
           style={{
             position: "absolute",
@@ -117,25 +104,27 @@ export function RecoveryOrb({
             width: "40%",
             height: "28%",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%)",
+            background: "radial-gradient(circle, rgba(255,255,255,0.92), transparent 70%)",
             filter: "blur(3px)",
           }}
+          animate={reduced ? undefined : { x: ["0%", "8%", "0%"], y: ["0%", "4%", "0%"], opacity: [0.9, 1, 0.9] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
-
-        {/* Score */}
-        <motion.div
-          initial={reduced ? false : { scale: 0.7, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 240, damping: 20, delay: 0.2 }}
-          style={{ fontFamily: t.fontHeading, fontSize: size * 0.26, fontWeight: 700, color: "#2A2350", letterSpacing: "-0.03em", lineHeight: 1, position: "relative", zIndex: 1 }}
-        >
-          {score}
-        </motion.div>
-        <div style={{ fontSize: 12, color: "#5A4F9A", marginTop: 2, fontWeight: 500, position: "relative", zIndex: 1 }}>/100</div>
-        <div style={{ fontSize: 11, color: "#6B62A8", marginTop: 6, position: "relative", zIndex: 1 }}>{label}</div>
-        {delta && (
-          <div style={{ fontSize: 11, color: "#3A2F8F", marginTop: 3, fontWeight: 600, position: "relative", zIndex: 1 }}>{delta}</div>
-        )}
+        {/* Faint lower rim light for depth */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            bottom: "8%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "56%",
+            height: "16%",
+            borderRadius: "50%",
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.4), transparent 70%)",
+            filter: "blur(4px)",
+          }}
+        />
       </motion.div>
     </div>
   );

@@ -25,6 +25,20 @@ function greeting(): string {
   return "Rest well tonight";
 }
 
+// Status read as words, so the orb isn't carrying a bare number.
+function scoreState(score: number): string {
+  if (score >= 80) return "Strong";
+  if (score >= 60) return "Improving";
+  if (score >= 40) return "Building";
+  return "Getting started";
+}
+function scoreHeadline(score: number): string {
+  if (score >= 80) return "You’ve stayed steady through difficult moments.";
+  if (score >= 60) return "Recovery is becoming more stable.";
+  if (score >= 40) return "You’re building something that lasts.";
+  return "Every reset starts with showing up.";
+}
+
 
 function HomeScreen({
   streak,
@@ -85,39 +99,52 @@ function HomeScreen({
         </div>
       </Reveal>
 
-      {/* ── HERO: compact orb + stats side-by-side (≈28% of screen) ── */}
+      {/* ── HERO: one focal Recovery Orb; score presented outside it ── */}
       <Reveal index={2}>
         <div
           className="mesh pearl"
           style={{
             borderRadius: 32,
-            padding: "22px 22px",
+            padding: "26px 22px 28px",
             marginBottom: 14,
             boxShadow: t.shadowAccent,
             position: "relative",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            gap: 18,
+            textAlign: "center",
           }}
         >
-          <div style={{ position: "relative", zIndex: 1, flexShrink: 0 }}>
-            <RecoveryOrb score={score} size={128} label="" />
+          <div style={{ position: "relative", zIndex: 1, fontSize: 12, color: "rgba(255,255,255,0.82)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            How are you doing?
           </div>
-          <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>How you&apos;re doing</div>
-            <div style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginTop: 4 }}>{momentum}</div>
-            <div
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 7, marginTop: 12,
-                padding: "8px 14px", borderRadius: 999,
-                background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.32)",
-                color: "#fff", fontSize: 13, fontWeight: 600,
-              }}
-            >
-              <span aria-hidden>🔥</span>
-              {streak} day streak
-            </div>
+          <div style={{ position: "relative", zIndex: 1, fontSize: 15, color: "#fff", fontWeight: 500, marginTop: 6, marginBottom: 6, maxWidth: 300, lineHeight: 1.5 }}>
+            {scoreHeadline(score)}
+          </div>
+
+          <div style={{ position: "relative", zIndex: 1, margin: "6px 0 2px" }}>
+            <RecoveryOrb size={150} />
+          </div>
+
+          {/* Score — outside the orb, as supporting information */}
+          <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
+            <span style={{ fontFamily: t.fontHeading, fontSize: 34, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em", lineHeight: 1 }}>{score}</span>
+            <span style={{ fontSize: 14, color: "rgba(255,255,255,0.78)", fontWeight: 600 }}>· {scoreState(score)}</span>
+          </div>
+          <div style={{ position: "relative", zIndex: 1, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4 }}>{momentum}</div>
+
+          <div
+            style={{
+              position: "relative", zIndex: 1,
+              display: "inline-flex", alignItems: "center", gap: 7, marginTop: 14,
+              padding: "8px 14px", borderRadius: 999,
+              background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.32)",
+              color: "#fff", fontSize: 13, fontWeight: 600,
+            }}
+          >
+            <span aria-hidden>🔥</span>
+            {streak} day streak
           </div>
         </div>
       </Reveal>

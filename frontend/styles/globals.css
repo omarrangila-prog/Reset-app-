@@ -160,15 +160,63 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line
 /* ── Premium component utilities (light theme) ── */
 .glass {
   position: relative;
-  background: var(--glass-hi);
-  backdrop-filter: blur(28px) saturate(170%);
-  -webkit-backdrop-filter: blur(28px) saturate(170%);
-  border: 1px solid var(--glass-stroke);
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   box-shadow:
-    var(--shadow-lg),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),     /* top rim light */
-    inset 0 0 24px rgba(255, 255, 255, 0.35),    /* inner ambient glow */
+    0 18px 45px rgba(74, 80, 130, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),     /* top rim light */
+    inset 0 0 24px rgba(255, 255, 255, 0.3),     /* inner ambient glow */
     inset 0 -1px 0 rgba(46, 62, 120, 0.05);      /* bottom contact */
+}
+
+/* ── Modern soft neumorphism (consistent light source: upper-left) ──
+   Raised = softly lifted off the surface; pressed = pushed inward.
+   Tuned for the light lavender/blue palette — soft, not the harsh 2020 look. */
+.neu {
+  background: linear-gradient(145deg, #FBFCFF, #EFF2FB);
+  border-radius: 20px;
+  box-shadow:
+    -8px -8px 18px rgba(255, 255, 255, 0.9),
+    8px 8px 18px rgba(90, 100, 150, 0.12),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.75);
+}
+/* Interactive raised surface: lifts on hover, presses in on active. */
+.neu-btn {
+  background: linear-gradient(145deg, #FBFCFF, #EFF2FB);
+  border: none;
+  box-shadow:
+    -7px -7px 16px rgba(255, 255, 255, 0.9),
+    7px 7px 16px rgba(90, 100, 150, 0.12),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.7);
+  transition: box-shadow 180ms ease, transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.neu-btn:hover { box-shadow: -9px -9px 20px rgba(255,255,255,0.95), 9px 9px 20px rgba(90,100,150,0.14), inset 1px 1px 0 rgba(255,255,255,0.75); }
+.neu-btn:active {
+  box-shadow:
+    inset 5px 5px 12px rgba(90, 100, 150, 0.14),
+    inset -5px -5px 12px rgba(255, 255, 255, 0.85);
+  transform: translateY(1px);
+}
+/* Recessed panel (charts, wells). */
+.neu-inset {
+  background: linear-gradient(145deg, #EDF0F8, #F7F9FE);
+  border-radius: 20px;
+  box-shadow:
+    inset 5px 5px 12px rgba(90, 100, 150, 0.12),
+    inset -5px -5px 12px rgba(255, 255, 255, 0.85);
+}
+/* Selected state: inner glow + raised rim. */
+.neu-selected {
+  box-shadow:
+    -6px -6px 14px rgba(255, 255, 255, 0.85),
+    6px 6px 14px rgba(90, 100, 150, 0.12),
+    inset 0 0 0 1.5px rgba(110, 140, 251, 0.55),
+    inset 0 0 16px rgba(110, 140, 251, 0.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .neu-btn { transition: none; }
 }
 
 /* ── Skeleton shimmer + pulse (app always feels alive) ── */
