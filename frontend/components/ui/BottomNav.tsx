@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -9,11 +8,10 @@ import { haptic } from "@/lib/haptics";
 import { t } from "./theme";
 
 /**
- * Floating premium navigation.
- * - Active tab EXPANDS into a glass pill: icon + label slides in.
- * - Inactive tabs are icon-only.
+ * Floating premium navigation — a fixed bottom dock that ALWAYS stays visible.
+ * - Active tab expands into a glass pill: icon + label slides in.
  * - Centered elevated Coach action.
- * - Scroll-adaptive: shrinks on scroll-down, expands on scroll-up (Arc/Airbnb).
+ * - Fixed to the viewport with safe-area padding; never scroll-hides.
  */
 const tabs = [
   { href: "/", label: "Home", Icon: Home },
@@ -26,49 +24,28 @@ const tabs = [
 export function BottomNav() {
   const pathname = usePathname();
   const reduced = useReducedMotion();
-  const [hidden, setHidden] = useState(false);
-
-  // Shrink/hide on scroll-down, reveal on scroll-up.
-  useEffect(() => {
-    if (reduced) return;
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y > last + 8 && y > 80) setHidden(true);
-      else if (y < last - 8) setHidden(false);
-      last = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [reduced]);
 
   return (
-    <motion.nav
+    <nav
       aria-label="Primary"
-      animate={{ y: hidden ? 90 : 0, opacity: hidden ? 0.85 : 1 }}
-      transition={{ type: "spring", stiffness: 320, damping: 32 }}
       style={{
         position: "fixed",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 90,
-        display: "flex",
-        justifyContent: "center",
-        padding: "0 16px calc(14px + env(safe-area-inset-bottom))",
-        pointerEvents: "none",
+        left: "50%",
+        bottom: "calc(12px + env(safe-area-inset-bottom))",
+        transform: "translateX(-50%)",
+        zIndex: 1000,
+        width: "calc(100% - 32px)",
+        maxWidth: 440,
       }}
     >
       <div
-        className="glass frost"
+        className="dock frost"
         style={{
-          pointerEvents: "auto",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           gap: 4,
           width: "100%",
-          maxWidth: 440,
           padding: "8px 12px",
           borderRadius: 28,
         }}
@@ -160,6 +137,6 @@ export function BottomNav() {
           );
         })}
       </div>
-    </motion.nav>
+    </nav>
   );
 }

@@ -171,6 +171,18 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; line
     inset 0 -1px 0 rgba(46, 62, 120, 0.05);      /* bottom contact */
 }
 
+/* ── Premium floating bottom dock: translucent glass + pearl rim + neu lift ── */
+.dock {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 12px 34px rgba(74, 80, 130, 0.16),
+    0 2px 8px rgba(74, 80, 130, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
 /* ── Modern soft neumorphism (consistent light source: upper-left) ──
    Raised = softly lifted off the surface; pressed = pushed inward.
    Tuned for the light lavender/blue palette — soft, not the harsh 2020 look. */

@@ -90,8 +90,8 @@ export function Splash({ onDone }: { onDone: () => void }) {
         <div style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: 30, fontWeight: 700, letterSpacing: "0.1em", color: "#1C2333" }}>
           RESET
         </div>
-        <div style={{ fontSize: 14, color: "#5A6478", marginTop: 8 }}>
-          A calm space to rise, one day at a time.
+        <div style={{ fontSize: 14, color: "#5A6478", marginTop: 8, lineHeight: 1.5 }}>
+          Break the pattern.<br />Take back control.
         </div>
       </motion.div>
     </motion.div>

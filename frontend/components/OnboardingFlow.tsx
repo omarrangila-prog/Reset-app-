@@ -140,7 +140,7 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
             boxShadow: "0 10px 30px rgba(91,124,250,0.35)",
           }}
         >
-          {screen < TOTAL - 1 ? "Continue" : "Begin My Journey"}
+          {screen < TOTAL - 1 ? "Continue" : "Start my reset"}
         </motion.button>
       </div>
     </div>
@@ -149,20 +149,20 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
 
 const COPY = [
   {
-    title: "Welcome to RESET",
-    body: "RESET helps you understand and reduce compulsive phone and adult-content habits — through reflection, awareness, and healthier routines.",
+    title: "Quit porn. Rebuild control.",
+    body: "RESET helps you understand urges, avoid triggers, and build healthier habits — one day at a time.",
   },
   {
-    title: "Notice Before You React",
-    body: "Moods, urges, and triggers pass more easily once you can see them. RESET helps you build that awareness, one calm moment at a time.",
+    title: "Get help when an urge hits.",
+    body: "Use Calm Mode, breathing, reflection, and your AI coach before the urge takes over.",
   },
   {
-    title: "Build Better Habits",
-    body: "Small daily actions create lasting change. Your journal, recovery, habits, and insights all work together.",
+    title: "See what actually helps.",
+    body: "Track moods, triggers, habits, and reflections to learn the patterns behind your porn use.",
   },
   {
-    title: "Private By Design",
-    body: "Everything stays on your device unless you choose otherwise. No judgment. No shame. Only support.",
+    title: "Private and judgment-free.",
+    body: "Your recovery is personal. RESET keeps the experience discreet, supportive, and under your control.",
   },
 ];
 
