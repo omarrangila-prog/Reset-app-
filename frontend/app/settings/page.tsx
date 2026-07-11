@@ -3,7 +3,7 @@
 import { useState, ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bell, Shield, Mic2, Download, Trash2, ChevronRight, Lock } from "lucide-react";
+import { Bell, Shield, Mic2, Download, Trash2, ChevronRight, Lock, Sparkles } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/ui/BottomNav";
@@ -92,6 +92,11 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+        </Group>
+
+        {/* ── PERSONALIZATION ── */}
+        <Group title="Personalization" delay={0.12}>
+          <NavRow icon={<Sparkles size={17} />} label="Recovery profile" desc="Goals, triggers, high-risk times & reminders" href="/profile/recovery" />
         </Group>
 
         {/* ── VOICE ── */}

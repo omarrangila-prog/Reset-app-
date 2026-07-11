@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { RecoveryOrb } from "@/components/ui/RecoveryOrb";
 import { deriveInsight } from "@/lib/insights";
 import { deriveReflection } from "@/lib/reflection";
+import { loadProfile, deriveRecovery } from "@/lib/recoveryProfile";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
@@ -46,6 +47,7 @@ function HomeScreen({
   score,
   insight,
   reflection,
+  focus,
   onJournalTap,
   onRelapseTap,
 }: {
@@ -54,6 +56,7 @@ function HomeScreen({
   score: number;
   insight: string;
   reflection: string;
+  focus: string;
   onJournalTap: () => void;
   onRelapseTap: () => void;
 }) {
@@ -183,7 +186,7 @@ function HomeScreen({
             <Link href="/habits" style={{ fontSize: 12, color: t.accent, fontWeight: 600 }}>See all →</Link>
           </div>
           <p style={{ fontSize: 14, color: t.text, lineHeight: 1.6 }}>
-            Small steps today. Check off a habit or write a quick note — one thing is enough.
+            {focus}
           </p>
         </Card>
       </Reveal>
@@ -246,6 +249,18 @@ export default function HomeApp() {
   const streak = user?.streak ?? 0;
   const score = user?.disciplineScore ?? 0;
   const momentum = user?.momentum ?? "Getting started";
+
+  // Personalized "Today's focus" from the Recovery Profile (falls back to the
+  // gentle default when the user hasn't personalized yet — non-breaking).
+  const [homeFocus, setHomeFocus] = useState(
+    "Small steps today. Check off a habit or write a quick note — one thing is enough."
+  );
+  useEffect(() => {
+    const p = loadProfile();
+    if (p.onboardingCompleted && (p.triggers.length || p.highRiskTimes.length || p.locations.length)) {
+      setHomeFocus(deriveRecovery(p).firstStep);
+    }
+  }, []);
 
   // Decide splash before first paint: show once per session (fresh launch),
   // not on internal navigation back to Home. Independent of onboarding.
@@ -489,6 +504,7 @@ export default function HomeApp() {
           score={score}
           insight={deriveInsight(user?.logs, user?.triggerPatterns)}
           reflection={deriveReflection(user?.logs, user?.dailyActivity, streak)}
+          focus={homeFocus}
           onJournalTap={() => setShowJournalModal(true)}
           onRelapseTap={() => setShowPostRelapse(true)}
         />
