@@ -17,6 +17,14 @@ import { audit, log as logger } from "@/lib/logger";
 const InterventionSchema = z.object({
   message: z.string().min(1).max(1000),
   urgencyScore: z.number().int().min(1).max(10).default(5),
+  // Recent turns for a natural back-and-forth (voice conversation mode).
+  history: z
+    .array(z.object({ role: z.enum(["you", "coach"]), text: z.string().max(1000) }))
+    .max(12)
+    .optional(),
+  // When true, the coach is speaking aloud — keep replies short and
+  // conversational, and end with a gentle follow-up question when it helps.
+  voice: z.boolean().optional(),
 });
 
 function getTimeOfDay(): UserContext["timeOfDay"] {
@@ -89,12 +97,27 @@ export async function POST(req: NextRequest) {
       };
 
       const mode = detectMode(body.message, body.urgencyScore, context);
-      const systemPrompt = buildSystemPrompt(mode, context);
+      let systemPrompt = buildSystemPrompt(mode, context);
+      if (body.voice) {
+        // Voice conversation: shorter, spoken, therapist-like with follow-ups.
+        systemPrompt +=
+          "\n\nVOICE CONVERSATION MODE: You are speaking aloud in a live back-and-forth. " +
+          "Keep replies to 1–3 short sentences that sound natural spoken. When it helps the " +
+          "person open up, end with ONE gentle follow-up question. Never read lists or headings aloud.";
+      }
+
+      // Prepend recent conversation turns so replies stay coherent across the exchange.
+      const convo = (body.history ?? [])
+        .map((h) => `${h.role === "you" ? "User" : "Coach"}: ${h.text}`)
+        .join("\n");
+      const userContent = convo
+        ? `${convo}\nUser: ${wrapUserMessage(body.message)}`
+        : wrapUserMessage(body.message);
 
       // 2) Try the free Groq API; fall back to safe scripted response on any issue.
       let responseText: string | null = null;
       try {
-        responseText = await callGroq(systemPrompt, wrapUserMessage(body.message));
+        responseText = await callGroq(systemPrompt, userContent);
       } catch (aiError) {
         logger.warn("coach.ai_fallback", { type: (aiError as Error).name });
       }

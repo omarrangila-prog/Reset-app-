@@ -103,10 +103,14 @@ export const api = {
   getMe: (): Promise<MeProfile> => apiFetch("/api/me"),
 
   // Coach
-  intervene: (message: string, urgencyScore = 5): Promise<InterventionResponse> =>
+  intervene: (
+    message: string,
+    urgencyScore = 5,
+    opts?: { history?: Array<{ role: "you" | "coach"; text: string }>; voice?: boolean }
+  ): Promise<InterventionResponse> =>
     apiFetch("/api/coach/intervene", {
       method: "POST",
-      body: JSON.stringify({ message, urgencyScore }),
+      body: JSON.stringify({ message, urgencyScore, history: opts?.history, voice: opts?.voice }),
     }),
 
   // Streak

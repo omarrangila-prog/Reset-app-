@@ -48,10 +48,14 @@ export default function VoiceCoachPage() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const restartRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const convoRef = useRef(false);   // read latest convo flag inside callbacks
+  const historyRef = useRef<Turn[]>([]);
   const endedRef = useRef(false);   // page unmounted / conversation ended
   const startRef = useRef<() => void>(() => {});
 
   const stopTimer = () => { if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; } };
+
+  // Keep a ref copy of history so callbacks read the latest turns without stale closures.
+  useEffect(() => { historyRef.current = history; }, [history]);
 
   // ── Recognition setup ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -143,10 +147,13 @@ export default function VoiceCoachPage() {
   }, [voiceOut]);
 
   const handle = useCallback(async (text: string) => {
+    // Pass the recent turns + voice flag so the coach replies conversationally
+    // and can ask natural follow-ups (see /api/coach/intervene voice mode).
+    const priorTurns = historyRef.current.slice(-8);
     setHistory((h) => [...h, { role: "you", text }]);
     setPhase("thinking"); setCaption("Thinking…");
     try {
-      const res = await api.intervene(text, 6);
+      const res = await api.intervene(text, 6, { history: priorTurns, voice: true });
       setReply(res.message); setCaption(res.message);
       setHistory((h) => [...h, { role: "coach", text: res.message }]);
       speak(res.message);
