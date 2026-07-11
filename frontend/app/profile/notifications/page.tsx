@@ -23,9 +23,9 @@ const PREFS = [
   { key: "wins", label: "Celebrate small wins", desc: "A note when you reach a milestone" },
 ];
 
-function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
+function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
   return (
-    <button onClick={onClick} role="switch" aria-checked={on}
+    <button onClick={onClick} role="switch" aria-checked={on} aria-label={label}
       style={{ width: 48, height: 28, borderRadius: 999, border: "none", background: on ? t.accent : t.borderMid, position: "relative", cursor: "pointer", flexShrink: 0, transition: "background 0.2s", minHeight: 28 }}>
       <span style={{ position: "absolute", top: 3, left: on ? 23 : 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "left 0.2s" }} />
     </button>
@@ -76,11 +76,11 @@ export default function NotificationsPage() {
                   {r.cta === "Done" ? (
                     <motion.button whileTap={{ scale: 0.94 }} transition={spring}
                       onClick={() => setDone((d) => ({ ...d, [r.key]: !d[r.key] }))}
-                      style={{ padding: "9px 16px", borderRadius: 999, border: "none", background: complete ? r.color : `${r.color}1c`, color: complete ? "#fff" : r.color, fontSize: 13, fontWeight: 600, cursor: "pointer", minHeight: 40, flexShrink: 0 }}>
+                      style={{ padding: "9px 16px", borderRadius: 999, border: "none", background: r.color, color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", minHeight: 40, flexShrink: 0 }}>
                       {complete ? "✓" : r.cta}
                     </motion.button>
                   ) : (
-                    <Link href={r.href} style={{ padding: "9px 16px", borderRadius: 999, background: `${r.color}1c`, color: r.color, fontSize: 13, fontWeight: 600, minHeight: 40, display: "inline-flex", alignItems: "center", flexShrink: 0 }}>
+                    <Link href={r.href} style={{ padding: "9px 16px", borderRadius: 999, background: r.color, color: "#fff", fontSize: 13, fontWeight: 600, minHeight: 40, display: "inline-flex", alignItems: "center", flexShrink: 0 }}>
                       {r.cta}
                     </Link>
                   )}
@@ -101,7 +101,7 @@ export default function NotificationsPage() {
                 <div style={{ fontSize: 15, fontWeight: 600, color: t.text }}>{o.label}</div>
                 <div style={{ fontSize: 12, color: t.sub, marginTop: 2 }}>{o.desc}</div>
               </div>
-              <Toggle on={!!state[o.key]} onClick={() => toggle(o.key)} />
+              <Toggle on={!!state[o.key]} onClick={() => toggle(o.key)} label={o.label} />
             </div>
           </Card>
         ))}

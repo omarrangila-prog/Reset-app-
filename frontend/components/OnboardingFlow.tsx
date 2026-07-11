@@ -12,7 +12,6 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
   const [reason, setReason] = useState("");
   const [name, setName] = useState("");
   const [timeOfDay, setTimeOfDay] = useState("");
-  const [remindTime, setRemindTime] = useState("");
 
   const T = {
     bg: "#F5F7FC",
@@ -22,13 +21,14 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
     textMuted: "#8A93A6",
     border: "#E6EAF2",
     recovery: "#2FBE6E",
+    recoveryDeep: "#128A4E", // AA (4.5:1) with white text
   };
 
   const handleNext = () => {
     if (screen === 1) setScreen(2);
     else if (screen === 2) setScreen(3);
     else if (screen === 3) {
-      onComplete({ reason, name: name || "You", timeOfDay, remindTime });
+      onComplete({ reason, name: name || "You", timeOfDay });
     }
   };
 
@@ -108,7 +108,7 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
               style={{
                 width: "100%",
                 padding: "16px 24px",
-                background: T.recovery,
+                background: T.recoveryDeep,
                 border: "none",
                 borderRadius: 12,
                 color: "#fff",

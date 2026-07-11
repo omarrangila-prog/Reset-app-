@@ -177,7 +177,7 @@ export default function DashboardPage() {
     <div style={{ minHeight: "100vh", maxWidth: 560, margin: "0 auto", padding: "24px 22px 130px", position: "relative", zIndex: 1 }}>
       {/* Editorial masthead — typography-led, no "dashboard" chrome */}
       <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32, marginTop: 8 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8A93A6" }}>Your progress</div>
+        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#646E80" }}>Your progress</div>
         <h1 style={{ fontSize: 40, fontWeight: 700, color: "#1C2333", letterSpacing: "-0.035em", lineHeight: 1.02, marginTop: 8 }}>
           Look how far<br />you&apos;ve come.
         </h1>
@@ -190,13 +190,13 @@ export default function DashboardPage() {
           <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{urges} urges</span> and got through{" "}
           <span style={{ color: "#2FBE6E", fontWeight: 700 }}>{wins}</span> of them.
         </div>
-        <div style={{ fontSize: 14, color: "#8A93A6", marginTop: 8 }}>That&apos;s not luck. That&apos;s you showing up.</div>
+        <div style={{ fontSize: 14, color: "#646E80", marginTop: 8 }}>That&apos;s not luck. That&apos;s you showing up.</div>
       </motion.div>
 
       {/* Chart as a calm, wide hero (asymmetric, no card chrome) */}
       {chartData.length > 0 && (
         <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 40 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A93A6", marginBottom: 18 }}>Last 14 days</div>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#646E80", marginBottom: 18 }}>Last 14 days</div>
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={chartData} barGap={3}>
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#B4BCCE" }} axisLine={false} tickLine={false} />
@@ -213,13 +213,13 @@ export default function DashboardPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", borderRadius: 22, background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: "1px solid #E6EAF2", boxShadow: "0 8px 24px rgba(46,62,120,0.07), inset 0 1px 0 rgba(255,255,255,0.9)" }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 16, fontWeight: 700, color: "#1C2333" }}>Been on track today?</div>
-            <div style={{ fontSize: 13, color: "#8A93A6", marginTop: 2 }}>A quick check-in keeps your thread alive.</div>
+            <div style={{ fontSize: 13, color: "#646E80", marginTop: 2 }}>A quick check-in keeps your thread alive.</div>
           </div>
           <button onClick={handleCheckIn} disabled={streakLoading} style={{ padding: "12px 20px", borderRadius: 999, border: "none", background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", minHeight: 44, boxShadow: "0 10px 24px rgba(91,124,250,0.28)" }}>
             {streakLoading ? "…" : "Check in"}
           </button>
         </div>
-        <button onClick={handleResetStreak} style={{ display: "block", margin: "14px auto 0", background: "none", border: "none", color: "#8A93A6", fontSize: 13, cursor: "pointer" }}>
+        <button onClick={handleResetStreak} style={{ display: "block", margin: "14px auto 0", background: "none", border: "none", color: "#646E80", fontSize: 13, cursor: "pointer" }}>
           I slipped — start again, gently
         </button>
       </motion.section>
@@ -227,11 +227,11 @@ export default function DashboardPage() {
       {/* Trigger insight as one editorial line + soft link, not a bar list */}
       {data.triggerPatterns.length > 0 && (
         <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }} style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A93A6", marginBottom: 10 }}>What we&apos;ve noticed</div>
+          <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#646E80", marginBottom: 10 }}>What we&apos;ve noticed</div>
           <p style={{ fontSize: 17, color: "#1C2333", lineHeight: 1.55, fontWeight: 500 }}>
             Your urges lean toward <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{triggerLabels[data.triggerPatterns[0].type] || "certain moments"}</span>.
           </p>
-          <Link href="/journey/triggers" style={{ display: "inline-block", marginTop: 10, color: "#5B7CFA", fontSize: 14, fontWeight: 600 }}>See your patterns →</Link>
+          <Link href="/journey/triggers" style={{ display: "inline-block", marginTop: 10, color: "#4257C9", fontSize: 14, fontWeight: 600 }}>See your patterns →</Link>
         </motion.section>
       )}
 
@@ -240,7 +240,7 @@ export default function DashboardPage() {
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36, duration: 0.5 }} style={{ marginTop: 36 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
           <span style={{ width: 24, height: 24, borderRadius: 8, background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13 }} aria-hidden>✦</span>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7C6BF0" }}>What we&apos;ve learned</div>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5B4FC4" }}>What we&apos;ve learned</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {[
@@ -361,11 +361,11 @@ function FactorRow({ f, index }: { f: any; index: number }) {
       {open && (
         <div style={{ padding: "0 16px 16px 38px", display: "flex", flexDirection: "column", gap: 10 }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#8A93A6", marginBottom: 3 }}>Why it matters</div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#646E80", marginBottom: 3 }}>Why it matters</div>
             <p style={{ fontSize: 13, color: "#1C2333", lineHeight: 1.55 }}>{f.why}</p>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#8A93A6", marginBottom: 3 }}>One way to grow it</div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#646E80", marginBottom: 3 }}>One way to grow it</div>
             <p style={{ fontSize: 13, color: "#1C2333", lineHeight: 1.55 }}>{f.how}</p>
           </div>
           <Link href={f.href} style={{ fontSize: 13, fontWeight: 600, color: "#4257C9", marginTop: 2 }}>Do this now →</Link>
