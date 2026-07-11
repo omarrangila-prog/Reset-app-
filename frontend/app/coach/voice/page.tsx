@@ -16,7 +16,6 @@ export default function VoiceCoachPage() {
   const [state, setState] = useState<OrbState>("idle");
   const [supported, setSupported] = useState(true);
   const [heard, setHeard] = useState("");
-  const [reply, setReply] = useState("");
   const [caption, setCaption] = useState("Tap the orb and talk. I'm listening.");
   const recogRef = useRef<any>(null);
 
@@ -54,19 +53,18 @@ export default function VoiceCoachPage() {
     setCaption("Thinking…");
     try {
       const res = await api.intervene(text, 6);
-      setReply(res.message);
       setCaption(res.message);
       speak(res.message);
     } catch {
       const msg = "I'm right here with you. Take one slow breath — in for four, out for six.";
-      setReply(msg); setCaption(msg); speak(msg);
+      setCaption(msg); speak(msg);
     }
   };
 
   const listen = () => {
     if (!recogRef.current || state === "listening") return;
     window.speechSynthesis?.cancel();
-    setHeard(""); setReply("");
+    setHeard("");
     setState("listening");
     setCaption("Listening…");
     try { recogRef.current.start(); } catch {}

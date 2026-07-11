@@ -61,7 +61,7 @@ function fallback(mode: Mode): InterventionResponse {
 
 function CoachInner() {
   const params = useSearchParams();
-  const { userId, user } = useAppStore();
+  const { userId } = useAppStore();
   const [mode, setMode] = useState<Mode>((params.get("mode") as Mode) || "RECOVERY");
   const [urgency] = useState(parseInt(params.get("urgency") || "5", 10));
   const [messages, setMessages] = useState<ChatMsg[]>([]);

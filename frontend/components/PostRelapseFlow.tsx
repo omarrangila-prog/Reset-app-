@@ -3,10 +3,9 @@ import { api } from "@/lib/api";
 
 interface PostRelapseFlowProps {
   onComplete: () => void;
-  previousStreak?: number;
 }
 
-export function PostRelapseFlow({ onComplete, previousStreak = 0 }: PostRelapseFlowProps) {
+export function PostRelapseFlow({ onComplete }: PostRelapseFlowProps) {
   const [stage, setStage] = useState<"compassion" | "reflection" | "reset">("compassion");
   const [reflection, setReflection] = useState({ before: "", need: "", next: "" });
   const [saving, setSaving] = useState(false);
@@ -44,6 +43,7 @@ export function PostRelapseFlow({ onComplete, previousStreak = 0 }: PostRelapseF
   };
 
   const handleComplete = async () => {
+    if (saving) return; // guard against double-taps while the relapse is recording
     if (stage === "compassion") {
       setStage("reflection");
     } else if (stage === "reflection") {

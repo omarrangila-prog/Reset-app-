@@ -6,7 +6,7 @@ interface CrisisBarProps {
   position?: "bottom" | "top";
 }
 
-export function CrisisBar({ position = "bottom" }: CrisisBarProps) {
+export function CrisisBar(_props: CrisisBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const T = {

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 interface MentalWeatherProps {
   current: number;
   onChange: (index: number) => void;

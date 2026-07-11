@@ -14,7 +14,7 @@ export interface UserContext {
 export function detectMode(
   message: string,
   urgencyScore: number,
-  context: UserContext
+  _context: UserContext
 ): BehavioralMode {
   const lowerMsg = message.toLowerCase();
 

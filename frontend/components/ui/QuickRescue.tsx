@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { LifeBuoy } from "lucide-react";
 import { haptic } from "@/lib/haptics";
-import { t } from "./theme";
 
 /**
  * Quick Rescue — a floating glass orb, always reachable (bottom-right), that

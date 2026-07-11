@@ -27,7 +27,6 @@ function greeting(): string {
 
 function HomeScreen({
   streak,
-  longestStreak,
   momentum,
   score,
   insight,
@@ -35,7 +34,6 @@ function HomeScreen({
   onRelapseTap,
 }: {
   streak: number;
-  longestStreak: number;
   momentum: string;
   score: number;
   insight: string;
@@ -196,7 +194,6 @@ export default function HomeApp() {
   const [showSplash, setShowSplash] = useState(true);
 
   const streak = user?.streak ?? 0;
-  const longestStreak = user?.longestStreak ?? 0;
   const score = user?.disciplineScore ?? 0;
   const momentum = user?.momentum ?? "Getting started";
 
@@ -252,7 +249,7 @@ export default function HomeApp() {
     <div style={{ minHeight: "100vh", color: t.text }}>
       <AnimatePresence>{showSplash && <Splash onDone={() => setShowSplash(false)} />}</AnimatePresence>
       {showOnboarding && <OnboardingFlow onComplete={handleOnboardingComplete} onSkip={handleOnboardingComplete} />}
-      {showPostRelapse && <PostRelapseFlow onComplete={handleRelapseComplete} previousStreak={streak} />}
+      {showPostRelapse && <PostRelapseFlow onComplete={handleRelapseComplete} />}
 
       <Modal open={showJournalModal} onClose={() => setShowJournalModal(false)} title="What's on your mind?" align="bottom">
         <textarea
@@ -400,7 +397,6 @@ export default function HomeApp() {
       {hasSeenOnboarding && (
         <HomeScreen
           streak={streak}
-          longestStreak={longestStreak}
           momentum={momentum}
           score={score}
           insight={deriveInsight(user?.logs, user?.triggerPatterns)}
