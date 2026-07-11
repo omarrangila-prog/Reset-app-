@@ -40,12 +40,10 @@ export function Card({
   };
   // Sculpted-glass surface: a faint top-lit gradient (not flat white) + an inner
   // rim highlight in the shadow so every card reads as a polished material.
-  const sculpted = "linear-gradient(145deg, #FFFFFF 0%, #FaFbFF 55%, #F1F4FC 100%)";
-  // Modern soft-neumorphic dual light (source: upper-left) — a bright highlight
-  // and a soft cool shadow so cards read as raised physical surfaces.
-  const neuRaised =
-    "-7px -7px 16px rgba(255,255,255,0.85), 8px 8px 20px rgba(90,100,150,0.10)";
-  const innerRim = "inset 1px 1px 0 rgba(255,255,255,0.9), inset 0 -1px 2px rgba(46,62,120,0.03)";
+  // Theme-aware surfaces via CSS vars so cards adapt to light/dark automatically.
+  const sculpted = "var(--card-sculpted)";
+  const neuRaised = "var(--card-raised-shadow)";
+  const innerRim = "var(--card-inner-rim)";
   const variants: Record<string, CSSProperties> = {
     soft: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${neuRaised}, ${innerRim}` },
     float: { background: sculpted, border: `1px solid ${t.border}`, boxShadow: `${neuRaised}, ${innerRim}` },
@@ -53,10 +51,10 @@ export function Card({
       background: t.glass,
       backdropFilter: "blur(24px) saturate(160%)",
       WebkitBackdropFilter: "blur(24px) saturate(160%)",
-      border: "1px solid rgba(255,255,255,0.65)",
+      border: `1px solid ${t.border}`,
       boxShadow: `${t.shadowMd}, ${innerRim}`,
     },
-    tint: { background: `linear-gradient(180deg, ${t.accentSoft} 0%, #EEF0FE 100%)`, border: `1px solid ${t.accent}22`, boxShadow: innerRim },
+    tint: { background: "var(--card-tint)", border: `1px solid ${t.accent}22`, boxShadow: innerRim },
   };
 
   const merged = { ...base, ...variants[variant], position: "relative" as const, overflow: "hidden" as const };

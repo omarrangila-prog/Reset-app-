@@ -71,7 +71,7 @@ export default function AchievementsPage() {
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: t.accentText, marginBottom: 4 }}>Next up</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: t.text }}>{next.title}</div>
                 <div style={{ fontSize: 12, color: t.sub, marginTop: 2 }}>{next.desc} · {Math.round(pct * 100)}% there</div>
-                <div style={{ height: 6, background: "#FFFFFF", borderRadius: 3, overflow: "hidden", marginTop: 8 }}>
+                <div style={{ height: 6, background: "var(--bg-tint)", borderRadius: 3, overflow: "hidden", marginTop: 8 }}>
                   <div style={{ width: `${pct * 100}%`, height: "100%", background: t.gradHero, borderRadius: 3 }} />
                 </div>
               </div>

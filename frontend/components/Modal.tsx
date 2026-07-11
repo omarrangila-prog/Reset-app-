@@ -97,14 +97,14 @@ export function Modal({ open, onClose, title, children, align = "center" }: Moda
         aria-modal="true"
         aria-labelledby={titleId}
         style={{
-          background: "#FFFFFF",
+          background: "var(--bg-surface)",
           borderRadius: align === "bottom" ? "24px 24px 0 0" : 20,
           padding: 24,
           maxHeight: "80vh",
           maxWidth: 520,
           width: "100%",
           margin: align === "bottom" ? undefined : "0 auto",
-          border: "1px solid #E6EAF2",
+          border: "1px solid var(--border)",
           boxShadow: "0 -8px 40px rgba(28,35,51,0.16)",
           display: "flex",
           flexDirection: "column",

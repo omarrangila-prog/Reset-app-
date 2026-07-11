@@ -104,6 +104,12 @@
   /* neumorphic light-source pair (light theme) */
   --neu-light: rgba(255, 255, 255, 0.92);
   --neu-dark:  rgba(77, 88, 140, 0.15);
+
+  /* Card surfaces (theme-aware; consumed by ui/Card + inline cards) */
+  --card-sculpted: linear-gradient(145deg, #FFFFFF 0%, #FaFbFF 55%, #F1F4FC 100%);
+  --card-raised-shadow: -7px -7px 16px rgba(255,255,255,0.85), 8px 8px 20px rgba(90,100,150,0.10);
+  --card-inner-rim: inset 1px 1px 0 rgba(255,255,255,0.9), inset 0 -1px 2px rgba(46,62,120,0.03);
+  --card-tint: linear-gradient(180deg, var(--accent-soft) 0%, #EEF0FE 100%);
   color-scheme: light;
 }
 
@@ -166,6 +172,12 @@
   /* neumorphic pair (dark theme): highlight from a lighter navy, shadow deeper */
   --neu-light: rgba(60, 72, 120, 0.28);
   --neu-dark:  rgba(0, 0, 0, 0.45);
+
+  /* Card surfaces (dark): elevated navy, restrained rim/shadow */
+  --card-sculpted: linear-gradient(145deg, #1A2038 0%, #171C31 55%, #141829 100%);
+  --card-raised-shadow: -6px -6px 14px rgba(60,72,120,0.16), 8px 8px 20px rgba(0,0,0,0.4);
+  --card-inner-rim: inset 1px 1px 0 rgba(148,160,210,0.08), inset 0 -1px 2px rgba(0,0,0,0.2);
+  --card-tint: linear-gradient(180deg, var(--accent-soft) 0%, #1F2440 100%);
 
   color-scheme: dark;
 }

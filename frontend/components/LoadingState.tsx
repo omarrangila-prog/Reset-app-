@@ -85,7 +85,7 @@ export function FullPageLoading({ message }: { message?: string }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "#FFFFFF",
+        background: "var(--bg)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
