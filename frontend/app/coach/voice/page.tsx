@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import { Mic, Square, Volume2, VolumeX, RotateCcw, MessageSquare, PhoneOff } from "lucide-react";
+import { Mic, Square, Volume2, VolumeX, RotateCcw, MessageSquare, PhoneOff, Pause, Play } from "lucide-react";
 import { AICoachOrb, OrbState } from "@/components/ui/AICoachOrb";
 import { t } from "@/components/ui/theme";
 import { BackButton } from "@/components/ui/BackButton";
@@ -183,12 +183,26 @@ export default function VoiceCoachPage() {
   const replay = () => { if (reply) { setVoiceOut(true); speak(reply); } };
   const stopSpeaking = () => { window.speechSynthesis?.cancel(); setPhase(convoRef.current ? "returning" : "idle"); if (convoRef.current) scheduleRestart(500); };
 
+  const [paused, setPaused] = useState(false);
   const startConversation = () => {
-    setConvo(true); convoRef.current = true; endedRef.current = false; haptic("select");
+    setConvo(true); convoRef.current = true; endedRef.current = false; setPaused(false); haptic("select");
+    startListening();
+  };
+  // Pause the auto-listen loop without ending the conversation; resume later.
+  const pauseConversation = () => {
+    setPaused(true); convoRef.current = false; haptic("tap");
+    if (restartRef.current) clearTimeout(restartRef.current);
+    window.speechSynthesis?.cancel();
+    try { recogRef.current?.abort(); } catch {}
+    stopTimer();
+    setPhase("idle"); setCaption("Paused. Resume whenever you’re ready.");
+  };
+  const resumeConversation = () => {
+    setPaused(false); convoRef.current = true; endedRef.current = false; haptic("select");
     startListening();
   };
   const endConversation = () => {
-    setConvo(false); convoRef.current = false; haptic("tap");
+    setConvo(false); convoRef.current = false; setPaused(false); haptic("tap");
     if (restartRef.current) clearTimeout(restartRef.current);
     window.speechSynthesis?.cancel();
     try { recogRef.current?.abort(); } catch {}
@@ -279,19 +293,36 @@ export default function VoiceCoachPage() {
           </div>
         )}
 
-        {/* Conversation mode toggle / end */}
+        {/* Conversation mode: start / pause-resume / end (distinct controls) */}
         {phase !== "unsupported" && phase !== "denied" && (
-          <div style={{ marginTop: 16 }}>
-            {!convo ? (
+          <div style={{ marginTop: 16, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+            {!convo && !paused ? (
               <button onClick={startConversation}
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 999, border: `1px solid ${t.border}`, background: t.glass, color: t.sub, fontSize: 13.5, fontWeight: 600, cursor: "pointer", minHeight: 44 }}>
                 <MessageSquare size={16} /> Start live conversation
               </button>
+            ) : paused ? (
+              <>
+                <button onClick={resumeConversation}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 999, border: "none", background: "var(--grad-hero)", color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", minHeight: 44 }}>
+                  <Play size={15} fill="#fff" /> Resume
+                </button>
+                <button onClick={endConversation}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 999, border: `1px solid ${t.border}`, background: t.glass, color: t.sub, fontSize: 13.5, fontWeight: 600, cursor: "pointer", minHeight: 44 }}>
+                  <PhoneOff size={15} /> End
+                </button>
+              </>
             ) : (
-              <button onClick={endConversation}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 999, border: "none", background: "var(--danger)", color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", minHeight: 44 }}>
-                <PhoneOff size={16} /> End conversation
-              </button>
+              <>
+                <button onClick={pauseConversation} aria-label="Pause conversation"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 999, border: `1px solid ${t.border}`, background: t.glass, color: t.text, fontSize: 13.5, fontWeight: 600, cursor: "pointer", minHeight: 44 }}>
+                  <Pause size={15} /> Pause
+                </button>
+                <button onClick={endConversation}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 999, border: "none", background: "var(--danger)", color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", minHeight: 44 }}>
+                  <PhoneOff size={16} /> End conversation
+                </button>
+              </>
             )}
           </div>
         )}
