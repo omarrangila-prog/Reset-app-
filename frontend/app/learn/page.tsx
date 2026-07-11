@@ -62,7 +62,7 @@ export default function LearnPage() {
       <Reveal index={2}>
         <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginBottom: 10 }}>Continue reading</div>
         <Link href={`/learn/${continueLesson.slug}`} style={{ display: "block", marginBottom: 26 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, borderRadius: 20, background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: `1px solid ${t.border}`, boxShadow: t.shadowSm }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, borderRadius: 20, background: "var(--bg-surface)", border: `1px solid ${t.border}`, boxShadow: t.shadowSm }}>
             <span style={{ width: 46, height: 46, borderRadius: 14, background: `${categoryColor[continueLesson.category]}18`, color: categoryColor[continueLesson.category], display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }} aria-hidden>▷</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 15, fontWeight: 600, color: t.text }}>{continueLesson.title}</div>
@@ -87,7 +87,7 @@ export default function LearnPage() {
               {items.map((l, i) => (
                 <Reveal key={l.slug} index={ci + i}>
                   <Link href={`/learn/${l.slug}`} style={{ display: "block" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 16, background: "#FFFFFF", border: `1px solid ${t.border}`, boxShadow: t.shadowSm, opacity: read[l.slug] ? 0.7 : 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 16, background: "var(--bg-surface)", border: `1px solid ${t.border}`, boxShadow: t.shadowSm, opacity: read[l.slug] ? 0.7 : 1 }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 15, fontWeight: 600, color: t.text }}>{l.title}</div>
                         <div style={{ fontSize: 12, color: t.sub, marginTop: 2 }}>{l.minutes} min{read[l.slug] ? " · read" : ""}</div>

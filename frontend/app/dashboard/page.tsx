@@ -219,7 +219,7 @@ export default function DashboardPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>Your progress</div>
           {isDemo && (
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--accent-2)", background: "var(--accent-soft)", border: "1px solid var(--border)", borderRadius: 999, padding: "3px 8px" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--accent-text)", background: "var(--accent-soft)", border: "1px solid var(--border)", borderRadius: 999, padding: "3px 8px" }}>
               Sample insights
             </span>
           )}
@@ -277,7 +277,7 @@ export default function DashboardPage() {
           <p style={{ fontSize: 17, color: "var(--text)", lineHeight: 1.55, fontWeight: 500 }}>
             Your urges lean toward <span style={{ color: "#5B7CFA", fontWeight: 700 }}>{triggerLabels[data.triggerPatterns[0].type] || "certain moments"}</span>.
           </p>
-          <Link href="/journey/triggers" style={{ display: "inline-block", marginTop: 10, color: "#4257C9", fontSize: 14, fontWeight: 600 }}>See your patterns →</Link>
+          <Link href="/journey/triggers" style={{ display: "inline-block", marginTop: 10, color: "var(--accent-text)", fontSize: 14, fontWeight: 600 }}>See your patterns →</Link>
         </motion.section>
       )}
 
@@ -286,7 +286,7 @@ export default function DashboardPage() {
       <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36, duration: 0.5 }} style={{ marginTop: 36 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
           <span style={{ width: 24, height: 24, borderRadius: 8, background: "linear-gradient(135deg,#6E8CFB,#9B7BF2)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13 }} aria-hidden>✦</span>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent-2)" }}>What we&apos;ve learned</div>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent-text)" }}>What we&apos;ve learned</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {[
@@ -393,7 +393,8 @@ function RecoveryFactors({ data, logs }: { data: Analytics; logs?: any[] }) {
 
 function FactorRow({ f, index }: { f: any; index: number }) {
   const [open, setOpen] = useState(false);
-  const levelColor = f.level === "Strong" ? "#2FBE6E" : f.level === "Building" ? f.color : "var(--text-muted)";
+  // AA-safe level pill: white text needs a deep-enough fill (>4.5:1).
+  const levelTint = f.level === "Strong" ? "#127A44" : f.level === "Building" ? "#5B4FC4" : "#5A6478";
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * index }}
       style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 18, overflow: "hidden", boxShadow: "0 4px 14px rgba(46,62,120,0.05)" }}>
@@ -401,7 +402,7 @@ function FactorRow({ f, index }: { f: any; index: number }) {
         style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "15px 16px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", minHeight: 44 }}>
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: f.color, flexShrink: 0 }} aria-hidden />
         <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: "var(--text)" }}>{f.name}</span>
-        <span style={{ fontSize: 12, fontWeight: 600, color: levelColor }}>{f.level}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", background: levelTint, borderRadius: 999, padding: "3px 10px", whiteSpace: "nowrap" }}>{f.level}</span>
         <span style={{ color: "var(--text-muted)", fontSize: 15, transform: open ? "rotate(90deg)" : "none", transition: "transform 0.2s" }} aria-hidden>›</span>
       </button>
       {open && (
@@ -414,7 +415,7 @@ function FactorRow({ f, index }: { f: any; index: number }) {
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: 3 }}>One way to grow it</div>
             <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.55 }}>{f.how}</p>
           </div>
-          <Link href={f.href} style={{ fontSize: 13, fontWeight: 600, color: "#4257C9", marginTop: 2 }}>Do this now →</Link>
+          <Link href={f.href} style={{ fontSize: 13, fontWeight: 600, color: "var(--accent-text)", marginTop: 2 }}>Do this now →</Link>
         </div>
       )}
     </motion.div>
