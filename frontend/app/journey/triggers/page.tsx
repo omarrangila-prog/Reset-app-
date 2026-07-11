@@ -83,7 +83,7 @@ export default function TriggersPage() {
                 style={{
                   display: "flex", alignItems: "center", gap: 14, width: "100%",
                   padding: "14px 16px", borderRadius: 18, cursor: "pointer", textAlign: "left",
-                  background: isTop ? `linear-gradient(180deg,#FFFFFF,#F6F4FF)` : "linear-gradient(180deg,#FFFFFF,#F7F8FD)",
+                  background: isTop ? `var(--card-sculpted)` : "var(--card-sculpted)",
                   border: `1px solid ${isTop ? `${c.color}33` : t.border}`,
                   boxShadow: `0 4px 14px rgba(46,62,120,0.05), inset 0 1px 0 rgba(255,255,255,0.9)`,
                 }}

@@ -103,7 +103,7 @@ export default function GoalsPage() {
           const complete = g.done >= g.target;
           return (
             <Reveal key={g.id} index={i + 2}>
-              <div style={{ background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: `1px solid ${t.border}`, borderRadius: 20, padding: 16, boxShadow: t.shadowSm, display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{ background: "var(--card-sculpted)", border: `1px solid ${t.border}`, borderRadius: 20, padding: 16, boxShadow: t.shadowSm, display: "flex", alignItems: "center", gap: 14 }}>
                 <span style={{ width: 44, height: 44, borderRadius: 14, background: `${g.color}18`, color: g.color, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} aria-hidden>
                   <Icon size={20} strokeWidth={2} />
                 </span>

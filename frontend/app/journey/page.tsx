@@ -64,7 +64,7 @@ export default function JourneyPage() {
       {/* FEATURED — mood check-in (wide) */}
       <Reveal index={2}>
         <Link href="/journey/mood" style={{ display: "block", marginBottom: 14 }}>
-          <div style={{ background: "linear-gradient(180deg,#FFFFFF,#F6F4FF)", border: `1px solid ${t.border}`, borderRadius: 24, padding: 20, boxShadow: t.shadowSm, display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ background: "var(--card-sculpted)", border: `1px solid ${t.border}`, borderRadius: 24, padding: 20, boxShadow: t.shadowSm, display: "flex", alignItems: "center", gap: 16 }}>
             <span style={{ width: 52, height: 52, borderRadius: 18, background: `${t.accent}18`, color: t.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} aria-hidden>
               <CloudMoon size={24} strokeWidth={2} />
             </span>
@@ -82,7 +82,7 @@ export default function JourneyPage() {
       {/* FEATURED — journal (wide, warm) */}
       <Reveal index={3}>
         <Link href="/journey/journal" style={{ display: "block", marginBottom: 20 }}>
-          <div style={{ background: "linear-gradient(180deg,#FFFDF9,#FBF6EF)", border: "1px solid #EFE7DA", borderRadius: 24, padding: 20, boxShadow: t.shadowSm, display: "flex", alignItems: "center", gap: 16, position: "relative", overflow: "hidden" }}>
+          <div style={{ background: "var(--card-sculpted)", border: "1px solid #EFE7DA", borderRadius: 24, padding: 20, boxShadow: t.shadowSm, display: "flex", alignItems: "center", gap: 16, position: "relative", overflow: "hidden" }}>
             <span aria-hidden style={{ position: "absolute", top: -2, right: 22, width: 16, height: 32, background: t.gradHero, clipPath: "polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)" }} />
             <span style={{ width: 52, height: 52, borderRadius: 18, background: "#F0E7D6", color: "#B08D57", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} aria-hidden>
               <PenLine size={22} strokeWidth={2} />
@@ -104,7 +104,7 @@ export default function JourneyPage() {
           return (
             <Reveal key={tool.href} index={i + 4}>
               <Link href={tool.href} style={{ display: "block" }}>
-                <div className="pearl" style={{ background: "linear-gradient(180deg,#FFFFFF,#F7F8FD)", border: `1px solid ${t.border}`, borderRadius: 20, padding: 16, boxShadow: `0 4px 14px rgba(46,62,120,0.05), inset 0 1px 0 rgba(255,255,255,0.9)`, minHeight: 108, display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
+                <div className="pearl" style={{ background: "var(--card-sculpted)", border: `1px solid ${t.border}`, borderRadius: 20, padding: 16, boxShadow: `0 4px 14px rgba(46,62,120,0.05), inset 0 1px 0 rgba(255,255,255,0.9)`, minHeight: 108, display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
                   <span style={{ width: 40, height: 40, borderRadius: 13, background: `${tool.color}18`, color: tool.color, display: "inline-flex", alignItems: "center", justifyContent: "center" }} aria-hidden>
                     <Icon size={19} strokeWidth={2.1} />
                   </span>

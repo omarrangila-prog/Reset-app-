@@ -69,7 +69,7 @@ export default function JournalPage() {
           className="frost"
           style={{
             position: "relative",
-            background: "linear-gradient(180deg, #FFFFFF 0%, #FBFBFE 100%)",
+            background: "var(--card-sculpted)",
             border: `1px solid ${t.border}`,
             borderRadius: 24,
             padding: "20px 20px 16px",
