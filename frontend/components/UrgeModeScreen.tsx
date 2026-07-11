@@ -25,15 +25,17 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
   );
 
   const T = {
-    // Light "calm mode" palette with a soft gradient canvas.
-    bg: "linear-gradient(165deg, #EAF0FF 0%, #F3EEFF 55%, #EAFBF4 100%)",
+    // Calm-mode palette — pure PURE RISE lavender/blue/pearl (no green).
+    bg: "linear-gradient(165deg, #EEF1FF 0%, #F1EEFF 50%, #E9EEFF 100%)",
     bgSurface: "#FFFFFF",
     text: "#1C2333",
     textSub: "#5A6478",
-    textMuted: "#8A93A6",
+    textMuted: "#646E80",
     border: "#E6EAF2",
     accent: "#5B7CFA",
-    recovery: "#2FBE6E",
+    // "recovery" now maps to the lavender gradient for all primary CTAs.
+    recovery: "linear-gradient(135deg, #6E8CFB 0%, #9B7BF2 100%)",
+    recoverySolid: "#6E8CFB",
   };
 
   // Breathing is now handled by the self-managing <CalmSphere /> component.
@@ -125,7 +127,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 background: T.recovery,
                 border: "none",
                 borderRadius: 12,
-                color: "#000",
+                color: "#fff",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 15,
                 fontWeight: 600,
@@ -237,7 +239,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
               style={{
                 fontFamily: "'Bebas Neue', 'Impact', sans-serif",
                 fontSize: 96,
-                color: T.recovery,
+                color: T.recoverySolid,
                 marginBottom: 16,
                 lineHeight: 1,
                 letterSpacing: "0.01em",
@@ -267,7 +269,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                   background: T.recovery,
                   border: "none",
                   borderRadius: 10,
-                  color: "#000",
+                  color: "#fff",
                   fontFamily: "'DM Sans', sans-serif",
                   fontSize: 14,
                   fontWeight: 600,
@@ -331,7 +333,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
             <div
               style={{
                 padding: "24px",
-                background: `rgba(24, 168, 86, 0.08)`,
+                background: "rgba(110, 140, 251, 0.08)",
                 borderRadius: 14,
                 border: `1px solid ${T.recovery}33`,
                 marginBottom: 32,
@@ -341,7 +343,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
                   fontSize: 18,
-                  color: T.recovery,
+                  color: T.recoverySolid,
                   lineHeight: 1.7,
                   fontWeight: 500,
                 }}
@@ -389,7 +391,7 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
                 background: T.recovery,
                 border: "none",
                 borderRadius: 10,
-                color: "#000",
+                color: "#fff",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 14,
                 fontWeight: 600,
@@ -404,65 +406,41 @@ export function UrgeModeScreen({ onComplete }: UrgeModeScreenProps) {
         {/* Complete Stage */}
         {stage === "complete" && (
           <div style={{ textAlign: "center", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            {/* Soft lavender orb, not a green success card */}
             <div
               style={{
-                width: 100,
-                height: 100,
-                borderRadius: "50%",
-                background: `rgba(245, 166, 35, 0.1)`,
-                border: `2px solid ${T.accent}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 48,
-                margin: "0 auto 24px",
-                animation: "scaleIn 0.5s ease",
+                width: 108, height: 108, borderRadius: "50%", margin: "0 auto 24px",
+                background: "radial-gradient(circle at 35% 30%, #8AA6FF, #6E8CFB 55%, #7C6BF0 100%)",
+                boxShadow: "0 14px 44px rgba(91,124,250,0.4), inset 0 3px 12px rgba(255,255,255,0.55)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 40, color: "#fff", animation: "scaleIn 0.5s ease",
               }}
             >
               ✓
             </div>
 
-            <h1
-              style={{
-                fontFamily: "'Bebas Neue', 'Impact', sans-serif",
-                fontSize: 40,
-                color: T.accent,
-                marginBottom: 12,
-                letterSpacing: "0.05em",
-              }}
-            >
-              SUPPORT COMPLETE
+            <h1 style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: 26, fontWeight: 700, color: T.text, letterSpacing: "-0.02em", marginBottom: 10 }}>
+              You stayed with it.
             </h1>
-
-            <p
-              style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                color: T.textSub,
-                lineHeight: 1.7,
-                marginBottom: 32,
-              }}
-            >
-              You paused the momentum. That choice matters. Each return to calm builds your steady response.
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: T.textSub, lineHeight: 1.7, marginBottom: 28, maxWidth: 340, marginLeft: "auto", marginRight: "auto" }}>
+              You stayed with the feeling instead of chasing it. That matters — and it gets easier each time.
             </p>
 
-            <button
-              onClick={onComplete}
-              style={{
-                padding: "16px 24px",
-                background: T.recovery,
-                border: "none",
-                borderRadius: 12,
-                color: "#000",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-                letterSpacing: "0.02em",
-              }}
-            >
-              Continue →
-            </button>
+            {/* Reflection choices */}
+            <div style={{ display: "grid", gap: 10, maxWidth: 340, margin: "0 auto", width: "100%" }}>
+              <button onClick={onComplete} style={{ padding: "15px", background: T.recovery, border: "none", borderRadius: 16, color: "#fff", fontSize: 15, fontWeight: 600, cursor: "pointer", boxShadow: "0 10px 24px rgba(91,124,250,0.28)" }}>
+                I feel calmer
+              </button>
+              <button onClick={() => setStage("breathing")} style={{ padding: "14px", background: T.bgSurface, border: `1px solid ${T.border}`, borderRadius: 16, color: T.text, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                Try another round of breathing
+              </button>
+              <a href="/coach" style={{ padding: "14px", background: T.bgSurface, border: `1px solid ${T.border}`, borderRadius: 16, color: T.text, fontSize: 14, fontWeight: 600, textAlign: "center", display: "block" }}>
+                Talk to my coach
+              </a>
+              <a href="tel:988" style={{ padding: "12px", color: T.recoverySolid, fontSize: 13, fontWeight: 600, textAlign: "center", display: "block" }}>
+                I still need support — reach a person
+              </a>
+            </div>
           </div>
         )}
       </div>
