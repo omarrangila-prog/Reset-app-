@@ -56,3 +56,6 @@ build/
 # Temporary files
 tmp/
 temp/
+
+# Large icon design source (only the rasterized public/icons/* are used)
+frontend/public/app-icon-source.png
