@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { api, InterventionResponse } from "@/lib/api";
+import { rememberUserMessage, memoryOpener, memoryContext } from "@/lib/coachMemory";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { AICoachOrb } from "@/components/ui/AICoachOrb";
 import { FeatureIntro } from "@/components/ui/FeatureIntro";
@@ -76,9 +77,15 @@ function CoachInner() {
 
   const meta = modeMeta[mode];
 
-  // Seed with the coach's opener.
+  // Seed with the coach's opener — plus a memory continuity line if the coach
+  // remembers something notable from a previous conversation (RECOVERY mode).
   useEffect(() => {
-    setMessages([{ id: "opener", role: "coach", text: modeMeta[mode].opener }]);
+    const opener: ChatMsg[] = [{ id: "opener", role: "coach", text: modeMeta[mode].opener }];
+    if (mode !== "URGE") {
+      const mem = memoryOpener();
+      if (mem) opener.push({ id: "memory", role: "coach", text: mem });
+    }
+    setMessages(opener);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
@@ -101,8 +108,10 @@ function CoachInner() {
     setInput("");
     setMessages((m) => [...m, { id: `u${Date.now()}`, role: "user", text }]);
     setTyping(true);
+    rememberUserMessage(text);
     try {
-      const res = await api.intervene(text, urgency);
+      const mem = memoryContext();
+      const res = await api.intervene(text, urgency, mem ? { memory: mem } : undefined);
       setMessages((m) => [
         ...m,
         {

@@ -6,7 +6,7 @@ import { api } from "../../lib/api";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { SkeletonCard, SkeletonOrb } from "@/components/ui/Skeleton";
 import Link from "next/link";
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { RecoveryChart } from "@/components/ui/RecoveryChart";
 import { DEMO_ANALYTICS, hasUsefulAnalytics } from "@/lib/demoInsights";
 import { deriveTriggerDiscovery } from "@/lib/recoveryMetrics";
 
@@ -245,14 +245,11 @@ export default function DashboardPage() {
       {chartData.length > 0 && (
         <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16, duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 40 }}>
           <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 18 }}>Last 14 days</div>
-          <ResponsiveContainer width="100%" height={150}>
-            <BarChart data={chartData} barGap={3}>
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-              <Tooltip cursor={{ fill: "var(--bg-tint)" }} contentStyle={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12, color: "var(--text)" }} />
-              <Bar dataKey="wins" name="Got through" fill="#2FBE6E" radius={[5, 5, 0, 0]} animationDuration={900} />
-              <Bar dataKey="urges" name="Urges" fill="#C7D0FF" radius={[5, 5, 0, 0]} animationDuration={900} />
-            </BarChart>
-          </ResponsiveContainer>
+          <RecoveryChart data={chartData} />
+          <div style={{ display: "flex", gap: 18, marginTop: 12, paddingLeft: 4 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text-sub)" }}><span style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--recovery)" }} /> Got through</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text-sub)" }}><span style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--accent)" }} /> Difficult moments</span>
+          </div>
         </motion.section>
       )}
 

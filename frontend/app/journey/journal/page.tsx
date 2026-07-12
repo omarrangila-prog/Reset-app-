@@ -7,6 +7,7 @@ import { BackButton } from "@/components/ui/BackButton";
 import { SkeletonCard } from "@/components/ui/Skeleton";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { Illustration } from "@/components/ui/Illustration";
 import { api, JournalEntry } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { useToast } from "@/components/ui/SaveToast";
@@ -132,7 +133,8 @@ export default function JournalPage() {
       {loading ? (
         <div><SkeletonCard lines={2} /><SkeletonCard lines={3} /></div>
       ) : entries.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "24px 20px", background: t.accentSoft, borderRadius: 20, border: `1px solid ${t.accent}18` }}>
+        <div style={{ textAlign: "center", padding: "20px 20px 24px", background: t.accentSoft, borderRadius: 20, border: `1px solid ${t.accent}18` }}>
+          <Illustration name="empty-journal" size={132} alt="A blank glass page" style={{ margin: "0 auto 8px" }} />
           <div style={{ fontSize: 15, color: t.text, fontWeight: 600, marginBottom: 4 }}>Your story starts here</div>
           <div style={{ fontSize: 13, color: t.sub }}>Even one honest sentence is a step. This space grows with you.</div>
         </div>

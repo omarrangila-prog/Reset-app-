@@ -106,11 +106,11 @@ export const api = {
   intervene: (
     message: string,
     urgencyScore = 5,
-    opts?: { history?: Array<{ role: "you" | "coach"; text: string }>; voice?: boolean }
+    opts?: { history?: Array<{ role: "you" | "coach"; text: string }>; voice?: boolean; memory?: string }
   ): Promise<InterventionResponse> =>
     apiFetch("/api/coach/intervene", {
       method: "POST",
-      body: JSON.stringify({ message, urgencyScore, history: opts?.history, voice: opts?.voice }),
+      body: JSON.stringify({ message, urgencyScore, history: opts?.history, voice: opts?.voice, memory: opts?.memory }),
     }),
 
   // Streak

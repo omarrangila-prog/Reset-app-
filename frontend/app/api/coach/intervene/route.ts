@@ -25,6 +25,8 @@ const InterventionSchema = z.object({
   // When true, the coach is speaking aloud — keep replies short and
   // conversational, and end with a gentle follow-up question when it helps.
   voice: z.boolean().optional(),
+  // Recalled context from past conversations (client-side memory, private).
+  memory: z.string().max(2000).optional(),
 });
 
 function getTimeOfDay(): UserContext["timeOfDay"] {
@@ -104,6 +106,13 @@ export async function POST(req: NextRequest) {
           "\n\nVOICE CONVERSATION MODE: You are speaking aloud in a live back-and-forth. " +
           "Keep replies to 1–3 short sentences that sound natural spoken. When it helps the " +
           "person open up, end with ONE gentle follow-up question. Never read lists or headings aloud.";
+      }
+      if (body.memory && body.memory.trim()) {
+        // Recalled context so the coach feels like a companion who remembers.
+        systemPrompt +=
+          "\n\nRECALLED CONTEXT (things this person shared in earlier conversations — " +
+          "reference gently and naturally only if relevant, never list it back verbatim):\n" +
+          body.memory.trim();
       }
 
       // Prepend recent conversation turns so replies stay coherent across the exchange.

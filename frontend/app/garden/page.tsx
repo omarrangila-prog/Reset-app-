@@ -8,6 +8,7 @@ import { t } from "@/components/ui/theme";
 import { api, MeProfile } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { computeGarden, gardenMessage, GardenState } from "@/lib/garden";
+import { Illustration } from "@/components/ui/Illustration";
 
 /**
  * Recovery Garden — grows with healthy actions; never dies after a difficult
@@ -67,8 +68,9 @@ export default function GardenPage() {
           ))}
 
           {g.points === 0 && (
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, textAlign: "center", color: t.sub, fontSize: 14 }}>
-              Your garden is ready to grow.
+            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: 24, textAlign: "center" }}>
+              <Illustration name="empty-garden" size={120} alt="A single sprout" />
+              <span style={{ color: t.sub, fontSize: 14 }}>Your garden is ready to grow.</span>
             </div>
           )}
         </div>

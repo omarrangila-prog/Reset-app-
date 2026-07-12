@@ -13,6 +13,7 @@ import { deriveInsight } from "@/lib/insights";
 import { deriveReflection } from "@/lib/reflection";
 import { loadProfile, deriveRecovery, deriveBriefing, deriveForecast, DEFAULT_PROFILE, Briefing, RiskLevel, Forecast } from "@/lib/recoveryProfile";
 import { deriveHomeHero, HomeHero } from "@/lib/homeHero";
+import { setMood } from "@/components/ui/Atmosphere";
 import { Sun, Cloud, Moon, CloudRain } from "lucide-react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
@@ -316,6 +317,9 @@ export default function HomeApp() {
     const recentLapse = (user?.dailyActivity ?? []).slice(-2).some((d) => d.relapses > 0);
     const hitMilestone = [3, 7, 14, 30].includes(user?.streak ?? 0);
     setHero(deriveHomeHero({ streak: user?.streak ?? 0, hadRecentLapse: recentLapse, hitMilestone }));
+    // Living background mood: difficult after a recent lapse, progress at a
+    // milestone / healthy streak, else calm.
+    setMood(recentLapse ? "difficult" : hitMilestone || (user?.streak ?? 0) >= 7 ? "progress" : "calm");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.streak]);
 
