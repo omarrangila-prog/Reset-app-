@@ -115,9 +115,10 @@ const QUESTIONS: QuestionDef[] = [
   { key: "successGoals", headline: "Imagine yourself six months from now.", sub: "What would make you proud?", choices: SUCCESS, multi: true, reaction: "We'll keep this in sight." },
 ];
 
-const INTRO = 4;
+const INTRO = 3; // three swipeable storytelling slides, then personalization begins
 const PROFILE_STEP = INTRO + QUESTIONS.length + 2; // after questions + reminder + privacy
 const TOTAL = PROFILE_STEP + 1;
+const SWIPE_THRESHOLD = 56; // px of horizontal drag before a slide changes
 
 export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
   const reduced = useReducedMotion();
@@ -128,6 +129,19 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
   const [orbPulse, setOrbPulse] = useState(0);
 
   const go = (next: number) => { haptic("select"); setDir(next > screen ? 1 : -1); setCaption(""); setScreen(next); };
+
+  // Intro carousel navigation (swipe + dots + keyboard). Bounded to intro range.
+  const goIntro = (next: number) => { if (next < 0 || next > INTRO - 1) return; go(next); };
+  const onIntroDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const swipe = Math.abs(info.offset.x) * 0.6 + Math.abs(info.velocity.x) * 0.08;
+    if (swipe < SWIPE_THRESHOLD) return; // ignore small/accidental drags
+    if (info.offset.x < 0) goIntro(screen + 1); // swipe left → next
+    else goIntro(screen - 1); // swipe right → previous
+  };
+  const onIntroKey = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); goIntro(screen + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); goIntro(screen - 1); }
+  };
 
   const finishAll = () => {
     haptic("success");
@@ -180,20 +194,30 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
         )}
       </div>
 
-      <div tabIndex={0} role="group" aria-label="Building your recovery blueprint" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: isIntro || isPrivacy || isProfile ? "center" : "flex-start", alignItems: "center", padding: "clamp(16px, 5vh, 40px) 24px 0", maxWidth: 520, width: "100%", margin: "0 auto", overflowY: "auto" }}>
+      <div tabIndex={0} role={isIntro ? "region" : "group"} aria-roledescription={isIntro ? "carousel" : undefined}
+        aria-label={isIntro ? "Introduction" : "Building your recovery blueprint"}
+        onKeyDown={isIntro ? onIntroKey : undefined}
+        style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: isIntro || isPrivacy || isProfile ? "center" : "flex-start", alignItems: "center", padding: "clamp(16px, 5vh, 40px) 24px 0", maxWidth: 520, width: "100%", margin: "0 auto", overflowY: "auto", overflowX: "hidden", touchAction: isIntro ? "pan-y" : undefined }}>
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div key={screen} custom={dir} variants={variants} initial="enter" animate="center" exit="exit"
             transition={{ duration: reduced ? 0.15 : 0.42, ease: EASE }}
-            style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: isIntro || isPrivacy || isProfile ? "center" : "left" }}>
+            drag={isIntro && !reduced ? "x" : false}
+            dragDirectionLock
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.18}
+            onDragEnd={isIntro ? onIntroDragEnd : undefined}
+            aria-roledescription={isIntro ? "slide" : undefined}
+            aria-label={isIntro ? `Slide ${screen + 1} of ${INTRO}` : undefined}
+            style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: isIntro || isPrivacy || isProfile ? "center" : "left", cursor: isIntro && !reduced ? "grab" : undefined }}>
 
             {/* ── Intro ── */}
             {isIntro && (
               <>
-                <div style={{ minHeight: 190, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 34 }}>
+                <div style={{ minHeight: "clamp(140px, 26vh, 190px)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "clamp(24px, 4vh, 34px)", pointerEvents: "none" }}>
                   <AICoachOrb size={148} state="idle" />
                 </div>
-                <h1 style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: "clamp(24px, 7vw, 30px)", fontWeight: 700, color: T.text, lineHeight: 1.2, letterSpacing: "-0.01em", marginBottom: 18, maxWidth: 360 }}>{INTRO_COPY[screen].title}</h1>
-                <p style={{ fontSize: "clamp(15px, 4vw, 16.5px)", color: T.sub, lineHeight: 1.7, maxWidth: 340 }}>{INTRO_COPY[screen].body}</p>
+                <h1 style={{ fontFamily: "'Sora','DM Sans',sans-serif", fontSize: "clamp(23px, 6.6vw, 30px)", fontWeight: 700, color: T.text, lineHeight: 1.22, letterSpacing: "-0.01em", marginBottom: 16, maxWidth: 380 }}>{INTRO_COPY[screen].title}</h1>
+                <p style={{ fontSize: "clamp(15px, 4vw, 16.5px)", color: T.sub, lineHeight: 1.65, maxWidth: 360 }}>{INTRO_COPY[screen].body}</p>
               </>
             )}
 
@@ -270,17 +294,51 @@ export function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowProps) {
 
       {/* CTA */}
       <div style={{ padding: "0 24px calc(env(safe-area-inset-bottom) + 30px)", maxWidth: 520, width: "100%", margin: "0 auto" }}>
-        <motion.button
-          whileTap={reduced ? undefined : { scale: 0.97 }}
-          onClick={() => (isProfile ? finishAll() : go(screen + 1))}
-          style={{
-            width: "100%", padding: "18px 24px", borderRadius: 18, border: "none",
-            background: "var(--grad-hero)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 600,
-            cursor: "pointer", letterSpacing: "0.01em", minHeight: 58, boxShadow: "var(--shadow-accent)",
-          }}
-        >
-          {isProfile ? "Begin my journey" : screen === 0 ? "Let's begin" : "Next step"}
-        </motion.button>
+        {/* Carousel dots — intro only, centered above the CTA */}
+        {isIntro && (
+          <div role="tablist" aria-label="Intro slides" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, marginBottom: 20 }}>
+            {Array.from({ length: INTRO }).map((_, i) => {
+              const activeDot = i === screen;
+              return (
+                <button key={i} role="tab" aria-selected={activeDot} aria-label={`Go to slide ${i + 1}`}
+                  onClick={() => goIntro(i)}
+                  style={{ padding: 8, background: "none", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center" }}>
+                  <motion.span aria-hidden animate={{ width: activeDot ? 24 : 8, background: i <= screen ? T.accent : T.border }}
+                    transition={{ duration: 0.35, ease: EASE }} style={{ height: 8, borderRadius: 999, display: "block" }} />
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* Back — available whenever there's somewhere to go back to */}
+          {screen > 0 && !isProfile && (
+            <motion.button
+              whileTap={reduced ? undefined : { scale: 0.97 }}
+              onClick={() => go(screen - 1)}
+              aria-label="Go back"
+              style={{
+                padding: "18px 22px", borderRadius: 18, border: `1px solid ${T.border}`,
+                background: "var(--bg-surface)", color: T.sub, fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 600,
+                cursor: "pointer", minHeight: 58, flexShrink: 0,
+              }}
+            >
+              Back
+            </motion.button>
+          )}
+          <motion.button
+            whileTap={reduced ? undefined : { scale: 0.97 }}
+            onClick={() => (isProfile ? finishAll() : go(screen + 1))}
+            style={{
+              flex: 1, padding: "18px 24px", borderRadius: 18, border: "none",
+              background: "var(--grad-hero)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 600,
+              cursor: "pointer", letterSpacing: "0.01em", minHeight: 58, boxShadow: "var(--shadow-accent)",
+            }}
+          >
+            {isProfile ? "Begin my journey" : screen === INTRO - 1 ? "Build My Recovery Plan" : "Continue"}
+          </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -359,9 +417,18 @@ function goalLabel(value: string): string {
   return found ? found.label : value;
 }
 
+// Three storytelling slides: what RESET is → help in the moment → lasting change.
 const INTRO_COPY = [
-  { title: "Let's begin a new chapter.", body: "You're not here because you're weak. You're here because you want your life back." },
-  { title: "Get help when an urge hits.", body: "Calm Mode, breathing, reflection, and your coach — ready before the urge takes over." },
-  { title: "See what actually helps.", body: "As you check in, RESET learns the patterns behind your difficult moments." },
-  { title: "Private and judgment-free.", body: "Your recovery is personal. RESET stays discreet, supportive, and under your control." },
+  {
+    title: "Replace habits that hold you back.",
+    body: "RESET helps you understand compulsive habits, reduce porn use, and build healthier routines — one step at a time.",
+  },
+  {
+    title: "Support when an urge appears.",
+    body: "Use Calm Mode, your personal urge plan, short delays, reflection, and the AI coach to respond differently in difficult moments.",
+  },
+  {
+    title: "Turn small choices into lasting change.",
+    body: "Learn your triggers, track what helps, and build routines that give you more control over your time, focus, and wellbeing.",
+  },
 ];
