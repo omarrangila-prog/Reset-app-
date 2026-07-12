@@ -11,6 +11,7 @@ import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import { BackButton } from "@/components/ui/BackButton";
+import { AmbientSound } from "@/components/ui/AmbientSound";
 import { APP_BUILD_VERSION } from "@/lib/version";
 import { DEMO_PROFILE } from "@/lib/demoProfile";
 import { t } from "@/components/ui/theme";
@@ -107,6 +108,14 @@ export default function SettingsPage() {
           <ToggleRow icon={<Mic2 size={17} />} label="Spoken responses" desc="Hear the coach reply aloud" on={prefs.spokenReplies} onClick={() => toggle("spokenReplies")} />
           <Divider />
           <NavRow icon={<Mic2 size={17} />} label="Speech & voice" desc="Language and voice selection" href="/coach/voice" />
+        </Group>
+
+        {/* ── SOUND ── */}
+        <Group title="Sound" delay={0.16}>
+          <div style={{ padding: "8px 2px" }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: t.text, marginBottom: 10 }}>Ambient sound</div>
+            <AmbientSound />
+          </div>
         </Group>
 
         {/* ── REMINDERS ── */}

@@ -7,6 +7,7 @@ import { AchievementCrystal } from "@/components/ui/AchievementCrystal";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
 import { Illustration } from "@/components/ui/Illustration";
+import { OrbRings } from "@/components/ui/OrbRings";
 import { BackButton } from "@/components/ui/BackButton";
 import { api, MeProfile } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
@@ -47,8 +48,9 @@ export default function AchievementsPage() {
       <Reveal index={0}>
         <div className="mesh" style={{ borderRadius: 28, padding: "28px 20px", marginBottom: 20, textAlign: "center", boxShadow: t.shadowAccent }}>
           <div style={{ position: "relative", zIndex: 1 }}>
-            <AchievementCrystal size={120} unlocked={unlockedCount > 0} />
-            <div style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginTop: 12 }}>
+            <OrbRings rings={unlockedCount} size={150} />
+            <div style={{ color: "#fff", fontSize: 13, marginTop: 8, opacity: 0.9 }}>{unlockedCount} milestone{unlockedCount === 1 ? "" : "s"} · a ring for each</div>
+            <div style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginTop: 10 }}>
               {achievements.filter((a) => a.unlocked).slice(-1)[0]?.title ?? "Getting started"}
             </div>
             <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 13, marginTop: 2 }}>Your latest milestone</div>

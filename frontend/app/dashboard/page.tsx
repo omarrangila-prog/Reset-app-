@@ -1,4 +1,5 @@
 "use client";
+import { Illustration } from "@/components/ui/Illustration";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useAppStore } from "../../lib/store";
@@ -215,7 +216,11 @@ export default function DashboardPage() {
   const urges = data.dailyActivity.reduce((s, d) => s + d.urges, 0);
 
   return (
-    <div style={{ minHeight: "100vh", maxWidth: 560, margin: "0 auto", padding: "24px 22px 130px", position: "relative", zIndex: 1 }}>
+    <div style={{ minHeight: "100vh", maxWidth: 560, margin: "0 auto", padding: "24px 22px 130px", position: "relative", zIndex: 1, overflow: "hidden" }}>
+      {/* Soft insights art accent behind the masthead */}
+      <div aria-hidden style={{ position: "absolute", top: -30, right: -40, opacity: 0.35, pointerEvents: "none", zIndex: 0 }}>
+        <Illustration name="insights" size={200} />
+      </div>
       {/* Editorial masthead — typography-led, no "dashboard" chrome */}
       <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ marginBottom: 32, marginTop: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

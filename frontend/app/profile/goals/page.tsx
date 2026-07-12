@@ -1,5 +1,6 @@
 "use client";
 
+import { Illustration } from "@/components/ui/Illustration";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Moon, PenLine, Footprints, Smartphone, CalendarCheck } from "lucide-react";
@@ -74,7 +75,10 @@ export default function GoalsPage() {
 
       {/* FEATURED goal hero */}
       <Reveal index={1}>
-        <div className="mesh pearl" style={{ borderRadius: 28, padding: 24, marginBottom: 22, boxShadow: t.shadowAccent, position: "relative" }}>
+        <div className="mesh pearl" style={{ borderRadius: 28, padding: 24, marginBottom: 22, boxShadow: t.shadowAccent, position: "relative", overflow: "hidden" }}>
+          <div aria-hidden style={{ position: "absolute", top: -24, right: -20, opacity: 0.5, pointerEvents: "none" }}>
+            <Illustration name="goals" size={140} />
+          </div>
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(255,255,255,0.85)", marginBottom: 10 }}>This week&apos;s focus</div>
             <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
