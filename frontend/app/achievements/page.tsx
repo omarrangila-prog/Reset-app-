@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { AchievementCrystal } from "@/components/ui/AchievementCrystal";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { Illustration } from "@/components/ui/Illustration";
 import { BackButton } from "@/components/ui/BackButton";
 import { api, MeProfile } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
@@ -65,7 +66,7 @@ export default function AchievementsPage() {
         const pct = Math.min(1, streak / target);
         return (
           <Reveal index={1}>
-            <div style={{ background: "linear-gradient(135deg,#EAF0FF,#F3EEFF)", border: "1px solid #DCE3FF", borderRadius: 22, padding: 18, marginBottom: 22, display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ background: "linear-gradient(145deg, var(--accent-soft), var(--bg-surface))", border: "1px solid var(--border)", borderRadius: 22, padding: 18, marginBottom: 22, display: "flex", alignItems: "center", gap: 16 }}>
               <AchievementCrystal size={56} unlocked={false} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: t.accentText, marginBottom: 4 }}>Next up</div>
@@ -81,6 +82,9 @@ export default function AchievementsPage() {
       })()}
 
       {/* Collection */}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+        <Illustration name="crystal-shelf-full" size={200} alt="A shelf of glowing crystals" style={{ opacity: 0.95 }} />
+      </div>
       <div style={{ fontSize: 11, color: t.muted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginBottom: 12 }}>Your collection</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {achievements.map((a, i) => (

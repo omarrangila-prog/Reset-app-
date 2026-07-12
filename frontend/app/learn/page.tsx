@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
+import { Illustration } from "@/components/ui/Illustration";
 import { LESSONS } from "@/lib/lessons";
 
 const categoryColor: Record<string, string> = {
@@ -46,7 +47,10 @@ export default function LearnPage() {
       {/* FEATURED lesson — editorial hero */}
       <Reveal index={1}>
         <Link href={`/learn/${featured.slug}`} style={{ display: "block", marginBottom: 24 }}>
-          <div className="mesh pearl" style={{ borderRadius: 28, padding: 24, boxShadow: t.shadowAccent, position: "relative", minHeight: 200, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+          <div className="mesh pearl" style={{ borderRadius: 28, padding: 24, boxShadow: t.shadowAccent, position: "relative", minHeight: 200, display: "flex", flexDirection: "column", justifyContent: "flex-end", overflow: "hidden" }}>
+            <div aria-hidden style={{ position: "absolute", top: -20, right: -16, opacity: 0.55, pointerEvents: "none" }}>
+              <Illustration name="recovery" size={150} />
+            </div>
             <div style={{ position: "relative", zIndex: 1 }}>
               <span style={{ display: "inline-block", padding: "5px 12px", borderRadius: 999, background: "rgba(255,255,255,0.22)", color: "#fff", fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 14 }}>
                 Start here · {featured.minutes} min
