@@ -11,7 +11,9 @@ import { Card } from "@/components/ui/Card";
 import { RecoveryOrb } from "@/components/ui/RecoveryOrb";
 import { deriveInsight } from "@/lib/insights";
 import { deriveReflection } from "@/lib/reflection";
-import { loadProfile, deriveRecovery, deriveBriefing, DEFAULT_PROFILE, Briefing, RiskLevel } from "@/lib/recoveryProfile";
+import { loadProfile, deriveRecovery, deriveBriefing, deriveForecast, DEFAULT_PROFILE, Briefing, RiskLevel, Forecast } from "@/lib/recoveryProfile";
+import { deriveHomeHero, HomeHero } from "@/lib/homeHero";
+import { Sun, Cloud, Moon, CloudRain } from "lucide-react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Reveal } from "@/components/ui/motion";
 import { t } from "@/components/ui/theme";
@@ -24,6 +26,15 @@ function greeting(): string {
   if (h < 17) return "Good afternoon";
   if (h < 22) return "Good evening";
   return "Rest well tonight";
+}
+
+function ForecastIcon({ icon }: { icon: Forecast["icon"] }) {
+  const Icon = icon === "sun" ? Sun : icon === "cloud" ? Cloud : icon === "rain" ? CloudRain : Moon;
+  return (
+    <span aria-hidden style={{ width: 34, height: 34, borderRadius: 11, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "var(--bg-surface)", color: "var(--accent)", boxShadow: "inset 1px 1px 0 var(--neu-light), inset -2px -2px 5px var(--neu-dark)" }}>
+      <Icon size={17} />
+    </span>
+  );
 }
 
 function RiskChip({ risk }: { risk: RiskLevel }) {
@@ -63,6 +74,8 @@ function HomeScreen({
   reflection,
   focus,
   briefing,
+  hero,
+  forecast,
   onJournalTap,
   onRelapseTap,
 }: {
@@ -72,7 +85,9 @@ function HomeScreen({
   insight: string;
   reflection: string;
   focus: string;
-  briefing: Briefing;
+  briefing: Briefing | null;
+  hero: HomeHero | null;
+  forecast: Forecast | null;
   onJournalTap: () => void;
   onRelapseTap: () => void;
 }) {
@@ -92,7 +107,7 @@ function HomeScreen({
       <Reveal index={0}>
         <header style={{ marginBottom: 20, marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: t.text, letterSpacing: "-0.02em" }}>
+            <div suppressHydrationWarning style={{ fontSize: 22, fontWeight: 700, color: t.text, letterSpacing: "-0.02em" }}>
               {greeting()} 👋
             </div>
             <div style={{ fontSize: 13, color: t.accent, fontWeight: 600, marginTop: 2 }}>
@@ -102,26 +117,35 @@ function HomeScreen({
         </header>
       </Reveal>
 
-      {/* ── DAILY BRIEFING: personalized read + current risk + next action ── */}
+      {/* ── DAILY BRIEFING: dynamic hero + recovery forecast + quote ── */}
       <Reveal index={1}>
-        <div className="frost" style={{ borderRadius: 20, padding: "16px 18px", marginBottom: 14, border: `1px solid ${t.border}` }}>
-          <div style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
-            <span aria-hidden style={{ fontSize: 22, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>🌅</span>
+        {briefing && hero && forecast ? (
+        <div className="frost" style={{ borderRadius: 20, padding: "18px 18px", marginBottom: 14, border: `1px solid ${t.border}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: t.text }}>{briefing.greeting}</span>
+            <RiskChip risk={briefing.risk} />
+          </div>
+          <p style={{ fontSize: 16, color: t.text, lineHeight: 1.5, fontWeight: 600, margin: "0 0 10px" }}>{hero.line}</p>
+
+          {/* Recovery forecast — weather-like guidance */}
+          <div style={{ display: "flex", gap: 11, alignItems: "flex-start", padding: "11px 13px", borderRadius: 14, background: "var(--accent-soft)", border: `1px solid ${t.border}`, marginBottom: 12 }}>
+            <ForecastIcon icon={forecast.icon} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: t.text }}>{briefing.greeting}</span>
-                <RiskChip risk={briefing.risk} />
-              </div>
-              <p style={{ fontSize: 14.5, color: t.text, lineHeight: 1.55, fontWeight: 500, margin: 0 }}>{briefing.message}</p>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: t.text }}>{forecast.period} · {forecast.label}</div>
+              <div style={{ fontSize: 12.5, color: t.sub, marginTop: 2, lineHeight: 1.45 }}>{forecast.recommendation}</div>
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 12, borderTop: `1px solid ${t.border}` }}>
-            <span style={{ fontSize: 12.5, color: t.sub }}>{reflection}</span>
-          </div>
-          <Link href={briefing.nextAction.href} style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10, padding: "9px 16px", borderRadius: 999, background: "var(--accent-soft)", color: "var(--accent-text)", fontSize: 13, fontWeight: 600, minHeight: 40 }}>
+
+          {/* Contextual quote */}
+          <p style={{ fontSize: 13, color: t.sub, lineHeight: 1.55, fontStyle: "italic", margin: "0 0 12px", paddingLeft: 12, borderLeft: `2px solid ${t.accent}` }}>{hero.quote}</p>
+
+          <Link href={briefing.nextAction.href} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 999, background: "var(--grad-hero)", color: "#fff", fontSize: 13, fontWeight: 600, minHeight: 40, boxShadow: "var(--shadow-accent)" }}>
             {briefing.nextAction.label} →
           </Link>
         </div>
+        ) : (
+          <div className="frost" style={{ borderRadius: 20, padding: "18px 18px", marginBottom: 14, border: `1px solid ${t.border}`, minHeight: 120 }} aria-hidden />
+        )}
       </Reveal>
 
       {/* ── HERO: one focal Recovery Orb; score presented outside it ── */}
@@ -277,14 +301,23 @@ export default function HomeApp() {
   const [homeFocus, setHomeFocus] = useState(
     "Small steps today. Check off a habit or write a quick note — one thing is enough."
   );
-  const [briefing, setBriefing] = useState<Briefing>(() => deriveBriefing(DEFAULT_PROFILE));
+  // Time-of-day dependent values are computed client-side (in effects) to avoid
+  // SSR/client hydration mismatches (the server hour can differ from the client).
+  const [briefing, setBriefing] = useState<Briefing | null>(null);
+  const [forecast, setForecast] = useState<Forecast | null>(null);
+  const [hero, setHero] = useState<HomeHero | null>(null);
   useEffect(() => {
     const p = loadProfile();
     setBriefing(deriveBriefing(p));
+    setForecast(deriveForecast(p));
     if (p.onboardingCompleted && (p.triggers.length || p.highRiskTimes.length || p.locations.length)) {
       setHomeFocus(deriveRecovery(p).firstStep);
     }
-  }, []);
+    const recentLapse = (user?.dailyActivity ?? []).slice(-2).some((d) => d.relapses > 0);
+    const hitMilestone = [3, 7, 14, 30].includes(user?.streak ?? 0);
+    setHero(deriveHomeHero({ streak: user?.streak ?? 0, hadRecentLapse: recentLapse, hitMilestone }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.streak]);
 
   // Decide splash before first paint: show once per session (fresh launch),
   // not on internal navigation back to Home. Independent of onboarding.
@@ -530,6 +563,8 @@ export default function HomeApp() {
           reflection={deriveReflection(user?.logs, user?.dailyActivity, streak)}
           focus={homeFocus}
           briefing={briefing}
+          hero={hero}
+          forecast={forecast}
           onJournalTap={() => setShowJournalModal(true)}
           onRelapseTap={() => setShowPostRelapse(true)}
         />

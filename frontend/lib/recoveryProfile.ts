@@ -135,3 +135,17 @@ export function deriveBriefing(p: RecoveryProfile): Briefing {
   const nextAction = risk !== "low" ? { label: "Open Calm Mode", href: "/urge" } : { label: "Add a win", href: "/wins" };
   return { greeting, message, risk, nextAction };
 }
+
+// ── Recovery Forecast (weather-like guidance instead of a bare score) ──────────
+export interface Forecast { period: string; label: string; icon: "sun" | "cloud" | "moon" | "rain"; recommendation: string }
+
+export function deriveForecast(p: RecoveryProfile): Forecast {
+  const b = deriveBriefing(p);
+  const d = deriveRecovery(p);
+  const h = new Date().getHours();
+  const period = h >= 17 || h < 4 ? "Tonight" : h < 12 ? "This morning" : "This afternoon";
+
+  if (b.risk === "elevated") return { period, label: "Higher challenge", icon: "moon", recommendation: d.firstStep };
+  if (b.risk === "moderate") return { period, label: "Moderate challenge", icon: "cloud", recommendation: "A short wind-down now makes the evening easier." };
+  return { period, label: "Calm ahead", icon: "sun", recommendation: "A good window to build a small healthy habit." };
+}
